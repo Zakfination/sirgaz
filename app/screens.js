@@ -18,23 +18,11 @@ import { useAuth } from "./authContext";
 
 /* ---------- Shared UI Primitives ---------- */
 
+// StatusBar retired \u2014 sirgaZ is a true responsive web app, not a fake iPhone frame.
+// Kept as a small transparent safe-area spacer so legacy screens that still call
+// <StatusBar /> keep their top rhythm. Renders nothing visible, no battery/signal.
 export const StatusBar = () => (
-  <div className="flex items-center justify-between px-7 pt-3 pb-1 text-[13px] font-semibold text-white/90 select-none">
-    <span>9:41</span>
-    <div className="flex items-center gap-1.5">
-      <span className="flex gap-[3px] items-end">
-        <span className="w-[3px] h-[4px] rounded-sm bg-white/90" />
-        <span className="w-[3px] h-[6px] rounded-sm bg-white/90" />
-        <span className="w-[3px] h-[8px] rounded-sm bg-white/90" />
-        <span className="w-[3px] h-[10px] rounded-sm bg-white/90" />
-      </span>
-      <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 10.5a2 2 0 100-4 2 2 0 000 4z" fill="#fff"/><path d="M2 4.7C3.6 3.3 5.7 2.5 8 2.5s4.4.8 6 2.2" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" opacity=".9"/><path d="M4.5 6.9C5.5 6 6.7 5.5 8 5.5s2.5.5 3.5 1.4" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" opacity=".9"/></svg>
-      <div className="w-6 h-3 rounded-[3px] border border-white/70 relative">
-        <div className="absolute inset-0.5 rounded-[2px] bg-white/90" />
-        <div className="absolute -right-[3px] top-1/2 -translate-y-1/2 w-[2px] h-1.5 rounded-r bg-white/70" />
-      </div>
-    </div>
-  </div>
+  <div aria-hidden className="h-3 sm:h-4 pt-safe" />
 );
 
 export const TopBar = ({ title, onBack, right, subtle = false }) => (
@@ -123,83 +111,214 @@ export const EventCard = ({ title, venue, date, tag, hue = "pink", onClick }) =>
 };
 
 /* ---------- 01 SPLASH ---------- */
-export const Splash = ({ next, go }) => {
+export const Splash = ({ go }) => {
   const { session, sessionLoading } = useAuth();
   React.useEffect(() => {
-    // Auto-advance after 1.6s: if signed in => home, else landing
+    // Auto-advance after 1.6s: if signed in => home, else landing (unchanged)
     const t = setTimeout(() => {
       if (sessionLoading) return;
       go?.(session ? "home" : "landing");
     }, 1600);
     return () => clearTimeout(t);
   }, [session, sessionLoading, go]);
+
   return (
-  <div className="relative h-full w-full bg-haze noise overflow-hidden">
-    <div className="absolute inset-0 flex items-center justify-center">
-      <div className="absolute w-[520px] h-[520px] rounded-full bg-[#FF2F92]/20 blur-3xl pulse-slow" />
-      <div className="absolute w-[380px] h-[380px] rounded-full bg-[#A93CFF]/30 blur-3xl pulse-slow" style={{ animationDelay: "0.4s" }}/>
-      <div className="absolute w-[260px] h-[260px] rounded-full bg-[#00E5FF]/20 blur-3xl pulse-slow" style={{ animationDelay: "0.8s" }}/>
-    </div>
-    <div className="relative h-full flex flex-col items-center justify-center px-8">
-      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="flex flex-col items-center">
-        <div className="relative">
-          <div className="absolute inset-0 blur-2xl gradient-brand rounded-full opacity-70" />
-          <div className="relative w-[104px] h-[104px] rounded-[32px] glass-strong flex items-center justify-center glow-pink">
-            <span className="text-[42px] font-bold tracking-tighter text-gradient">sZ</span>
-          </div>
-        </div>
-        <div className="mt-8 text-[42px] font-bold tracking-tighter">
-          sirga<span className="text-gradient">Z</span>
-        </div>
-        <div className="mt-3 text-[14px] text-white/60 tracking-wide">Kalo Lu Sir, Ya Gazz <span className="text-[#FF2F92]">❤</span></div>
-      </motion.div>
-      <div className="absolute bottom-14 flex gap-2">
-        <span className="dot w-2 h-2 rounded-full bg-white/70" />
-        <span className="dot w-2 h-2 rounded-full bg-white/70" style={{ animationDelay: "0.15s" }} />
-        <span className="dot w-2 h-2 rounded-full bg-white/70" style={{ animationDelay: "0.3s" }} />
+    <div className="relative w-full min-h-[100dvh] overflow-hidden bg-[--sirgaz-bg]">
+      {/* Ambient bloom */}
+      <div aria-hidden className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="absolute w-[540px] h-[540px] rounded-full bg-[#ff2f92]/[0.12] blur-[140px] pulse-slow" />
+        <div className="absolute w-[400px] h-[400px] rounded-full bg-[#a93cff]/[0.14] blur-[140px] pulse-slow" style={{ animationDelay: "0.5s" }} />
+        <div className="absolute w-[280px] h-[280px] rounded-full bg-[#00e5ff]/[0.08] blur-[140px] pulse-slow" style={{ animationDelay: "1s" }} />
       </div>
-      <button onClick={next} className="absolute inset-0" aria-label="continue" />
+
+      {/* Content \u2014 vertically centered, mobile-first, comfortable on desktop */}
+      <div className="relative z-10 min-h-[100dvh] flex flex-col items-center justify-center px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 8, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="flex flex-col items-center"
+        >
+          <div className="relative">
+            <div aria-hidden className="absolute -inset-6 rounded-[36px] gradient-brand blur-2xl opacity-40" />
+            <div className="relative w-[88px] h-[88px] sm:w-[104px] sm:h-[104px] rounded-[28px] sm:rounded-[32px] glass-strong flex items-center justify-center shadow-premium">
+              <span className="text-[36px] sm:text-[42px] font-bold tracking-tighter text-gradient">sZ</span>
+            </div>
+          </div>
+
+          <div className="mt-8 text-[42px] sm:text-[52px] leading-none font-bold tracking-tighter">
+            sirga<span className="text-gradient">Z</span>
+          </div>
+          <div className="mt-4 font-editorial italic text-[16px] sm:text-[18px] text-white/70">
+            Kalo Lu Sir, Ya Gazz.
+          </div>
+        </motion.div>
+
+        {/* subtle progress hint */}
+        <div className="absolute bottom-10 flex gap-2">
+          <span className="dot w-1.5 h-1.5 rounded-full bg-white/60" />
+          <span className="dot w-1.5 h-1.5 rounded-full bg-white/60" style={{ animationDelay: "0.15s" }} />
+          <span className="dot w-1.5 h-1.5 rounded-full bg-white/60" style={{ animationDelay: "0.3s" }} />
+        </div>
+
+        {/* tap-anywhere to skip */}
+        <button
+          onClick={() => go?.("landing")}
+          className="absolute inset-0"
+          aria-label="Continue to landing"
+        />
+      </div>
     </div>
-  </div>
   );
 };
 
 /* ---------- 02 LANDING ---------- */
-export const Landing = ({ next, go }) => (
-  <div className="relative h-full w-full overflow-hidden">
-    <img src="https://images.pexels.com/photos/1179581/pexels-photo-1179581.jpeg" alt="nightlife" className="absolute inset-0 w-full h-full object-cover opacity-70"/>
-    <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/60 to-black" />
-    <div className="absolute -top-20 -left-16 w-[300px] h-[300px] rounded-full bg-[#FF2F92]/40 blur-3xl" />
-    <div className="absolute top-40 -right-16 w-[280px] h-[280px] rounded-full bg-[#A93CFF]/40 blur-3xl" />
-    <StatusBar />
-    <div className="relative h-[calc(100%-32px)] flex flex-col justify-between px-7 pb-10">
-      <div className="pt-4 flex items-center justify-between">
-        <div className="w-10 h-10 rounded-2xl glass flex items-center justify-center">
-          <span className="text-[14px] font-bold text-gradient">sZ</span>
-        </div>
-        <button onClick={() => go?.("login")} className="text-[13px] text-white/70 font-medium">Sign in</button>
-      </div>
-      <div className="mt-auto">
-        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-[11px] font-medium mb-6">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-pulse" /> AI Matchmaking · Live in 42 venues
-        </span>
-        <h1 className="text-[44px] leading-[1.02] font-bold tracking-tighter">
-          Meet who <br/> matches your <span className="text-gradient">frequency</span>.
-        </h1>
-        <p className="mt-4 text-white/60 text-[14px] leading-relaxed max-w-[300px]">
-          The premium matchmaking layer for clubs, festivals and concerts. No swipes. Just serendipity.
-        </p>
-        <div className="mt-8 space-y-3">
-          <BigButton onClick={() => go?.("login")} icon={<ArrowRight className="w-4 h-4" />}>Join an Event</BigButton>
-          <BigButton onClick={() => go?.("login")} variant="ghost">I already have an account</BigButton>
-        </div>
-        <div className="mt-6 flex items-center justify-center gap-1.5">
-          <span className="w-8 h-1 rounded-full bg-white" />
-          <span className="w-1.5 h-1 rounded-full bg-white/30" />
-          <span className="w-1.5 h-1 rounded-full bg-white/30" />
-        </div>
-      </div>
+export const Landing = ({ go }) => (
+  <div className="relative w-full min-h-[100dvh] overflow-hidden bg-[--sirgaz-bg]">
+    {/* Editorial background photo */}
+    <div className="absolute inset-0">
+      <img
+        src="https://images.pexels.com/photos/1179581/pexels-photo-1179581.jpeg"
+        alt=""
+        aria-hidden
+        className="absolute inset-0 w-full h-full object-cover opacity-60"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/70 to-black" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/40 hidden lg:block" />
+      <div aria-hidden className="absolute -top-40 -left-32 w-[380px] h-[380px] rounded-full bg-[#ff2f92]/[0.25] blur-[140px]" />
+      <div aria-hidden className="absolute top-40 -right-32 w-[380px] h-[380px] rounded-full bg-[#a93cff]/[0.22] blur-[140px]" />
     </div>
+
+    {/* Top nav */}
+    <header className="relative z-10 px-6 sm:px-10 pt-safe">
+      <div className="max-w-6xl mx-auto flex items-center justify-between h-16 sm:h-20">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl glass flex items-center justify-center">
+            <span className="text-[13px] font-bold text-gradient">sZ</span>
+          </div>
+          <span className="text-[15px] font-semibold tracking-tight">
+            sirga<span className="text-gradient">Z</span>
+          </span>
+        </div>
+        <button
+          onClick={() => go?.("login")}
+          className="text-[13px] sm:text-[14px] text-white/80 hover:text-white font-medium transition"
+        >
+          Sign in
+        </button>
+      </div>
+    </header>
+
+    {/* Hero */}
+    <main className="relative z-10 px-6 sm:px-10 pb-safe">
+      <div className="max-w-6xl mx-auto min-h-[calc(100dvh-9rem)] grid lg:grid-cols-2 gap-10 lg:gap-16 items-end lg:items-center py-8 sm:py-12">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="max-w-xl lg:pb-0 pb-4"
+        >
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-[11px] font-medium mb-6 sm:mb-8">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-pulse" />
+            AI matchmaking · live in 42 venues
+          </span>
+
+          <h1 className="font-editorial italic text-[44px] sm:text-[64px] lg:text-[76px] leading-[0.95] tracking-tighter text-white">
+            Meet who
+            <br />
+            matches your
+            <br />
+            <span className="not-italic font-sans font-semibold text-gradient tracking-tighter">frequency</span>.
+          </h1>
+
+          <p className="mt-6 sm:mt-8 text-white/65 text-[15px] sm:text-[16px] leading-relaxed max-w-md">
+            The premium matchmaking layer for clubs, festivals and concerts.
+            No swipes. Just serendipity, engineered.
+          </p>
+
+          <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 max-w-md">
+            <button
+              onClick={() => go?.("login")}
+              className="h-14 px-6 rounded-2xl gradient-brand text-white font-semibold text-[15px] tracking-tight
+                         inline-flex items-center justify-center gap-2 shadow-glow-pink
+                         hover:-translate-y-[1px] active:scale-[0.98] transition-all duration-300 ease-out-expo"
+            >
+              Join an event <ArrowRight className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => go?.("login")}
+              className="h-14 px-6 rounded-2xl glass text-white font-medium text-[14px] tracking-tight
+                         inline-flex items-center justify-center gap-2
+                         hover:bg-white/[0.08] active:scale-[0.98] transition"
+            >
+              I already have an account
+            </button>
+          </div>
+
+          {/* Trust strip */}
+          <div className="mt-10 sm:mt-14 grid grid-cols-3 gap-4 sm:gap-8 max-w-md">
+            {[
+              { k: "42", v: "Live venues" },
+              { k: "180k+", v: "Matches made" },
+              { k: "4.8\u2605", v: "App rating" },
+            ].map((s) => (
+              <div key={s.v}>
+                <div className="text-[22px] sm:text-[26px] font-semibold tracking-tighter">
+                  {s.k}
+                </div>
+                <div className="mt-1 text-[11px] sm:text-[12px] text-white/50 tracking-wide">
+                  {s.v}
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Right column \u2014 desktop only: subtle floating card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+          className="hidden lg:flex justify-end"
+        >
+          <div className="relative w-full max-w-md">
+            <div aria-hidden className="absolute -inset-4 rounded-[36px] gradient-brand-subtle blur-2xl opacity-70" />
+            <div className="relative glass-card rounded-[32px] p-8 float-slow">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full gradient-brand" />
+                <div>
+                  <div className="text-[14px] font-semibold">Tonight at Hevn Station</div>
+                  <div className="text-[11.5px] text-white/50">Live · 218 people vibing</div>
+                </div>
+              </div>
+              <div className="mt-6 text-[11px] uppercase tracking-widest text-white/40">
+                Your match
+              </div>
+              <div className="mt-2 flex items-baseline gap-2">
+                <span className="text-[56px] font-semibold tracking-tighter text-gradient">
+                  94
+                </span>
+                <span className="text-white/50 text-[13px]">% vibe compat</span>
+              </div>
+              <div className="mt-4 space-y-1.5 text-[13px] text-white/70">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-[#00E5FF]" />
+                  Same energy tonight
+                </div>
+                <div className="flex items-center gap-2">
+                  <Music className="w-3.5 h-3.5 text-[#ff2f92]" />
+                  Both love afro-house
+                </div>
+                <div className="flex items-center gap-2">
+                  <Star className="w-3.5 h-3.5 text-[#a93cff]" />
+                  Zodiac bonus +5%
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </main>
   </div>
 );
 
@@ -220,59 +339,153 @@ export const Login = ({ go }) => {
   };
 
   return (
-  <div className="relative h-full w-full bg-haze overflow-hidden">
-    <StatusBar />
-    <TopBar title="Sign in" onBack={() => go?.("landing")} />
-    <div className="px-7 pt-2">
-      <h2 className="text-[30px] font-semibold tracking-tighter">Enter your email</h2>
-      <p className="text-white/50 text-[13px] mt-2">We'll send a 6 digit code to your inbox.</p>
-      <div className="mt-8 space-y-3">
-        <div className="glass rounded-2xl px-4 h-14 flex items-center gap-3">
-          <span className="text-[14px] font-medium text-white/70">@</span>
-          <input
-            type="email"
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            inputMode="email"
-            autoComplete="email"
-            className="flex-1 bg-transparent outline-none text-[15px] placeholder-white/30 tracking-wide"
-            onKeyDown={(e) => { if (e.key === "Enter") onContinue(); }}
-          />
+    <div className="relative w-full min-h-[100dvh] overflow-hidden bg-[--sirgaz-bg]">
+      {/* Ambient bloom */}
+      <div aria-hidden className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-40 -left-32 w-[420px] h-[420px] rounded-full bg-[#ff2f92]/[0.10] blur-[140px]" />
+        <div className="absolute -bottom-40 -right-32 w-[420px] h-[420px] rounded-full bg-[#a93cff]/[0.10] blur-[140px]" />
+      </div>
+
+      {/* Top nav */}
+      <header className="relative z-10 px-6 sm:px-10 pt-safe">
+        <div className="max-w-6xl mx-auto flex items-center justify-between h-16 sm:h-20">
+          <button
+            onClick={() => go?.("landing")}
+            className="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-white/[0.08] transition"
+            aria-label="Back"
+          >
+            <ChevronLeft className="w-5 h-5 text-white" />
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg glass flex items-center justify-center">
+              <span className="text-[12px] font-bold text-gradient">sZ</span>
+            </div>
+            <span className="text-[14px] font-semibold tracking-tight">
+              sirga<span className="text-gradient">Z</span>
+            </span>
+          </div>
+          <div className="w-10 h-10" />
         </div>
-        {error && (
-          <div className="px-4 py-2.5 rounded-xl bg-[#FF2F92]/10 border border-[#FF2F92]/30 text-[12px] text-[#FF2F92]">{error}</div>
-        )}
-        <div className="flex items-center gap-2 text-[12px] text-white/50 px-1">
-          <ShieldCheck className="w-3.5 h-3.5 text-[#00E5FF]" /> Passwordless · encrypted · never spammed
+      </header>
+
+      {/* Content */}
+      <main className="relative z-10 px-6 sm:px-10">
+        <div className="max-w-[440px] mx-auto pt-8 sm:pt-16 pb-24">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <h1 className="font-editorial italic text-[40px] sm:text-[52px] leading-[0.98] tracking-tighter">
+              Enter your <br />
+              <span className="not-italic font-sans font-semibold text-gradient">email</span>
+            </h1>
+            <p className="mt-4 text-white/55 text-[14px] sm:text-[15px] leading-relaxed">
+              We'll send a 6 digit code to your inbox. No password. No spam.
+            </p>
+
+            <div className="mt-10 space-y-3">
+              <label className="block">
+                <div className="glass-card rounded-2xl px-5 h-16 flex items-center gap-3 transition-all focus-within:border-white/20 focus-within:bg-white/[0.055]">
+                  <span className="text-white/40 text-[14px]">@</span>
+                  <input
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    inputMode="email"
+                    autoComplete="email"
+                    autoFocus
+                    aria-label="Email address"
+                    className="flex-1 bg-transparent outline-none text-[16px] placeholder-white/25 tracking-normal"
+                    onKeyDown={(e) => { if (e.key === "Enter") onContinue(); }}
+                  />
+                </div>
+              </label>
+
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="px-4 py-3 rounded-xl bg-[#ff2f92]/[0.08] border border-[#ff2f92]/25 text-[13px] text-[#ff8fbf]"
+                >
+                  {error}
+                </motion.div>
+              )}
+
+              <div className="flex items-center gap-2 text-[12px] text-white/45 px-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#00e5ff]" />
+                Passwordless · encrypted · never spammed
+              </div>
+            </div>
+
+            <div className="mt-8">
+              <button
+                onClick={onContinue}
+                disabled={loading}
+                className="w-full h-14 rounded-2xl gradient-brand text-white font-semibold text-[15px] tracking-tight
+                           inline-flex items-center justify-center gap-2 shadow-glow-pink
+                           hover:-translate-y-[1px] active:scale-[0.98] transition-all duration-300 ease-out-expo
+                           disabled:opacity-60 disabled:hover:translate-y-0"
+              >
+                {loading ? (
+                  <>
+                    <span className="h-4 w-4 rounded-full border-2 border-white/80 border-t-transparent animate-spin" />
+                    Sending code…
+                  </>
+                ) : (
+                  <>
+                    Continue <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </div>
+
+            <div className="mt-8 flex items-center gap-3">
+              <div className="flex-1 h-px bg-white/10" />
+              <span className="text-[11px] text-white/40 tracking-widest uppercase">or</span>
+              <div className="flex-1 h-px bg-white/10" />
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                className="h-12 rounded-2xl glass text-[13px] font-medium hover:bg-white/[0.08] transition"
+                disabled
+                aria-disabled
+              >
+                Apple
+              </button>
+              <button
+                type="button"
+                className="h-12 rounded-2xl glass text-[13px] font-medium hover:bg-white/[0.08] transition"
+                disabled
+                aria-disabled
+              >
+                Google
+              </button>
+            </div>
+
+            <p className="mt-10 text-[11.5px] text-white/35 leading-relaxed">
+              By continuing you agree to sirgaZ's{" "}
+              <span className="text-white/60">Terms</span> and{" "}
+              <span className="text-white/60">Privacy Policy</span>.
+            </p>
+          </motion.div>
         </div>
-      </div>
-      <div className="mt-8">
-        <BigButton onClick={onContinue} icon={loading ? null : <ArrowRight className="w-4 h-4" />}>
-          {loading ? "Sending code…" : "Continue"}
-        </BigButton>
-      </div>
-      <div className="mt-6 flex items-center gap-3">
-        <div className="flex-1 h-px bg-white/10" />
-        <span className="text-[11px] text-white/40 tracking-widest uppercase">or</span>
-        <div className="flex-1 h-px bg-white/10" />
-      </div>
-      <div className="mt-6 grid grid-cols-2 gap-3">
-        <button className="h-12 rounded-2xl glass text-[13px] font-medium">Apple</button>
-        <button className="h-12 rounded-2xl glass text-[13px] font-medium">Google</button>
-      </div>
+      </main>
     </div>
-  </div>
   );
 };
 
 /* ---------- 04 OTP ---------- */
 export const OTP = ({ go }) => {
   const { verifyOtp, resendOtp, pendingIdentifier, authMethod } = useAuth();
-  const [code, setCode] = React.useState(["","","","","",""]);
+  const [code, setCode] = React.useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState("");
-  const [resendTimer, setResendTimer] = React.useState(24);
+  const [resendTimer, setResendTimer] = React.useState(30);
+  const inputsRef = React.useRef([]);
 
   React.useEffect(() => {
     if (resendTimer <= 0) return;
@@ -280,25 +493,48 @@ export const OTP = ({ go }) => {
     return () => clearTimeout(t);
   }, [resendTimer]);
 
-  const pressKey = (k) => {
-    setError("");
-    if (k === "⌫") {
-      setCode(prev => {
-        const idx = prev.findIndex(c => c === "");
-        const target = idx === -1 ? prev.length - 1 : idx - 1;
-        if (target < 0) return prev;
-        const n = [...prev]; n[target] = ""; return n;
-      });
-      return;
-    }
-    setCode(prev => {
-      const idx = prev.findIndex(c => c === "");
-      if (idx === -1) return prev;
-      const n = [...prev]; n[idx] = k; return n;
+  // Auto-focus first tile on mount
+  React.useEffect(() => {
+    inputsRef.current[0]?.focus();
+  }, []);
+
+  const setDigit = (i, val) => {
+    const clean = val.replace(/\D/g, "").slice(0, 1);
+    setCode((prev) => {
+      const n = [...prev];
+      n[i] = clean;
+      return n;
     });
+    setError("");
+    if (clean && i < 5) inputsRef.current[i + 1]?.focus();
   };
 
-  const doVerify = async () => {
+  const handlePaste = (e) => {
+    const pasted = (e.clipboardData.getData("text") || "").replace(/\D/g, "").slice(0, 6);
+    if (!pasted) return;
+    e.preventDefault();
+    const next = Array.from({ length: 6 }, (_, i) => pasted[i] || "");
+    setCode(next);
+    setError("");
+    const focusIdx = Math.min(pasted.length, 5);
+    inputsRef.current[focusIdx]?.focus();
+  };
+
+  const handleKeyDown = (i, e) => {
+    if (e.key === "Backspace" && !code[i] && i > 0) {
+      inputsRef.current[i - 1]?.focus();
+      setCode((prev) => {
+        const n = [...prev];
+        n[i - 1] = "";
+        return n;
+      });
+      e.preventDefault();
+    }
+    if (e.key === "ArrowLeft" && i > 0) inputsRef.current[i - 1]?.focus();
+    if (e.key === "ArrowRight" && i < 5) inputsRef.current[i + 1]?.focus();
+  };
+
+  const doVerify = React.useCallback(async () => {
     setError("");
     const token = code.join("");
     if (token.length < 6) { setError("Enter the 6 digit code"); return; }
@@ -307,11 +543,11 @@ export const OTP = ({ go }) => {
     setLoading(false);
     if (res?.error) { setError(res.error); return; }
     go?.("success");
-  };
+  }, [code, verifyOtp, go]);
 
-  // Auto-submit when 6 digits are filled
+  // Auto-submit when 6 digits are filled (unchanged business logic)
   React.useEffect(() => {
-    if (code.every(c => c !== "") && !loading) {
+    if (code.every((c) => c !== "") && !loading) {
       doVerify();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -326,40 +562,125 @@ export const OTP = ({ go }) => {
   };
 
   return (
-    <div className="relative h-full w-full bg-haze overflow-hidden">
-      <StatusBar />
-      <TopBar title="Verification" onBack={() => go?.("login")} />
-      <div className="px-7">
-        <h2 className="text-[30px] font-semibold tracking-tighter">Enter the code</h2>
-        <p className="text-white/50 text-[13px] mt-2">Sent to {pendingIdentifier || (authMethod === "email" ? "your email" : "your number")}</p>
-        <div className="mt-10 flex gap-2.5 justify-between">
-          {code.map((c, i) => (
-            <div key={i} className={`flex-1 h-16 rounded-2xl flex items-center justify-center text-[24px] font-semibold tracking-tighter ${c ? "gradient-brand-soft" : "glass"} ${c ? "glow-pink" : ""}`}>
-              {c || <span className="w-2 h-2 rounded-full bg-white/20" />}
+    <div className="relative w-full min-h-[100dvh] overflow-hidden bg-[--sirgaz-bg]">
+      {/* Ambient bloom */}
+      <div aria-hidden className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-40 -right-32 w-[420px] h-[420px] rounded-full bg-[#a93cff]/[0.10] blur-[140px]" />
+        <div className="absolute -bottom-40 -left-32 w-[420px] h-[420px] rounded-full bg-[#00e5ff]/[0.08] blur-[140px]" />
+      </div>
+
+      {/* Top nav */}
+      <header className="relative z-10 px-6 sm:px-10 pt-safe">
+        <div className="max-w-6xl mx-auto flex items-center justify-between h-16 sm:h-20">
+          <button
+            onClick={() => go?.("login")}
+            className="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-white/[0.08] transition"
+            aria-label="Back"
+          >
+            <ChevronLeft className="w-5 h-5 text-white" />
+          </button>
+          <div className="text-[13px] text-white/50 font-medium tracking-tight">
+            Verification
+          </div>
+          <div className="w-10 h-10" />
+        </div>
+      </header>
+
+      <main className="relative z-10 px-6 sm:px-10">
+        <div className="max-w-[440px] mx-auto pt-8 sm:pt-16 pb-24">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <h1 className="font-editorial italic text-[40px] sm:text-[52px] leading-[0.98] tracking-tighter">
+              Enter the <br />
+              <span className="not-italic font-sans font-semibold text-gradient">code</span>
+            </h1>
+            <p className="mt-4 text-white/55 text-[14px] sm:text-[15px] leading-relaxed break-all">
+              Sent to <span className="text-white/85">{pendingIdentifier || (authMethod === "email" ? "your email" : "your number")}</span>
+            </p>
+
+            {/* 6 digit input tiles */}
+            <div className="mt-10 grid grid-cols-6 gap-2 sm:gap-3" onPaste={handlePaste}>
+              {code.map((c, i) => (
+                <input
+                  key={i}
+                  ref={(el) => (inputsRef.current[i] = el)}
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={1}
+                  value={c}
+                  onChange={(e) => setDigit(i, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(i, e)}
+                  aria-label={`Digit ${i + 1}`}
+                  className={`
+                    h-14 sm:h-16 rounded-2xl text-center text-[22px] sm:text-[26px] font-semibold tracking-tighter
+                    transition-all duration-200 ease-out-expo outline-none
+                    ${c
+                      ? "bg-white text-black shadow-soft"
+                      : "glass-card text-white focus:border-white/25 focus:bg-white/[0.06]"
+                    }
+                  `}
+                />
+              ))}
             </div>
-          ))}
+
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-5 px-4 py-3 rounded-xl bg-[#ff2f92]/[0.08] border border-[#ff2f92]/25 text-[13px] text-[#ff8fbf] text-center"
+              >
+                {error}
+              </motion.div>
+            )}
+
+            <div className="mt-6 text-center text-[13px] text-white/50">
+              Didn't get it?{" "}
+              {resendTimer > 0 ? (
+                <span className="text-white/40">
+                  Resend in 0:{String(resendTimer).padStart(2, "0")}
+                </span>
+              ) : (
+                <button
+                  onClick={doResend}
+                  className="text-white font-medium underline underline-offset-2 decoration-white/30 hover:decoration-white transition"
+                >
+                  Resend code
+                </button>
+              )}
+            </div>
+
+            <div className="mt-8">
+              <button
+                onClick={doVerify}
+                disabled={loading}
+                className="w-full h-14 rounded-2xl gradient-brand text-white font-semibold text-[15px] tracking-tight
+                           inline-flex items-center justify-center gap-2 shadow-glow-pink
+                           hover:-translate-y-[1px] active:scale-[0.98] transition-all duration-300 ease-out-expo
+                           disabled:opacity-60 disabled:hover:translate-y-0"
+              >
+                {loading ? (
+                  <>
+                    <span className="h-4 w-4 rounded-full border-2 border-white/80 border-t-transparent animate-spin" />
+                    Verifying…
+                  </>
+                ) : (
+                  <>
+                    Verify <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </div>
+
+            <p className="mt-10 text-[11.5px] text-white/35 leading-relaxed text-center">
+              Tip: check spam if the code doesn't arrive within 30 seconds.
+            </p>
+          </motion.div>
         </div>
-        {error && (
-          <div className="mt-5 px-4 py-2.5 rounded-xl bg-[#FF2F92]/10 border border-[#FF2F92]/30 text-[12px] text-[#FF2F92] text-center">{error}</div>
-        )}
-        <div className="mt-6 text-center text-[13px] text-white/50">
-          Didn't get it? {resendTimer > 0
-            ? <span className="text-white/40">Resend in 0:{String(resendTimer).padStart(2,"0")}</span>
-            : <button onClick={doResend} className="text-white font-medium">Resend</button>}
-        </div>
-        <div className="mt-8">
-          <BigButton onClick={doVerify} icon={loading ? null : <ArrowRight className="w-4 h-4" />}>
-            {loading ? "Verifying…" : "Verify"}
-          </BigButton>
-        </div>
-      </div>
-      {/* Numeric pad */}
-      <div className="absolute bottom-0 left-0 right-0 px-6 pb-6 pt-4 grid grid-cols-3 gap-2.5">
-        {["1","2","3","4","5","6","7","8","9","","0","⌫"].map((k, i) => (
-          <button key={i} disabled={!k || loading} onClick={() => k && pressKey(k)}
-            className={`h-14 rounded-2xl text-[20px] font-medium active:scale-95 transition ${k ? "glass" : ""}`}>{k}</button>
-        ))}
-      </div>
+      </main>
     </div>
   );
 };

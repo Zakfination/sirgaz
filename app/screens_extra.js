@@ -19,21 +19,10 @@ import {
 } from "@/lib/db";
 
 /* ---------- reusable ---------- */
+// StatusBar retired \u2014 no more fake iPhone chrome. Kept as a small safe-area
+// spacer so legacy screens that still call <StatusBar /> retain their top rhythm.
 export const StatusBar = () => (
-  <div className="flex items-center justify-between px-7 pt-3 pb-1 text-[13px] font-semibold text-white/90 select-none">
-    <span>9:41</span>
-    <div className="flex items-center gap-1.5">
-      <span className="flex gap-[3px] items-end">
-        <span className="w-[3px] h-[4px] rounded-sm bg-white/90" />
-        <span className="w-[3px] h-[6px] rounded-sm bg-white/90" />
-        <span className="w-[3px] h-[8px] rounded-sm bg-white/90" />
-        <span className="w-[3px] h-[10px] rounded-sm bg-white/90" />
-      </span>
-      <div className="w-6 h-3 rounded-[3px] border border-white/70 relative">
-        <div className="absolute inset-0.5 rounded-[2px] bg-white/90" />
-      </div>
-    </div>
-  </div>
+  <div aria-hidden className="h-3 sm:h-4 pt-safe" />
 );
 export const TopBar = ({ title, onBack, right }) => (
   <div className="flex items-center justify-between px-6 pt-2 pb-4">

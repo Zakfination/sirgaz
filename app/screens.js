@@ -110,99 +110,126 @@ export const EventCard = ({ title, venue, date, tag, hue = "pink", onClick }) =>
   );
 };
 
-/* ---------- 01 SPLASH ---------- */
+/* ---------- 01 SPLASH \u2014 MAXE CLASS Anniversary ---------- */
 export const Splash = ({ go }) => {
   const { session, sessionLoading } = useAuth();
   React.useEffect(() => {
-    // Auto-advance after 1.6s: if signed in => home, else landing (unchanged)
     const t = setTimeout(() => {
       if (sessionLoading) return;
       go?.(session ? "home" : "landing");
-    }, 1600);
+    }, 2000);
     return () => clearTimeout(t);
   }, [session, sessionLoading, go]);
 
   return (
-    <div className="relative w-full min-h-[100dvh] overflow-hidden bg-[--sirgaz-bg]">
-      {/* Ambient bloom */}
-      <div aria-hidden className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="absolute w-[540px] h-[540px] rounded-full bg-[#ff2f92]/[0.12] blur-[140px] pulse-slow" />
-        <div className="absolute w-[400px] h-[400px] rounded-full bg-[#a93cff]/[0.14] blur-[140px] pulse-slow" style={{ animationDelay: "0.5s" }} />
-        <div className="absolute w-[280px] h-[280px] rounded-full bg-[#00e5ff]/[0.08] blur-[140px] pulse-slow" style={{ animationDelay: "1s" }} />
+    <div className="relative w-full min-h-[100dvh] overflow-hidden bg-black">
+      {/* Cinematic vignette */}
+      <div aria-hidden className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_40%,rgba(255,255,255,0.06),transparent_65%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(50%_50%_at_50%_50%,rgba(196,255,0,0.10),transparent_60%)]" />
       </div>
 
-      {/* Content \u2014 vertically centered, mobile-first, comfortable on desktop */}
+      {/* Content */}
       <div className="relative z-10 min-h-[100dvh] flex flex-col items-center justify-center px-6">
+        {/* small event label \u2014 fades in first */}
         <motion.div
-          initial={{ opacity: 0, y: 8, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-col items-center"
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          className="text-[11px] sm:text-[12px] tracking-[0.34em] uppercase text-white/50 mb-10 sm:mb-12"
         >
-          <div className="relative">
-            <div aria-hidden className="absolute -inset-6 rounded-[36px] gradient-brand blur-2xl opacity-40" />
-            <div className="relative w-[88px] h-[88px] sm:w-[104px] sm:h-[104px] rounded-[28px] sm:rounded-[32px] glass-strong flex items-center justify-center shadow-premium">
-              <span className="text-[36px] sm:text-[42px] font-bold tracking-tighter text-gradient">sZ</span>
-            </div>
-          </div>
+          Anniversary
+        </motion.div>
 
-          <div className="mt-8 text-[42px] sm:text-[52px] leading-none font-bold tracking-tighter">
-            sirga<span className="text-gradient">Z</span>
-          </div>
-          <div className="mt-4 font-editorial italic text-[16px] sm:text-[18px] text-white/70">
-            Kalo Lu Sir, Ya Gazz.
-          </div>
+        {/* Logo w/ animated glow rings */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+          className="relative"
+        >
+          {/* Concentric pulse rings */}
+          <span aria-hidden className="absolute inset-0 rounded-full bg-[#C4FF00]/20 blur-2xl maxe-breathe" />
+          <span aria-hidden className="absolute -inset-6 rounded-full border border-[#C4FF00]/15 ring-ping" style={{ animationDelay: "0.3s" }} />
+          <span aria-hidden className="absolute -inset-10 rounded-full border border-[#C4FF00]/10 ring-ping" style={{ animationDelay: "0.9s" }} />
+
+          <img
+            src="/brand/maxe-class-logo.png"
+            alt="MAXE CLASS"
+            width={220}
+            height={220}
+            className="relative w-[180px] h-[180px] sm:w-[220px] sm:h-[220px] object-contain drop-shadow-[0_0_44px_rgba(196,255,0,0.35)]"
+            draggable="false"
+          />
+        </motion.div>
+
+        {/* Hairline separator + Powered by */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-14 sm:mt-16 flex flex-col items-center gap-3"
+        >
+          <span className="w-10 h-px bg-white/15" />
+          <span className="text-[11px] tracking-[0.26em] uppercase text-white/40">
+            Powered by <span className="text-white/70 font-medium">sirgaZ</span>
+          </span>
         </motion.div>
 
         {/* subtle progress hint */}
         <div className="absolute bottom-10 flex gap-2">
-          <span className="dot w-1.5 h-1.5 rounded-full bg-white/60" />
-          <span className="dot w-1.5 h-1.5 rounded-full bg-white/60" style={{ animationDelay: "0.15s" }} />
-          <span className="dot w-1.5 h-1.5 rounded-full bg-white/60" style={{ animationDelay: "0.3s" }} />
+          <span className="dot w-1.5 h-1.5 rounded-full bg-[#C4FF00]/80" />
+          <span className="dot w-1.5 h-1.5 rounded-full bg-[#C4FF00]/60" style={{ animationDelay: "0.15s" }} />
+          <span className="dot w-1.5 h-1.5 rounded-full bg-[#C4FF00]/40" style={{ animationDelay: "0.3s" }} />
         </div>
 
         {/* tap-anywhere to skip */}
         <button
           onClick={() => go?.("landing")}
           className="absolute inset-0"
-          aria-label="Continue to landing"
+          aria-label="Continue"
         />
       </div>
     </div>
   );
 };
 
-/* ---------- 02 LANDING ---------- */
+/* ---------- 02 LANDING \u2014 MAXE CLASS Anniversary ---------- */
 export const Landing = ({ go }) => (
   <div className="relative w-full min-h-[100dvh] overflow-hidden bg-[--sirgaz-bg]">
-    {/* Editorial background photo */}
-    <div className="absolute inset-0">
-      <img
-        src="https://images.pexels.com/photos/1179581/pexels-photo-1179581.jpeg"
-        alt=""
-        aria-hidden
-        className="absolute inset-0 w-full h-full object-cover opacity-60"
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/70 to-black" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/40 hidden lg:block" />
-      <div aria-hidden className="absolute -top-40 -left-32 w-[380px] h-[380px] rounded-full bg-[#ff2f92]/[0.25] blur-[140px]" />
-      <div aria-hidden className="absolute top-40 -right-32 w-[380px] h-[380px] rounded-full bg-[#a93cff]/[0.22] blur-[140px]" />
+    {/* Cinematic gradient + soft stage spotlight */}
+    <div aria-hidden className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,#0B0B0D_0%,#09090B_60%,#050506_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(75%_55%_at_50%_-10%,rgba(255,255,255,0.10),transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(50%_40%_at_15%_110%,rgba(196,255,0,0.10),transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(50%_40%_at_85%_110%,rgba(196,255,0,0.06),transparent_60%)]" />
+      <div className="absolute inset-0 grid-lines opacity-40" />
     </div>
 
     {/* Top nav */}
     <header className="relative z-10 px-6 sm:px-10 pt-safe">
       <div className="max-w-6xl mx-auto flex items-center justify-between h-16 sm:h-20">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl glass flex items-center justify-center">
-            <span className="text-[13px] font-bold text-gradient">sZ</span>
+          <img
+            src="/brand/maxe-class-logo.png"
+            alt="MAXE CLASS"
+            width={32}
+            height={32}
+            className="w-8 h-8 object-contain"
+            draggable="false"
+          />
+          <div className="leading-tight">
+            <div className="text-[13px] sm:text-[14px] font-semibold tracking-tight">
+              MAXE <span className="text-maxe">CLASS</span>
+            </div>
+            <div className="text-[9px] tracking-[0.22em] uppercase text-white/40 mt-0.5">
+              Anniversary
+            </div>
           </div>
-          <span className="text-[15px] font-semibold tracking-tight">
-            sirga<span className="text-gradient">Z</span>
-          </span>
         </div>
         <button
           onClick={() => go?.("login")}
-          className="text-[13px] sm:text-[14px] text-white/80 hover:text-white font-medium transition"
+          className="text-[13px] sm:text-[14px] text-white/75 hover:text-white font-medium transition"
         >
           Sign in
         </button>
@@ -211,62 +238,64 @@ export const Landing = ({ go }) => (
 
     {/* Hero */}
     <main className="relative z-10 px-6 sm:px-10 pb-safe">
-      <div className="max-w-6xl mx-auto min-h-[calc(100dvh-9rem)] grid lg:grid-cols-2 gap-10 lg:gap-16 items-end lg:items-center py-8 sm:py-12">
+      <div className="max-w-6xl mx-auto min-h-[calc(100dvh-9rem)] grid lg:grid-cols-2 gap-10 lg:gap-16 items-center py-10 sm:py-12">
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-xl lg:pb-0 pb-4"
+          transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+          className="max-w-xl"
         >
           <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-[11px] font-medium mb-6 sm:mb-8">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-pulse" />
-            AI matchmaking · live in 42 venues
+            <span className="w-1.5 h-1.5 rounded-full bg-[#C4FF00] animate-pulse" />
+            <span className="text-white/85">
+              Anniversary edition <span className="text-white/40 mx-1.5">/</span>
+              <span className="text-maxe">Live now</span>
+            </span>
           </span>
 
-          <h1 className="font-editorial italic text-[44px] sm:text-[64px] lg:text-[76px] leading-[0.95] tracking-tighter text-white">
-            Meet who
+          <h1 className="font-editorial italic text-[52px] sm:text-[72px] lg:text-[88px] leading-[0.94] tracking-tighter text-white">
+            Celebrate
             <br />
-            matches your
-            <br />
-            <span className="not-italic font-sans font-semibold text-gradient tracking-tighter">frequency</span>.
+            Together<span className="not-italic text-maxe">.</span>
           </h1>
 
-          <p className="mt-6 sm:mt-8 text-white/65 text-[15px] sm:text-[16px] leading-relaxed max-w-md">
-            The premium matchmaking layer for clubs, festivals and concerts.
-            No swipes. Just serendipity, engineered.
+          <p className="mt-6 sm:mt-8 text-white/62 text-[15px] sm:text-[17px] leading-relaxed max-w-md">
+            The official digital experience for MAXE CLASS Anniversary.
+            Connect with your crew, discover your vibe match, unlock the night.
           </p>
 
           <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 max-w-md">
             <button
               onClick={() => go?.("login")}
-              className="h-14 px-6 rounded-2xl gradient-brand text-white font-semibold text-[15px] tracking-tight
-                         inline-flex items-center justify-center gap-2 shadow-glow-pink
-                         hover:-translate-y-[1px] active:scale-[0.98] transition-all duration-300 ease-out-expo"
+              className="h-14 px-6 rounded-2xl bg-[#C4FF00] text-black font-semibold text-[15px] tracking-tight
+                         inline-flex items-center justify-center gap-2 shadow-glow-maxe
+                         hover:brightness-[1.05] hover:-translate-y-[1px] active:scale-[0.98]
+                         transition-all duration-300 ease-out-expo"
             >
-              Join an event <ArrowRight className="w-4 h-4" />
+              Join Event <ArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={() => go?.("login")}
               className="h-14 px-6 rounded-2xl glass text-white font-medium text-[14px] tracking-tight
                          inline-flex items-center justify-center gap-2
-                         hover:bg-white/[0.08] active:scale-[0.98] transition"
+                         hover:bg-white/[0.06] active:scale-[0.98] transition"
             >
-              I already have an account
+              I have an invite
             </button>
           </div>
 
-          {/* Trust strip */}
-          <div className="mt-10 sm:mt-14 grid grid-cols-3 gap-4 sm:gap-8 max-w-md">
+          {/* Event stats strip */}
+          <div className="mt-12 sm:mt-16 grid grid-cols-3 gap-4 sm:gap-8 max-w-md">
             {[
-              { k: "42", v: "Live venues" },
-              { k: "180k+", v: "Matches made" },
-              { k: "4.8\u2605", v: "App rating" },
+              { k: "1000+", v: "Attending" },
+              { k: "20", v: "Live sets" },
+              { k: "12h", v: "Nonstop" },
             ].map((s) => (
               <div key={s.v}>
-                <div className="text-[22px] sm:text-[26px] font-semibold tracking-tighter">
+                <div className="text-[22px] sm:text-[28px] font-semibold tracking-tighter text-white">
                   {s.k}
                 </div>
-                <div className="mt-1 text-[11px] sm:text-[12px] text-white/50 tracking-wide">
+                <div className="mt-1 text-[11px] sm:text-[12px] text-white/45 tracking-wide">
                   {s.v}
                 </div>
               </div>
@@ -274,45 +303,70 @@ export const Landing = ({ go }) => (
           </div>
         </motion.div>
 
-        {/* Right column \u2014 desktop only: subtle floating card */}
+        {/* Right column \u2014 desktop only: floating event card */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 1, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
           className="hidden lg:flex justify-end"
         >
           <div className="relative w-full max-w-md">
-            <div aria-hidden className="absolute -inset-4 rounded-[36px] gradient-brand-subtle blur-2xl opacity-70" />
-            <div className="relative glass-card rounded-[32px] p-8 float-slow">
+            <div aria-hidden className="absolute -inset-6 rounded-[40px] bg-[#C4FF00]/[0.10] blur-[60px]" />
+            <div className="relative glass-card rounded-[32px] p-8 float-slow overflow-hidden">
+              {/* subtle top edge highlight */}
+              <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full gradient-brand" />
+                <img
+                  src="/brand/maxe-class-logo.png"
+                  alt="MAXE CLASS"
+                  width={40}
+                  height={40}
+                  className="w-10 h-10 object-contain"
+                />
                 <div>
-                  <div className="text-[14px] font-semibold">Tonight at Hevn Station</div>
-                  <div className="text-[11.5px] text-white/50">Live · 218 people vibing</div>
+                  <div className="text-[14px] font-semibold tracking-tight">
+                    MAXE CLASS · Anniversary
+                  </div>
+                  <div className="mt-0.5 text-[11.5px] text-white/50 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#C4FF00] animate-pulse" />
+                    Tonight · Live now
+                  </div>
                 </div>
               </div>
-              <div className="mt-6 text-[11px] uppercase tracking-widest text-white/40">
-                Your match
+
+              <div className="mt-8 text-[10.5px] uppercase tracking-[0.24em] text-white/35">
+                Your vibe match
               </div>
               <div className="mt-2 flex items-baseline gap-2">
-                <span className="text-[56px] font-semibold tracking-tighter text-gradient">
+                <span className="text-[64px] font-semibold tracking-tighter text-maxe leading-none">
                   94
                 </span>
-                <span className="text-white/50 text-[13px]">% vibe compat</span>
+                <span className="text-white/50 text-[13px]">% compatibility</span>
               </div>
-              <div className="mt-4 space-y-1.5 text-[13px] text-white/70">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-[#00E5FF]" />
+
+              <div className="mt-6 space-y-2.5 text-[13px] text-white/75">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-1 h-1 rounded-full bg-[#C4FF00]" />
                   Same energy tonight
                 </div>
-                <div className="flex items-center gap-2">
-                  <Music className="w-3.5 h-3.5 text-[#ff2f92]" />
+                <div className="flex items-center gap-2.5">
+                  <span className="w-1 h-1 rounded-full bg-[#C4FF00]" />
                   Both love afro-house
                 </div>
-                <div className="flex items-center gap-2">
-                  <Star className="w-3.5 h-3.5 text-[#a93cff]" />
-                  Zodiac bonus +5%
+                <div className="flex items-center gap-2.5">
+                  <span className="w-1 h-1 rounded-full bg-[#C4FF00]" />
+                  Unlocks a shared reward
                 </div>
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-white/8 flex items-center justify-between">
+                <span className="text-[11px] tracking-[0.2em] uppercase text-white/40">
+                  Powered by <span className="text-white/70">sirgaZ</span>
+                </span>
+                <span className="w-8 h-8 rounded-full bg-[#C4FF00]/10 border border-[#C4FF00]/25 flex items-center justify-center">
+                  <ArrowRight className="w-3.5 h-3.5 text-maxe" />
+                </span>
               </div>
             </div>
           </div>
@@ -351,18 +405,28 @@ export const Login = ({ go }) => {
         <div className="max-w-6xl mx-auto flex items-center justify-between h-16 sm:h-20">
           <button
             onClick={() => go?.("landing")}
-            className="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-white/[0.08] transition"
+            className="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-white/[0.06] transition"
             aria-label="Back"
           >
             <ChevronLeft className="w-5 h-5 text-white" />
           </button>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg glass flex items-center justify-center">
-              <span className="text-[12px] font-bold text-gradient">sZ</span>
+          <div className="flex items-center gap-2.5">
+            <img
+              src="/brand/maxe-class-logo.png"
+              alt="MAXE CLASS"
+              width={28}
+              height={28}
+              className="w-7 h-7 object-contain"
+              draggable="false"
+            />
+            <div className="leading-tight">
+              <div className="text-[13px] font-semibold tracking-tight">
+                MAXE <span className="text-maxe">CLASS</span>
+              </div>
+              <div className="text-[9px] tracking-[0.22em] uppercase text-white/40 mt-0.5">
+                Anniversary
+              </div>
             </div>
-            <span className="text-[14px] font-semibold tracking-tight">
-              sirga<span className="text-gradient">Z</span>
-            </span>
           </div>
           <div className="w-10 h-10" />
         </div>
@@ -376,17 +440,21 @@ export const Login = ({ go }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
+            <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full glass text-[10.5px] font-medium mb-5">
+              <span className="w-1 h-1 rounded-full bg-[#C4FF00]" />
+              <span className="text-white/70 tracking-wide">Step 1 of 2</span>
+            </span>
             <h1 className="font-editorial italic text-[40px] sm:text-[52px] leading-[0.98] tracking-tighter">
-              Enter your <br />
-              <span className="not-italic font-sans font-semibold text-gradient">email</span>
+              What's your <br />
+              <span className="not-italic font-sans font-semibold text-maxe">email?</span>
             </h1>
-            <p className="mt-4 text-white/55 text-[14px] sm:text-[15px] leading-relaxed">
-              We'll send a 6 digit code to your inbox. No password. No spam.
+            <p className="mt-4 text-white/58 text-[14px] sm:text-[15px] leading-relaxed">
+              We'll send you a 6 digit code. No password. No spam. Just the vibe.
             </p>
 
             <div className="mt-10 space-y-3">
               <label className="block">
-                <div className="glass-card rounded-2xl px-5 h-16 flex items-center gap-3 transition-all focus-within:border-white/20 focus-within:bg-white/[0.055]">
+                <div className="rounded-2xl bg-[--sirgaz-surface] border border-white/8 px-5 h-16 flex items-center gap-3 transition-all focus-within:border-[#C4FF00]/50 focus-within:bg-[--sirgaz-surface-2]">
                   <span className="text-white/40 text-[14px]">@</span>
                   <input
                     type="email"
@@ -407,14 +475,14 @@ export const Login = ({ go }) => {
                 <motion.div
                   initial={{ opacity: 0, y: -4 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="px-4 py-3 rounded-xl bg-[#ff2f92]/[0.08] border border-[#ff2f92]/25 text-[13px] text-[#ff8fbf]"
+                  className="px-4 py-3 rounded-xl bg-red-500/[0.08] border border-red-500/25 text-[13px] text-red-300"
                 >
                   {error}
                 </motion.div>
               )}
 
-              <div className="flex items-center gap-2 text-[12px] text-white/45 px-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#00e5ff]" />
+              <div className="flex items-center gap-2 text-[12px] text-white/40 px-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-maxe" />
                 Passwordless · encrypted · never spammed
               </div>
             </div>
@@ -423,14 +491,15 @@ export const Login = ({ go }) => {
               <button
                 onClick={onContinue}
                 disabled={loading}
-                className="w-full h-14 rounded-2xl gradient-brand text-white font-semibold text-[15px] tracking-tight
-                           inline-flex items-center justify-center gap-2 shadow-glow-pink
-                           hover:-translate-y-[1px] active:scale-[0.98] transition-all duration-300 ease-out-expo
+                className="w-full h-14 rounded-2xl bg-[#C4FF00] text-black font-semibold text-[15px] tracking-tight
+                           inline-flex items-center justify-center gap-2 shadow-glow-maxe
+                           hover:brightness-[1.05] hover:-translate-y-[1px] active:scale-[0.98]
+                           transition-all duration-300 ease-out-expo
                            disabled:opacity-60 disabled:hover:translate-y-0"
               >
                 {loading ? (
                   <>
-                    <span className="h-4 w-4 rounded-full border-2 border-white/80 border-t-transparent animate-spin" />
+                    <span className="h-4 w-4 rounded-full border-2 border-black/70 border-t-transparent animate-spin" />
                     Sending code…
                   </>
                 ) : (
@@ -450,7 +519,7 @@ export const Login = ({ go }) => {
             <div className="mt-6 grid grid-cols-2 gap-3">
               <button
                 type="button"
-                className="h-12 rounded-2xl glass text-[13px] font-medium hover:bg-white/[0.08] transition"
+                className="h-12 rounded-2xl glass text-[13px] font-medium hover:bg-white/[0.06] transition disabled:opacity-50"
                 disabled
                 aria-disabled
               >
@@ -458,7 +527,7 @@ export const Login = ({ go }) => {
               </button>
               <button
                 type="button"
-                className="h-12 rounded-2xl glass text-[13px] font-medium hover:bg-white/[0.08] transition"
+                className="h-12 rounded-2xl glass text-[13px] font-medium hover:bg-white/[0.06] transition disabled:opacity-50"
                 disabled
                 aria-disabled
               >
@@ -574,13 +643,28 @@ export const OTP = ({ go }) => {
         <div className="max-w-6xl mx-auto flex items-center justify-between h-16 sm:h-20">
           <button
             onClick={() => go?.("login")}
-            className="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-white/[0.08] transition"
+            className="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-white/[0.06] transition"
             aria-label="Back"
           >
             <ChevronLeft className="w-5 h-5 text-white" />
           </button>
-          <div className="text-[13px] text-white/50 font-medium tracking-tight">
-            Verification
+          <div className="flex items-center gap-2.5">
+            <img
+              src="/brand/maxe-class-logo.png"
+              alt="MAXE CLASS"
+              width={28}
+              height={28}
+              className="w-7 h-7 object-contain"
+              draggable="false"
+            />
+            <div className="leading-tight">
+              <div className="text-[13px] font-semibold tracking-tight">
+                MAXE <span className="text-maxe">CLASS</span>
+              </div>
+              <div className="text-[9px] tracking-[0.22em] uppercase text-white/40 mt-0.5">
+                Anniversary
+              </div>
+            </div>
           </div>
           <div className="w-10 h-10" />
         </div>
@@ -593,11 +677,15 @@ export const OTP = ({ go }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
+            <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full glass text-[10.5px] font-medium mb-5">
+              <span className="w-1 h-1 rounded-full bg-[#C4FF00]" />
+              <span className="text-white/70 tracking-wide">Step 2 of 2</span>
+            </span>
             <h1 className="font-editorial italic text-[40px] sm:text-[52px] leading-[0.98] tracking-tighter">
               Enter the <br />
-              <span className="not-italic font-sans font-semibold text-gradient">code</span>
+              <span className="not-italic font-sans font-semibold text-maxe">code.</span>
             </h1>
-            <p className="mt-4 text-white/55 text-[14px] sm:text-[15px] leading-relaxed break-all">
+            <p className="mt-4 text-white/58 text-[14px] sm:text-[15px] leading-relaxed break-all">
               Sent to <span className="text-white/85">{pendingIdentifier || (authMethod === "email" ? "your email" : "your number")}</span>
             </p>
 
@@ -619,8 +707,8 @@ export const OTP = ({ go }) => {
                     h-14 sm:h-16 rounded-2xl text-center text-[22px] sm:text-[26px] font-semibold tracking-tighter
                     transition-all duration-200 ease-out-expo outline-none
                     ${c
-                      ? "bg-white text-black shadow-soft"
-                      : "glass-card text-white focus:border-white/25 focus:bg-white/[0.06]"
+                      ? "bg-[#C4FF00] text-black shadow-glow-maxe-soft"
+                      : "bg-[--sirgaz-surface] border border-white/8 text-white focus:border-[#C4FF00]/50 focus:bg-[--sirgaz-surface-2]"
                     }
                   `}
                 />
@@ -631,7 +719,7 @@ export const OTP = ({ go }) => {
               <motion.div
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-5 px-4 py-3 rounded-xl bg-[#ff2f92]/[0.08] border border-[#ff2f92]/25 text-[13px] text-[#ff8fbf] text-center"
+                className="mt-5 px-4 py-3 rounded-xl bg-red-500/[0.08] border border-red-500/25 text-[13px] text-red-300 text-center"
               >
                 {error}
               </motion.div>
@@ -646,7 +734,7 @@ export const OTP = ({ go }) => {
               ) : (
                 <button
                   onClick={doResend}
-                  className="text-white font-medium underline underline-offset-2 decoration-white/30 hover:decoration-white transition"
+                  className="text-maxe font-medium underline underline-offset-2 decoration-[#C4FF00]/30 hover:decoration-[#C4FF00] transition"
                 >
                   Resend code
                 </button>
@@ -657,14 +745,15 @@ export const OTP = ({ go }) => {
               <button
                 onClick={doVerify}
                 disabled={loading}
-                className="w-full h-14 rounded-2xl gradient-brand text-white font-semibold text-[15px] tracking-tight
-                           inline-flex items-center justify-center gap-2 shadow-glow-pink
-                           hover:-translate-y-[1px] active:scale-[0.98] transition-all duration-300 ease-out-expo
+                className="w-full h-14 rounded-2xl bg-[#C4FF00] text-black font-semibold text-[15px] tracking-tight
+                           inline-flex items-center justify-center gap-2 shadow-glow-maxe
+                           hover:brightness-[1.05] hover:-translate-y-[1px] active:scale-[0.98]
+                           transition-all duration-300 ease-out-expo
                            disabled:opacity-60 disabled:hover:translate-y-0"
               >
                 {loading ? (
                   <>
-                    <span className="h-4 w-4 rounded-full border-2 border-white/80 border-t-transparent animate-spin" />
+                    <span className="h-4 w-4 rounded-full border-2 border-black/70 border-t-transparent animate-spin" />
                     Verifying…
                   </>
                 ) : (
@@ -676,7 +765,7 @@ export const OTP = ({ go }) => {
             </div>
 
             <p className="mt-10 text-[11.5px] text-white/35 leading-relaxed text-center">
-              Tip: check spam if the code doesn't arrive within 30 seconds.
+              Tip: check your spam folder if the code doesn't arrive within 30 seconds.
             </p>
           </motion.div>
         </div>

@@ -16,32 +16,9 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: [
-          'var(--font-sans)',
-          'ui-sans-serif',
-          'system-ui',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'Segoe UI',
-          'Roboto',
-          'sans-serif',
-        ],
-        serif: [
-          'var(--font-serif)',
-          'ui-serif',
-          'Georgia',
-          'Cambria',
-          'Times New Roman',
-          'serif',
-        ],
-        editorial: [
-          'var(--font-serif)',
-          'ui-serif',
-          'Georgia',
-          'Cambria',
-          'Times New Roman',
-          'serif',
-        ],
+        sans: ['var(--font-sans)', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        serif: ['var(--font-serif)', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'serif'],
+        editorial: ['var(--font-serif)', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'serif'],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -49,38 +26,24 @@ module.exports = {
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
-        primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
-        },
-        secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
-        },
-        destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
-        },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
-        },
-        accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
-        },
-        popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
-        },
-        card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
+        primary: { DEFAULT: 'hsl(var(--primary))', foreground: 'hsl(var(--primary-foreground))' },
+        secondary: { DEFAULT: 'hsl(var(--secondary))', foreground: 'hsl(var(--secondary-foreground))' },
+        destructive: { DEFAULT: 'hsl(var(--destructive))', foreground: 'hsl(var(--destructive-foreground))' },
+        muted: { DEFAULT: 'hsl(var(--muted))', foreground: 'hsl(var(--muted-foreground))' },
+        accent: { DEFAULT: 'hsl(var(--accent))', foreground: 'hsl(var(--accent-foreground))' },
+        popover: { DEFAULT: 'hsl(var(--popover))', foreground: 'hsl(var(--popover-foreground))' },
+        card: { DEFAULT: 'hsl(var(--card))', foreground: 'hsl(var(--card-foreground))' },
+        maxe: {
+          DEFAULT: '#C4FF00',
+          soft: '#DFFF3F',
+          deep: '#A8DB00',
+          ink: '#0A0F00',
         },
         sirgaz: {
           bg: 'var(--sirgaz-bg)',
           surface: 'var(--sirgaz-surface)',
           'surface-2': 'var(--sirgaz-surface-2)',
+          card: 'var(--sirgaz-card)',
           border: 'var(--sirgaz-border)',
           text: 'var(--sirgaz-text)',
           muted: 'var(--sirgaz-text-muted)',
@@ -89,20 +52,8 @@ module.exports = {
           secondary: 'var(--sirgaz-secondary)',
           accent: 'var(--sirgaz-accent)',
         },
-        chart: {
-          1: 'hsl(var(--chart-1))',
-          2: 'hsl(var(--chart-2))',
-          3: 'hsl(var(--chart-3))',
-          4: 'hsl(var(--chart-4))',
-          5: 'hsl(var(--chart-5))',
-        },
       },
-      spacing: {
-        18: '4.5rem',
-        22: '5.5rem',
-        26: '6.5rem',
-        30: '7.5rem',
-      },
+      spacing: { 18: '4.5rem', 22: '5.5rem', 26: '6.5rem', 30: '7.5rem' },
       borderRadius: {
         xs: '0.375rem',
         sm: '0.75rem',
@@ -119,28 +70,16 @@ module.exports = {
         soft: '0 8px 24px -8px rgba(0,0,0,0.45)',
         'soft-lg': '0 20px 40px -16px rgba(0,0,0,0.55)',
         elevated: '0 30px 60px -30px rgba(0,0,0,0.7), 0 1px 0 0 rgba(255,255,255,0.04) inset',
-        premium:
-          '0 24px 48px -24px rgba(0,0,0,0.7), 0 1px 0 0 rgba(255,255,255,0.06) inset, 0 0 0 1px rgba(255,255,255,0.04)',
+        premium: '0 24px 48px -24px rgba(0,0,0,0.7), 0 1px 0 0 rgba(255,255,255,0.06) inset, 0 0 0 1px rgba(255,255,255,0.04)',
+        'glow-maxe': '0 24px 64px -18px rgba(196,255,0,0.4)',
+        'glow-maxe-soft': '0 16px 44px -14px rgba(196,255,0,0.28)',
         'glow-pink': '0 20px 60px -20px rgba(255,47,146,0.45)',
-        'glow-cyan': '0 20px 60px -20px rgba(0,229,255,0.4)',
       },
       keyframes: {
-        'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' },
-        },
-        'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' },
-        },
-        'fade-in': {
-          from: { opacity: '0' },
-          to: { opacity: '1' },
-        },
-        'fade-in-up': {
-          from: { opacity: '0', transform: 'translateY(12px)' },
-          to: { opacity: '1', transform: 'translateY(0)' },
-        },
+        'accordion-down': { from: { height: '0' }, to: { height: 'var(--radix-accordion-content-height)' } },
+        'accordion-up': { from: { height: 'var(--radix-accordion-content-height)' }, to: { height: '0' } },
+        'fade-in': { from: { opacity: '0' }, to: { opacity: '1' } },
+        'fade-in-up': { from: { opacity: '0', transform: 'translateY(12px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',

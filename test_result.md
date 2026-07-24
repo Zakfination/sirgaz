@@ -136,7 +136,67 @@ frontend:
         comment: "EMAIL OTP VERIFIED - PART A COMPLETE. Tested auth UI flow end-to-end. ✅ WORKING: (1) Splash→Landing transition, (2) Login screen shows 'Enter your email' (NOT 'Enter your number'), (3) Input type='email' with placeholder='you@example.com', (4) Client-side email validation works (invalid email 'notanemail' shows error 'Enter a valid email address'), (5) Valid email submission calls Supabase POST /auth/v1/otp correctly, (6) Error handling displays properly. ⚠️ RATE LIMITED: Supabase returned HTTP 429 after multiple test attempts - this is EXPECTED behavior, not a bug. Email OTP integration is working correctly. ❌ UNABLE TO TEST: Full OTP verification flow (Part B), session persistence, logout, and post-auth flows require either (a) real email inbox access to retrieve OTP code, (b) waiting for Supabase rate limit to reset (~1 hour), or (c) configuring Supabase Test OTP for email. Code implementation is correct. Main agent successfully migrated from Phone OTP to Email OTP."
       - working: "NA"
         agent: "main"
-        comment: "ENV RESTORE (fresh workspace clone). After cloning Zakfination/sirgaz into /app, `.env` had placeholder Supabase values. Located the real publishable credentials in DEPLOY.md and populated /app/.env with NEXT_PUBLIC_SUPABASE_URL=https://dmoaeewcsjklgdhaprsq.supabase.co and NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_Vz6BlwKknK5aFyw_LLiu6w_X9WL_67X. NO application code was changed. Restarted nextjs; server compiles clean, GET / returns 200, Supabase client initializes without the 'Missing Supabase env vars' warning. Needs re-verification that the email OTP flow is reachable (Login screen renders, invalid email validation fires, valid email POSTs to /auth/v1/otp and returns 200 — not a 400/'Auth not configured' or 'Missing env vars' warning)."
+        comment: |
+          MAXE CLASS ANNIVERSARY REBRAND — Phase 1 (Splash / Landing / Login / OTP only).
+          Business logic UNCHANGED. authContext.js not touched. Session-driven auto-routing intact.
+
+          Brand palette applied:
+            - Background: #09090B
+            - Surface: #151518
+            - Cards: #1D1D22
+            - MAXE accent (from logo): #C4FF00 (pure electric lime — used sparingly for CTAs, active
+              states, progress, glow, single-word highlights)
+            - Text: white; muted/subtle: white/62, white/40
+            - shadcn --primary rerouted to MAXE yellow (HSL 74 100% 50%) so any Button
+              consumers pick it up.
+
+          Assets:
+            - Logo saved to /app/public/brand/maxe-class-logo.png (256KB, served at /brand/…).
+            - Used in Splash hero, Landing nav + right event card, Login nav, OTP nav.
+
+          Splash: black bg, cinematic vignette, MAXE logo animates in with breathing yellow bloom +
+            two ping rings. "ANNIVERSARY" letterspaced above; hairline + "POWERED BY sirgaZ" below.
+            Yellow dot loader. Auto-advance to landing/home preserved (business logic).
+
+          Landing: "Celebrate Together." editorial italic serif hero (yellow accent period).
+            Subhead: "The official digital experience for MAXE CLASS Anniversary. Connect with your
+            crew, discover your vibe match, unlock the night." CTA "Join Event" in MAXE-yellow-on-
+            black. Secondary ghost "I have an invite". "Anniversary edition / Live now" pill.
+            Event stats 1000+ / 20 / 12h. Desktop-only floating event card with logo, "Live now"
+            dot, "94% compatibility" hero number, three reason rows, "Powered by sirgaZ" footer.
+            No stock nightlife photo; cinematic dark gradient + soft top-center stage spotlight +
+            subtle MAXE bottom-corner glow instead.
+
+          Login: MAXE nav lockup top-center. "Step 1 of 2" pill. "What's your email?" editorial
+            italic serif with yellow accent. Refined input on --sirgaz-surface with yellow focus
+            border. MAXE-yellow Continue button with shadow-glow-maxe. Same OR divider + disabled
+            Apple/Google placeholders.
+
+          OTP: MAXE nav lockup. "Step 2 of 2" pill. "Enter the code." editorial hero with yellow
+            accent. Six input tiles: empty tiles use --sirgaz-surface with yellow focus border,
+            FILLED tiles are MAXE-yellow-on-black with shadow-glow-maxe-soft. Resend link is yellow.
+            Verify button is MAXE-yellow-on-black. All keyboard/paste business logic preserved.
+
+          Bug fixed during QA: two remaining literal `\u00b7` in the Landing right-column event
+            card JSX text nodes ("MAXE CLASS \u00b7 Anniversary", "Tonight \u00b7 Live now") were
+            replaced with real "·" characters.
+
+          Please re-verify (frontend UI/UX only — no need to try to complete OTP):
+            1. Splash: black bg, MAXE logo visible with soft yellow glow rings, "ANNIVERSARY"
+               above, "POWERED BY sirgaZ" below. Auto-advances to Landing.
+            2. Landing: "Celebrate Together." headline (italic serif with yellow ".") + subhead
+               with "MAXE CLASS Anniversary" phrase + yellow "Join Event" CTA + event stats
+               (1000+/20/12h). Real "·" chars everywhere (no literal \u00b7). Right card visible
+               on desktop only.
+            3. Login: MAXE nav lockup, "What's your email?" hero, yellow Continue button, real "·"
+               in the trust line. Valid email → POST /auth/v1/otp → transitions to OTP.
+            4. OTP: MAXE nav, "Enter the code." hero, 6 individual tiles that turn MAXE-yellow
+               when filled, yellow Resend link, MAXE-yellow Verify button. Auto-submit on 6 preserved.
+            5. Console clean on all screens. No fake iOS chrome. No dev navigator.
+            6. Responsive verified at 390 and 1440.
+      - working: "NA"
+        agent: "main"
+        comment: "ENV RESTORE (fresh workspace clone). After cloning Zakfination/sirgaz into /app, `.env` had placeholder Supabase values. Located the real publishable credentials in DEPLOY.md and populated /app/.env with NEXT_PUBLIC_SUPABASE_URL=https://dmoaeewcsjklgdhaprsq.supabase.co and NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_Vz6BlwKknK5aFyw_LLiu6w_X9WL_67X. NO application code was changed. Restarted nextjs; server compiles clean, GET / returns 200, Supabase client initializes without the 'Missing Supabase env vars' warning."
       - working: "NA"
         agent: "main"
         comment: |

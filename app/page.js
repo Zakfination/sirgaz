@@ -170,19 +170,22 @@ const AppInner = () => {
 };
 
 /* ------------------------------------------------------------------ */
-/*  Ambient background \u2014 slow, subtle mesh; not a "neon nightclub".   */
+/*  Ambient background \u2014 cinematic dark canvas with soft spotlight.    */
+/*  Very subtle MAXE-yellow accents; never distracting.               */
 /* ------------------------------------------------------------------ */
 const AmbientBackground = () => (
   <div aria-hidden className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-    <div className="absolute -top-32 -left-32 w-[520px] h-[520px] rounded-full bg-[#ff2f92]/[0.08] blur-[140px]" />
-    <div className="absolute top-1/3 -right-40 w-[560px] h-[560px] rounded-full bg-[#a93cff]/[0.09] blur-[140px]" />
-    <div className="absolute bottom-[-10%] left-1/4 w-[600px] h-[600px] rounded-full bg-[#00e5ff]/[0.05] blur-[160px]" />
-    <div className="absolute inset-0 grid-lines opacity-[0.4]" />
+    {/* Top center spotlight \u2014 like a stage light */}
+    <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[520px] rounded-full bg-white/[0.05] blur-[140px]" />
+    {/* Corner MAXE accents \u2014 very subtle */}
+    <div className="absolute -bottom-40 -left-32 w-[520px] h-[520px] rounded-full bg-[#C4FF00]/[0.045] blur-[160px]" />
+    <div className="absolute -bottom-32 -right-40 w-[520px] h-[520px] rounded-full bg-[#C4FF00]/[0.03] blur-[160px]" />
+    {/* Grain */}
     <div
-      className="absolute inset-0 opacity-[0.35] mix-blend-overlay"
+      className="absolute inset-0 opacity-[0.32] mix-blend-overlay"
       style={{
         backgroundImage:
-          "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
+          "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.055 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
       }}
     />
   </div>

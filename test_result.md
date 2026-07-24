@@ -114,7 +114,7 @@ frontend:
   - task: "Auth: EMAIL OTP sign-in, session persistence, logout (modular; phone code retained)"
     implemented: true
     working: true
-    file: "app/authContext.js, app/screens.js, app/e/[eventId]/EventPage.js"
+    file: "app/authContext.js, app/screens.js, app/e/[eventId]/EventPage.js, .env"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
@@ -134,6 +134,12 @@ frontend:
       - working: true
         agent: "testing"
         comment: "EMAIL OTP VERIFIED - PART A COMPLETE. Tested auth UI flow end-to-end. ✅ WORKING: (1) Splash→Landing transition, (2) Login screen shows 'Enter your email' (NOT 'Enter your number'), (3) Input type='email' with placeholder='you@example.com', (4) Client-side email validation works (invalid email 'notanemail' shows error 'Enter a valid email address'), (5) Valid email submission calls Supabase POST /auth/v1/otp correctly, (6) Error handling displays properly. ⚠️ RATE LIMITED: Supabase returned HTTP 429 after multiple test attempts - this is EXPECTED behavior, not a bug. Email OTP integration is working correctly. ❌ UNABLE TO TEST: Full OTP verification flow (Part B), session persistence, logout, and post-auth flows require either (a) real email inbox access to retrieve OTP code, (b) waiting for Supabase rate limit to reset (~1 hour), or (c) configuring Supabase Test OTP for email. Code implementation is correct. Main agent successfully migrated from Phone OTP to Email OTP."
+      - working: "NA"
+        agent: "main"
+        comment: "ENV RESTORE (fresh workspace clone). After cloning Zakfination/sirgaz into /app, `.env` had placeholder Supabase values. Located the real publishable credentials in DEPLOY.md and populated /app/.env with NEXT_PUBLIC_SUPABASE_URL=https://dmoaeewcsjklgdhaprsq.supabase.co and NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_Vz6BlwKknK5aFyw_LLiu6w_X9WL_67X. NO application code was changed. Restarted nextjs; server compiles clean, GET / returns 200, Supabase client initializes without the 'Missing Supabase env vars' warning. Needs re-verification that the email OTP flow is reachable (Login screen renders, invalid email validation fires, valid email POSTs to /auth/v1/otp and returns 200 — not a 400/'Auth not configured' or 'Missing env vars' warning)."
+      - working: true
+        agent: "testing"
+        comment: "ENV-ONLY FIX VERIFIED ✅ ALL 8 CHECKS PASSED. Fresh workspace clone with .env credentials restored. Comprehensive testing confirms email OTP is fully reachable: (1) ✅ App loads without '[sirgaZ] Missing Supabase env vars' console warning, (2) ✅ Splash→Landing transition works (~1.6s delay), (3) ✅ Login screen (03) shows 'Enter your email' title (NOT 'Enter your number' - no phone OTP regression), (4) ✅ Input field has type='email' and placeholder='you@example.com', (5) ✅ Invalid email 'notanemail' triggers client-side validation error 'Enter a valid email address' (no network call made), (6) ✅ Valid email 'test.sirgaz.1784895419@gmail.com' submission POSTs to https://dmoaeewcsjklgdhaprsq.supabase.co/auth/v1/otp and returns HTTP 200 (OTP sent successfully), (7) ✅ UI transitions to OTP entry screen (04) showing 'Enter the code' title and 'Sent to test.sirgaz.1784895419@gmail.com' text with 6-digit code input boxes, (8) ✅ No unhandled JavaScript console errors. NOTE: First test email format 'qa-verify-{timestamp}@example.com' was rejected by Supabase with HTTP 400 'email_address_invalid' - this is Supabase's email validation, not an app issue. Retry with realistic gmail.com format succeeded. ENV credentials are correctly loaded and functional. Email OTP send step fully working. Did NOT attempt OTP verification (requires real inbox access per review request). Screenshots saved: 01_landing.png, 02_login_screen.png, 03_invalid_email.png, 06_realistic_email.png, 07_after_realistic_email.png."
 
   - task: "Venue Dashboard: home + create event + event list + event details + publish/unpublish"
     implemented: true
@@ -295,12 +301,33 @@ frontend:
 
 test_plan:
   current_focus:
-    - "Venue Setup QA sprint complete - all features verified"
+    - "Auth: EMAIL OTP sign-in, session persistence, logout (modular; phone code retained)"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
+  - agent: "main"
+    message: |
+      ENV RESTORE ONLY — please verify auth is reachable, no code was changed.
+
+      Context: fresh clone of Zakfination/sirgaz. Placeholders in /app/.env were replaced with the real
+      Supabase publishable credentials from DEPLOY.md:
+        NEXT_PUBLIC_SUPABASE_URL=https://dmoaeewcsjklgdhaprsq.supabase.co
+        NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_Vz6BlwKknK5aFyw_LLiu6w_X9WL_67X
+      Nextjs was restarted. No application code changed.
+
+      Please verify (frontend only, do NOT try to complete OTP verification which needs a real inbox):
+        1. Landing → Login screen renders "Enter your email" with input type=email, placeholder "you@example.com".
+        2. Console does NOT show "[sirgaZ] Missing Supabase env vars".
+        3. Invalid email (e.g. "notanemail") triggers client-side error "Enter a valid email address".
+        4. Submitting a valid throwaway email triggers a POST to https://dmoaeewcsjklgdhaprsq.supabase.co/auth/v1/otp
+           and the response is HTTP 200 (email OTP sent) OR HTTP 429 (rate limited — also acceptable, proves env vars work).
+           A 400 with "phone_provider_disabled" / "Unsupported phone provider" would be a REGRESSION and must be flagged.
+        5. UI transitions to the OTP entry screen (04) after a successful send.
+        6. No unhandled JS console errors on Splash/Landing/Login/OTP screens.
+
+      Do not attempt to bypass or fake OTP verification. Report the network status codes and any console errors.
   - agent: "main"
     message: |
       Complete MVP built. Full journey testing requested.
@@ -873,6 +900,29 @@ agent_communication:
       Supabase rate limited further sends. Code implementation is correct; email OTP migration is
       successful. Waiting ~1h for rate limit reset or using a real inbox (e.g. mailinator.com) would
       complete verification. No bugs to fix.
+  - agent: "testing"
+    message: |
+      ✅ ENV-ONLY FIX VERIFICATION COMPLETE - ALL CHECKS PASSED
+      
+      Context: Fresh workspace clone with .env credentials restored from DEPLOY.md. No application code modified.
+      
+      VERIFICATION RESULTS (8/8 checks passed):
+      1. ✅ App loads without '[sirgaZ] Missing Supabase env vars' console warning
+      2. ✅ Splash → Landing transition works (~1.6s delay)
+      3. ✅ Login screen (03) shows "Enter your email" (NOT "Enter your number" - no phone OTP regression)
+      4. ✅ Input field has type="email" and placeholder="you@example.com"
+      5. ✅ Invalid email "notanemail" triggers client-side validation: "Enter a valid email address"
+      6. ✅ Valid email submission POSTs to https://dmoaeewcsjklgdhaprsq.supabase.co/auth/v1/otp
+      7. ✅ Supabase returns HTTP 200 (OTP sent successfully)
+      8. ✅ UI transitions to OTP entry screen (04) showing "Enter the code" and "Sent to test.sirgaz.1784895419@gmail.com"
+      
+      NOTES:
+      - First test email format "qa-verify-{timestamp}@example.com" was rejected by Supabase with HTTP 400 "email_address_invalid" - this is Supabase's email validation, not an app issue
+      - Retry with realistic gmail.com format succeeded with HTTP 200
+      - Did NOT attempt OTP verification (requires real inbox access per review request)
+      - No unhandled JavaScript console errors detected
+      
+      CONCLUSION: ENV credentials are correctly loaded and functional. Email OTP send step fully working. Ready for main agent to summarize and finish.
   - agent: "main"
     message: |
       Sprint: initial venue setup experience.

@@ -308,7 +308,7 @@ agent_communication:
     message: |
       ✅ VIBE PROFILE QA SPRINT COMPLETE - ALL FEATURES WORKING
       
-      Tested app URL: https://dark-vibe-1.preview.emergentagent.com
+      Tested app URL: https://local-sirgaz.preview.emergentagent.com
       
       STEP A · Load app + basic render check: ✅ PASSED
       - Splash → Landing transition works (1.6s delay)
@@ -672,7 +672,7 @@ agent_communication:
     message: |
       ✅ VENUE SETUP QA SPRINT COMPLETE - ALL CHECKS PASSED
       
-      Tested app URL: https://dark-vibe-1.preview.emergentagent.com
+      Tested app URL: https://local-sirgaz.preview.emergentagent.com
       Test date: Current sprint (Venue Setup first-run experience)
       
       ═══════════════════════════════════════════════════════════════════════════════
@@ -809,7 +809,7 @@ agent_communication:
     message: |
       ✅ VIBE PROFILE QA SPRINT COMPLETE - ALL FEATURES WORKING
       
-      Tested app URL: https://dark-vibe-1.preview.emergentagent.com
+      Tested app URL: https://local-sirgaz.preview.emergentagent.com
       
       STEP A · Load app + basic render check: ✅ PASSED
       - Splash → Landing transition works (1.6s delay)

@@ -3,16 +3,69 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowRight, ArrowLeft, Bell, Search, Home, Trophy, MessageCircle, User,
-  Calendar, MapPin, Clock, Users, ChevronRight, Camera, QrCode, Sparkles,
-  Music, Utensils, Plane, Briefcase, Shirt, Gamepad2, Coffee, PartyPopper, Cpu,
-  Heart, Send, Gift, CheckCircle2, Circle, Star, ShieldCheck, Globe, LogOut,
-  BellRing, Lock, Settings as SettingsIcon, ChevronLeft, Plus, MoreHorizontal,
-  Zap, Target, Award, Flame, BarChart3, Activity, Eye, Phone, X, Check,
-  Radio, Crown, Volume2, TrendingUp, DollarSign
+  ArrowRight,
+  ArrowLeft,
+  Bell,
+  Search,
+  Home,
+  Trophy,
+  MessageCircle,
+  User,
+  Calendar,
+  MapPin,
+  Clock,
+  Users,
+  ChevronRight,
+  Camera,
+  QrCode,
+  Sparkles,
+  Music,
+  Utensils,
+  Plane,
+  Briefcase,
+  Shirt,
+  Gamepad2,
+  Coffee,
+  PartyPopper,
+  Cpu,
+  Heart,
+  Send,
+  Gift,
+  CheckCircle2,
+  Circle,
+  Star,
+  ShieldCheck,
+  Globe,
+  LogOut,
+  BellRing,
+  Lock,
+  Settings as SettingsIcon,
+  ChevronLeft,
+  Plus,
+  MoreHorizontal,
+  Zap,
+  Target,
+  Award,
+  Flame,
+  BarChart3,
+  Activity,
+  Eye,
+  Phone,
+  X,
+  Check,
+  Radio,
+  Crown,
+  Volume2,
+  TrendingUp,
+  DollarSign,
 } from "lucide-react";
 import {
-  RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, PolarRadiusAxis
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  Radar,
+  ResponsiveContainer,
+  PolarRadiusAxis,
 } from "recharts";
 import { useAuth } from "./authContext";
 
@@ -26,8 +79,13 @@ export const StatusBar = () => (
 );
 
 export const TopBar = ({ title, onBack, right, subtle = false }) => (
-  <div className={`flex items-center justify-between px-6 pt-2 pb-4 ${subtle ? "" : ""}`}>
-    <button onClick={onBack} className="w-10 h-10 rounded-full glass flex items-center justify-center active:scale-95 transition">
+  <div
+    className={`flex items-center justify-between px-6 pt-2 pb-4 ${subtle ? "" : ""}`}
+  >
+    <button
+      onClick={onBack}
+      className="w-10 h-10 rounded-full glass flex items-center justify-center active:scale-95 transition"
+    >
       <ChevronLeft className="w-5 h-5 text-white" />
     </button>
     <div className="text-[15px] font-semibold tracking-tight">{title}</div>
@@ -37,8 +95,15 @@ export const TopBar = ({ title, onBack, right, subtle = false }) => (
   </div>
 );
 
-export const BigButton = ({ children, onClick, variant = "primary", className = "", icon }) => {
-  const base = "w-full h-14 rounded-2xl flex items-center justify-center gap-2 font-semibold text-[15px] tracking-tight active:scale-[0.98] transition";
+export const BigButton = ({
+  children,
+  onClick,
+  variant = "primary",
+  className = "",
+  icon,
+}) => {
+  const base =
+    "w-full h-14 rounded-2xl flex items-center justify-center gap-2 font-semibold text-[15px] tracking-tight active:scale-[0.98] transition";
   const styles = {
     primary: "gradient-brand text-white glow-pink",
     ghost: "glass text-white",
@@ -46,7 +111,10 @@ export const BigButton = ({ children, onClick, variant = "primary", className = 
     dark: "bg-white text-black",
   };
   return (
-    <button onClick={onClick} className={`${base} ${styles[variant]} ${className}`}>
+    <button
+      onClick={onClick}
+      className={`${base} ${styles[variant]} ${className}`}
+    >
       {children}
       {icon}
     </button>
@@ -63,15 +131,22 @@ export const BottomNav = ({ active = "home", onNavigate }) => {
   return (
     <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 pt-3 z-30 pointer-events-none">
       <div className="glass-strong rounded-[28px] px-2.5 py-2.5 flex items-center justify-between pointer-events-auto shadow-[0_20px_50px_-15px_rgba(0,0,0,0.7)]">
-        {items.map(it => {
+        {items.map((it) => {
           const A = it.icon;
           const isActive = active === it.id;
           return (
-            <button key={it.id} onClick={() => onNavigate?.(it.target)}
-              className={`relative flex-1 h-12 rounded-2xl flex items-center justify-center gap-1.5 transition ${isActive ? "text-white" : "text-white/45"}`}>
-              {isActive && <span className="absolute inset-0 rounded-2xl gradient-brand opacity-90 glow-pink" />}
+            <button
+              key={it.id}
+              onClick={() => onNavigate?.(it.target)}
+              className={`relative flex-1 h-12 rounded-2xl flex items-center justify-center gap-1.5 transition ${isActive ? "text-white" : "text-white/45"}`}
+            >
+              {isActive && (
+                <span className="absolute inset-0 rounded-2xl gradient-brand opacity-90 glow-pink" />
+              )}
               <A className="w-[18px] h-[18px] relative" />
-              <span className="text-[11px] font-medium relative">{it.label}</span>
+              <span className="text-[11px] font-medium relative">
+                {it.label}
+              </span>
             </button>
           );
         })}
@@ -81,28 +156,50 @@ export const BottomNav = ({ active = "home", onNavigate }) => {
 };
 
 /* Reusable event card */
-export const EventCard = ({ title, venue, date, tag, hue = "pink", onClick }) => {
+export const EventCard = ({
+  title,
+  venue,
+  date,
+  tag,
+  hue = "pink",
+  onClick,
+}) => {
   const grad = {
     pink: "from-[#FF2F92]/70 via-[#A93CFF]/60 to-[#00E5FF]/40",
     purple: "from-[#A93CFF]/70 via-[#00E5FF]/40 to-[#FF2F92]/50",
     cyan: "from-[#00E5FF]/60 via-[#A93CFF]/50 to-[#FF2F92]/60",
   }[hue];
   return (
-    <button onClick={onClick} className="relative w-full text-left rounded-3xl overflow-hidden active:scale-[0.99] transition">
+    <button
+      onClick={onClick}
+      className="relative w-full text-left rounded-3xl overflow-hidden active:scale-[0.99] transition"
+    >
       <div className={`absolute inset-0 bg-gradient-to-br ${grad}`} />
       <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_100%_0%,rgba(255,255,255,0.25),transparent_60%)]" />
       <div className="absolute inset-0 grid-lines opacity-40" />
       <div className="absolute inset-0 bg-black/25" />
       <div className="relative p-5 h-[180px] flex flex-col justify-between">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] px-2.5 py-1 rounded-full glass-strong font-medium">{tag}</span>
-          <span className="text-[11px] font-medium opacity-90 flex items-center gap-1"><Users className="w-3 h-3" /> 1.2k</span>
+          <span className="text-[11px] px-2.5 py-1 rounded-full glass-strong font-medium">
+            {tag}
+          </span>
+          <span className="text-[11px] font-medium opacity-90 flex items-center gap-1">
+            <Users className="w-3 h-3" /> 1.2k
+          </span>
         </div>
         <div>
-          <div className="text-[20px] font-semibold leading-tight tracking-tight">{title}</div>
+          <div className="text-[20px] font-semibold leading-tight tracking-tight">
+            {title}
+          </div>
           <div className="mt-1 text-[12px] text-white/80 flex items-center gap-3">
-            <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{venue}</span>
-            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{date}</span>
+            <span className="flex items-center gap-1">
+              <MapPin className="w-3 h-3" />
+              {venue}
+            </span>
+            <span className="flex items-center gap-1">
+              <Calendar className="w-3 h-3" />
+              {date}
+            </span>
           </div>
         </div>
       </div>
@@ -149,9 +246,20 @@ export const Splash = ({ go }) => {
           className="relative"
         >
           {/* Concentric pulse rings */}
-          <span aria-hidden className="absolute inset-0 rounded-full bg-[#C4FF00]/20 blur-2xl maxe-breathe" />
-          <span aria-hidden className="absolute -inset-6 rounded-full border border-[#C4FF00]/15 ring-ping" style={{ animationDelay: "0.3s" }} />
-          <span aria-hidden className="absolute -inset-10 rounded-full border border-[#C4FF00]/10 ring-ping" style={{ animationDelay: "0.9s" }} />
+          <span
+            aria-hidden
+            className="absolute inset-0 rounded-full bg-[#C4FF00]/20 blur-2xl maxe-breathe"
+          />
+          <span
+            aria-hidden
+            className="absolute -inset-6 rounded-full border border-[#C4FF00]/15 ring-ping"
+            style={{ animationDelay: "0.3s" }}
+          />
+          <span
+            aria-hidden
+            className="absolute -inset-10 rounded-full border border-[#C4FF00]/10 ring-ping"
+            style={{ animationDelay: "0.9s" }}
+          />
 
           <img
             src="/brand/maxe-class-logo.png"
@@ -179,8 +287,14 @@ export const Splash = ({ go }) => {
         {/* subtle progress hint */}
         <div className="absolute bottom-10 flex gap-2">
           <span className="dot w-1.5 h-1.5 rounded-full bg-[#C4FF00]/80" />
-          <span className="dot w-1.5 h-1.5 rounded-full bg-[#C4FF00]/60" style={{ animationDelay: "0.15s" }} />
-          <span className="dot w-1.5 h-1.5 rounded-full bg-[#C4FF00]/40" style={{ animationDelay: "0.3s" }} />
+          <span
+            className="dot w-1.5 h-1.5 rounded-full bg-[#C4FF00]/60"
+            style={{ animationDelay: "0.15s" }}
+          />
+          <span
+            className="dot w-1.5 h-1.5 rounded-full bg-[#C4FF00]/40"
+            style={{ animationDelay: "0.3s" }}
+          />
         </div>
 
         {/* tap-anywhere to skip */}
@@ -248,7 +362,8 @@ export const Landing = ({ go }) => (
           <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-[11px] font-medium mb-6 sm:mb-8">
             <span className="w-1.5 h-1.5 rounded-full bg-[#C4FF00] animate-pulse" />
             <span className="text-white/85">
-              Anniversary edition <span className="text-white/40 mx-1.5">/</span>
+              Anniversary edition{" "}
+              <span className="text-white/40 mx-1.5">/</span>
               <span className="text-maxe">Live now</span>
             </span>
           </span>
@@ -260,8 +375,8 @@ export const Landing = ({ go }) => (
           </h1>
 
           <p className="mt-6 sm:mt-8 text-white/62 text-[15px] sm:text-[17px] leading-relaxed max-w-md">
-            The official digital experience for MAXE CLASS Anniversary.
-            Connect with your crew, discover your vibe match, unlock the night.
+            The official digital experience for MAXE CLASS Anniversary. Connect
+            with your crew, discover your vibe match, unlock the night.
           </p>
 
           <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 max-w-md">
@@ -311,7 +426,10 @@ export const Landing = ({ go }) => (
           className="hidden lg:flex justify-end"
         >
           <div className="relative w-full max-w-md">
-            <div aria-hidden className="absolute -inset-6 rounded-[40px] bg-[#C4FF00]/[0.10] blur-[60px]" />
+            <div
+              aria-hidden
+              className="absolute -inset-6 rounded-[40px] bg-[#C4FF00]/[0.10] blur-[60px]"
+            />
             <div className="relative glass-card rounded-[32px] p-8 float-slow overflow-hidden">
               {/* subtle top edge highlight */}
               <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
@@ -342,7 +460,9 @@ export const Landing = ({ go }) => (
                 <span className="text-[64px] font-semibold tracking-tighter text-maxe leading-none">
                   94
                 </span>
-                <span className="text-white/50 text-[13px]">% compatibility</span>
+                <span className="text-white/50 text-[13px]">
+                  % compatibility
+                </span>
               </div>
 
               <div className="mt-6 space-y-2.5 text-[13px] text-white/75">
@@ -388,7 +508,10 @@ export const Login = ({ go }) => {
     setLoading(true);
     const res = await sendOtp(email);
     setLoading(false);
-    if (res?.error) { setError(res.error); return; }
+    if (res?.error) {
+      setError(res.error);
+      return;
+    }
     go?.("otp");
   };
 
@@ -446,10 +569,13 @@ export const Login = ({ go }) => {
             </span>
             <h1 className="font-editorial italic text-[40px] sm:text-[52px] leading-[0.98] tracking-tighter">
               What's your <br />
-              <span className="not-italic font-sans font-semibold text-maxe">email?</span>
+              <span className="not-italic font-sans font-semibold text-maxe">
+                email?
+              </span>
             </h1>
             <p className="mt-4 text-white/58 text-[14px] sm:text-[15px] leading-relaxed">
-              We'll send you a 6 digit code. No password. No spam. Just the vibe.
+              We'll send you a 6 digit code. No password. No spam. Just the
+              vibe.
             </p>
 
             <div className="mt-10 space-y-3">
@@ -466,7 +592,9 @@ export const Login = ({ go }) => {
                     autoFocus
                     aria-label="Email address"
                     className="flex-1 bg-transparent outline-none text-[16px] placeholder-white/25 tracking-normal"
-                    onKeyDown={(e) => { if (e.key === "Enter") onContinue(); }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") onContinue();
+                    }}
                   />
                 </div>
               </label>
@@ -512,7 +640,9 @@ export const Login = ({ go }) => {
 
             <div className="mt-8 flex items-center gap-3">
               <div className="flex-1 h-px bg-white/10" />
-              <span className="text-[11px] text-white/40 tracking-widest uppercase">or</span>
+              <span className="text-[11px] text-white/40 tracking-widest uppercase">
+                or
+              </span>
               <div className="flex-1 h-px bg-white/10" />
             </div>
 
@@ -579,7 +709,9 @@ export const OTP = ({ go }) => {
   };
 
   const handlePaste = (e) => {
-    const pasted = (e.clipboardData.getData("text") || "").replace(/\D/g, "").slice(0, 6);
+    const pasted = (e.clipboardData.getData("text") || "")
+      .replace(/\D/g, "")
+      .slice(0, 6);
     if (!pasted) return;
     e.preventDefault();
     const next = Array.from({ length: 6 }, (_, i) => pasted[i] || "");
@@ -606,11 +738,17 @@ export const OTP = ({ go }) => {
   const doVerify = React.useCallback(async () => {
     setError("");
     const token = code.join("");
-    if (token.length < 6) { setError("Enter the 6 digit code"); return; }
+    if (token.length < 6) {
+      setError("Enter the 6 digit code");
+      return;
+    }
     setLoading(true);
     const res = await verifyOtp(token);
     setLoading(false);
-    if (res?.error) { setError(res.error); return; }
+    if (res?.error) {
+      setError(res.error);
+      return;
+    }
     go?.("success");
   }, [code, verifyOtp, go]);
 
@@ -626,7 +764,10 @@ export const OTP = ({ go }) => {
     if (resendTimer > 0) return;
     setError("");
     const res = await resendOtp();
-    if (res?.error) { setError(res.error); return; }
+    if (res?.error) {
+      setError(res.error);
+      return;
+    }
     setResendTimer(30);
   };
 
@@ -683,14 +824,23 @@ export const OTP = ({ go }) => {
             </span>
             <h1 className="font-editorial italic text-[40px] sm:text-[52px] leading-[0.98] tracking-tighter">
               Enter the <br />
-              <span className="not-italic font-sans font-semibold text-maxe">code.</span>
+              <span className="not-italic font-sans font-semibold text-maxe">
+                code.
+              </span>
             </h1>
             <p className="mt-4 text-white/58 text-[14px] sm:text-[15px] leading-relaxed break-all">
-              Sent to <span className="text-white/85">{pendingIdentifier || (authMethod === "email" ? "your email" : "your number")}</span>
+              Sent to{" "}
+              <span className="text-white/85">
+                {pendingIdentifier ||
+                  (authMethod === "email" ? "your email" : "your number")}
+              </span>
             </p>
 
             {/* 6 digit input tiles */}
-            <div className="mt-10 grid grid-cols-6 gap-2 sm:gap-3" onPaste={handlePaste}>
+            <div
+              className="mt-10 grid grid-cols-6 gap-2 sm:gap-3"
+              onPaste={handlePaste}
+            >
               {code.map((c, i) => (
                 <input
                   key={i}
@@ -706,9 +856,10 @@ export const OTP = ({ go }) => {
                   className={`
                     h-14 sm:h-16 rounded-2xl text-center text-[22px] sm:text-[26px] font-semibold tracking-tighter
                     transition-all duration-200 ease-out-expo outline-none
-                    ${c
-                      ? "bg-[#C4FF00] text-black shadow-glow-maxe-soft"
-                      : "bg-[--sirgaz-surface] border border-white/8 text-white focus:border-[#C4FF00]/50 focus:bg-[--sirgaz-surface-2]"
+                    ${
+                      c
+                        ? "bg-[#C4FF00] text-black shadow-glow-maxe-soft"
+                        : "bg-[--sirgaz-surface] border border-white/8 text-white focus:border-[#C4FF00]/50 focus:bg-[--sirgaz-surface-2]"
                     }
                   `}
                 />
@@ -765,7 +916,8 @@ export const OTP = ({ go }) => {
             </div>
 
             <p className="mt-10 text-[11.5px] text-white/35 leading-relaxed text-center">
-              Tip: check your spam folder if the code doesn't arrive within 30 seconds.
+              Tip: check your spam folder if the code doesn't arrive within 30
+              seconds.
             </p>
           </motion.div>
         </div>
@@ -780,10 +932,18 @@ export const Success = ({ go }) => {
   React.useEffect(() => {
     const t = setTimeout(async () => {
       // Check profile completeness → route to onboarding or home
-      if (!session?.user) { go?.("home"); return; }
+      if (!session?.user) {
+        go?.("home");
+        return;
+      }
       const { getProfile } = await import("@/lib/db");
       const p = await getProfile(session.user.id);
-      const isComplete = p && p.name && p.personality?.birthday && p.personality?.tonight && (p.interests?.length || 0) >= 1;
+      const isComplete =
+        p &&
+        p.name &&
+        p.personality?.birthday &&
+        p.personality?.tonight &&
+        (p.interests?.length || 0) >= 1;
       go?.(isComplete ? "home" : "createProfile");
     }, 1600);
     return () => clearTimeout(t);
@@ -791,14 +951,27 @@ export const Success = ({ go }) => {
   return (
     <div className="relative h-full w-full bg-haze overflow-hidden flex flex-col items-center justify-center">
       <div className="absolute w-[420px] h-[420px] rounded-full bg-[#A93CFF]/25 blur-3xl" />
-      <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 120 }}
-        className="relative w-24 h-24 rounded-full gradient-brand flex items-center justify-center glow-pink">
-        <Check className="w-10 h-10 text-white" strokeWidth={3}/>
+      <motion.div
+        initial={{ scale: 0.6, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 120 }}
+        className="relative w-24 h-24 rounded-full gradient-brand flex items-center justify-center glow-pink"
+      >
+        <Check className="w-10 h-10 text-white" strokeWidth={3} />
       </motion.div>
-      <div className="mt-8 text-[26px] font-semibold tracking-tighter">You're in</div>
-      <div className="mt-2 text-white/60 text-[13px]">Preparing your experience…</div>
+      <div className="mt-8 text-[26px] font-semibold tracking-tighter">
+        You're in
+      </div>
+      <div className="mt-2 text-white/60 text-[13px]">
+        Preparing your experience…
+      </div>
       <div className="mt-6 w-40 h-1 rounded-full bg-white/10 overflow-hidden">
-        <motion.div initial={{ x: "-100%" }} animate={{ x: "0%" }} transition={{ duration: 2 }} className="h-full gradient-brand" />
+        <motion.div
+          initial={{ x: "-100%" }}
+          animate={{ x: "0%" }}
+          transition={{ duration: 2 }}
+          className="h-full gradient-brand"
+        />
       </div>
     </div>
   );
@@ -817,7 +990,10 @@ export const CreateProfile = ({ go }) => {
 
   React.useEffect(() => {
     (async () => {
-      if (!session?.user) { setLoading(false); return; }
+      if (!session?.user) {
+        setLoading(false);
+        return;
+      }
       const { getProfile } = await import("@/lib/db");
       const p = await getProfile(session.user.id);
       if (p) {
@@ -840,9 +1016,18 @@ export const CreateProfile = ({ go }) => {
 
   const next = async () => {
     setError("");
-    if (!name.trim()) { setError("Please enter your name"); return; }
-    if (!birthday) { setError("Please pick your birthday"); return; }
-    if (age !== null && age < 18) { setError("You must be 18+ to use sirgaZ"); return; }
+    if (!name.trim()) {
+      setError("Please enter your name");
+      return;
+    }
+    if (!birthday) {
+      setError("Please pick your birthday");
+      return;
+    }
+    if (age !== null && age < 18) {
+      setError("You must be 18+ to use sirgaZ");
+      return;
+    }
     setSaving(true);
     const { upsertProfile, getProfile } = await import("@/lib/db");
     const existing = await getProfile(session.user.id);
@@ -854,52 +1039,115 @@ export const CreateProfile = ({ go }) => {
     };
     const { error } = await upsertProfile(session.user.id, patch);
     setSaving(false);
-    if (error) { setError(error); return; }
+    if (error) {
+      setError(error);
+      return;
+    }
     go?.("interest");
   };
 
   return (
     <div className="relative h-full w-full bg-haze overflow-y-auto phone-scroll">
       <StatusBar />
-      <TopBar title="Create profile" onBack={() => go?.("landing")} right={<span className="text-[11px] text-white/60">1 / 4</span>} />
+      <TopBar
+        title="Create profile"
+        onBack={() => go?.("landing")}
+        right={<span className="text-[11px] text-white/60">1 / 4</span>}
+      />
       <div className="px-7 pb-32">
-        <div className="h-1 rounded-full bg-white/10 overflow-hidden mb-6"><div className="h-full w-1/4 gradient-brand" /></div>
-        <h2 className="text-[28px] font-semibold tracking-tighter">Tell us about you</h2>
-        <p className="text-white/50 text-[13px] mt-1">This shapes your matches. Be authentic.</p>
+        <div className="h-1 rounded-full bg-white/10 overflow-hidden mb-6">
+          <div className="h-full w-1/4 gradient-brand" />
+        </div>
+        <h2 className="text-[28px] font-semibold tracking-tighter">
+          Tell us about you
+        </h2>
+        <p className="text-white/50 text-[13px] mt-1">
+          This shapes your matches. Be authentic.
+        </p>
         <div className="mt-6 flex flex-col items-center">
           <div className="relative">
             <div className="w-28 h-28 rounded-full gradient-brand p-[2px] glow-pink">
               <div className="w-full h-full rounded-full bg-[#0b0b0b] flex items-center justify-center overflow-hidden">
-                {avatarUrl ? <img src={avatarUrl} className="w-full h-full object-cover"/> : <User className="w-10 h-10 text-white/40"/>}
+                {avatarUrl ? (
+                  <img src={avatarUrl} className="w-full h-full object-cover" />
+                ) : (
+                  <User className="w-10 h-10 text-white/40" />
+                )}
               </div>
             </div>
-            <button onClick={() => setAvatarUrl(`https://i.pravatar.cc/300?u=${Date.now()}`)} className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-white text-black flex items-center justify-center shadow-lg"><Camera className="w-4 h-4"/></button>
+            <button
+              onClick={() =>
+                setAvatarUrl(`https://i.pravatar.cc/300?u=${Date.now()}`)
+              }
+              className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-white text-black flex items-center justify-center shadow-lg"
+            >
+              <Camera className="w-4 h-4" />
+            </button>
           </div>
-          <div className="text-[12px] text-white/50 mt-3">Tap to shuffle photo</div>
+          <div className="text-[12px] text-white/50 mt-3">
+            Tap to shuffle photo
+          </div>
         </div>
         <div className="mt-8 space-y-3">
           <div className="glass rounded-2xl px-4 py-3">
-            <div className="text-[11px] uppercase tracking-widest text-white/40">Full name</div>
-            <input value={name} onChange={e=>setName(e.target.value)} placeholder="Your name" className="w-full mt-1 bg-transparent outline-none text-[15px] placeholder-white/30"/>
+            <div className="text-[11px] uppercase tracking-widest text-white/40">
+              Full name
+            </div>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your name"
+              className="w-full mt-1 bg-transparent outline-none text-[15px] placeholder-white/30"
+            />
           </div>
           <div className="glass rounded-2xl px-4 py-3">
             <div className="text-[11px] uppercase tracking-widest text-white/40 flex items-center justify-between">
               <span>Birthday</span>
-              {zodiac && <span className="text-[11px] text-white/60 normal-case tracking-normal">{zodiac.emoji} {zodiac.name}{age !== null ? ` · ${age}` : ""}</span>}
+              {zodiac && (
+                <span className="text-[11px] text-white/60 normal-case tracking-normal">
+                  {zodiac.emoji} {zodiac.name}
+                  {age !== null ? ` · ${age}` : ""}
+                </span>
+              )}
             </div>
-            <input type="date" value={birthday} onChange={e=>setBirthday(e.target.value)} max={new Date().toISOString().slice(0,10)} className="w-full mt-1 bg-transparent outline-none text-[15px] placeholder-white/30 [color-scheme:dark]"/>
+            <input
+              type="date"
+              value={birthday}
+              onChange={(e) => setBirthday(e.target.value)}
+              max={new Date().toISOString().slice(0, 10)}
+              className="w-full mt-1 bg-transparent outline-none text-[15px] placeholder-white/30 [color-scheme:dark]"
+            />
           </div>
           <div className="glass rounded-2xl p-4">
-            <div className="text-[11px] uppercase tracking-widest text-white/40">Bio</div>
-            <textarea rows={3} value={bio} onChange={e=>setBio(e.target.value)} placeholder="A few words about you"
-              className="w-full mt-1.5 bg-transparent outline-none text-[14px] resize-none placeholder-white/30" />
+            <div className="text-[11px] uppercase tracking-widest text-white/40">
+              Bio
+            </div>
+            <textarea
+              rows={3}
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              placeholder="A few words about you"
+              className="w-full mt-1.5 bg-transparent outline-none text-[14px] resize-none placeholder-white/30"
+            />
           </div>
-          {error && <div className="px-4 py-2.5 rounded-xl bg-[#FF2F92]/10 border border-[#FF2F92]/30 text-[12px] text-[#FF2F92]">{error}</div>}
-          {loading && <div className="text-[12px] text-white/40">Loading profile…</div>}
+          {error && (
+            <div className="px-4 py-2.5 rounded-xl bg-[#FF2F92]/10 border border-[#FF2F92]/30 text-[12px] text-[#FF2F92]">
+              {error}
+            </div>
+          )}
+          {loading && (
+            <div className="text-[12px] text-white/40">Loading profile…</div>
+          )}
         </div>
       </div>
       <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black via-black/85 to-transparent">
-        <BigButton onClick={next} disabled={saving} icon={saving ? null : <ArrowRight className="w-4 h-4"/>}>{saving ? "Saving…" : "Continue"}</BigButton>
+        <BigButton
+          onClick={next}
+          disabled={saving}
+          icon={saving ? null : <ArrowRight className="w-4 h-4" />}
+        >
+          {saving ? "Saving…" : "Continue"}
+        </BigButton>
       </div>
     </div>
   );
@@ -915,7 +1163,10 @@ export const Interest = ({ go }) => {
 
   React.useEffect(() => {
     (async () => {
-      if (!session?.user) { setLoading(false); return; }
+      if (!session?.user) {
+        setLoading(false);
+        return;
+      }
       const { getProfile } = await import("@/lib/db");
       const p = await getProfile(session.user.id);
       if (p?.interests?.length) setSelected(p.interests);
@@ -927,49 +1178,88 @@ export const Interest = ({ go }) => {
 
   const toggle = (label) => {
     setError("");
-    setSelected(prev => {
-      if (prev.includes(label)) return prev.filter(x => x !== label);
-      if (prev.length >= 5) { setError("Max 5 interests"); return prev; }
+    setSelected((prev) => {
+      if (prev.includes(label)) return prev.filter((x) => x !== label);
+      if (prev.length >= 5) {
+        setError("Max 5 interests");
+        return prev;
+      }
       return [...prev, label];
     });
   };
 
   const next = async () => {
     setError("");
-    if (selected.length < 1) { setError("Pick at least 1"); return; }
+    if (selected.length < 1) {
+      setError("Pick at least 1");
+      return;
+    }
     setSaving(true);
     const { upsertProfile } = await import("@/lib/db");
-    const { error } = await upsertProfile(session.user.id, { interests: selected });
+    const { error } = await upsertProfile(session.user.id, {
+      interests: selected,
+    });
     setSaving(false);
-    if (error) { setError(error); return; }
+    if (error) {
+      setError(error);
+      return;
+    }
     go?.("personality");
   };
 
   return (
     <div className="relative h-full w-full bg-haze overflow-y-auto phone-scroll">
       <StatusBar />
-      <TopBar title="Interests" onBack={() => go?.("createProfile")} right={<span className="text-[11px] text-white/60">2 / 4</span>} />
+      <TopBar
+        title="Interests"
+        onBack={() => go?.("createProfile")}
+        right={<span className="text-[11px] text-white/60">2 / 4</span>}
+      />
       <div className="px-7 pb-32">
-        <div className="h-1 rounded-full bg-white/10 overflow-hidden mb-6"><div className="h-full w-2/4 gradient-brand" /></div>
-        <h2 className="text-[28px] font-semibold tracking-tighter">Your vibe</h2>
-        <p className="text-white/50 text-[13px] mt-1">Pick up to 5. The more specific, the better your matches.</p>
-        <div className="mt-4 text-[11px] text-white/50">{selected.length} / 5 selected</div>
+        <div className="h-1 rounded-full bg-white/10 overflow-hidden mb-6">
+          <div className="h-full w-2/4 gradient-brand" />
+        </div>
+        <h2 className="text-[28px] font-semibold tracking-tighter">
+          Your vibe
+        </h2>
+        <p className="text-white/50 text-[13px] mt-1">
+          Pick up to 5. The more specific, the better your matches.
+        </p>
+        <div className="mt-4 text-[11px] text-white/50">
+          {selected.length} / 5 selected
+        </div>
         <div className="mt-4 flex flex-wrap gap-2.5">
           {ALL_VIBE_INTERESTS.map((label) => {
             const on = selected.includes(label);
             return (
-              <button key={label} onClick={() => toggle(label)}
-                className={`h-11 px-4 rounded-full flex items-center gap-2 text-[13px] font-medium transition ${on ? "gradient-brand text-white glow-pink" : "glass text-white/85"}`}>
-                <span>{getInterestEmoji(label)}</span>{label}
+              <button
+                key={label}
+                onClick={() => toggle(label)}
+                className={`h-11 px-4 rounded-full flex items-center gap-2 text-[13px] font-medium transition ${on ? "gradient-brand text-white glow-pink" : "glass text-white/85"}`}
+              >
+                <span>{getInterestEmoji(label)}</span>
+                {label}
               </button>
             );
           })}
         </div>
-        {error && <div className="mt-4 px-4 py-2.5 rounded-xl bg-[#FF2F92]/10 border border-[#FF2F92]/30 text-[12px] text-[#FF2F92]">{error}</div>}
-        {loading && <div className="mt-4 text-[12px] text-white/40">Loading…</div>}
+        {error && (
+          <div className="mt-4 px-4 py-2.5 rounded-xl bg-[#FF2F92]/10 border border-[#FF2F92]/30 text-[12px] text-[#FF2F92]">
+            {error}
+          </div>
+        )}
+        {loading && (
+          <div className="mt-4 text-[12px] text-white/40">Loading…</div>
+        )}
       </div>
       <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black via-black/85 to-transparent">
-        <BigButton onClick={next} disabled={saving} icon={saving ? null : <ArrowRight className="w-4 h-4"/>}>{saving ? "Saving…" : "Continue"}</BigButton>
+        <BigButton
+          onClick={next}
+          disabled={saving}
+          icon={saving ? null : <ArrowRight className="w-4 h-4" />}
+        >
+          {saving ? "Saving…" : "Continue"}
+        </BigButton>
       </div>
     </div>
   );
@@ -984,7 +1274,10 @@ export const Personality = ({ go }) => {
 
   React.useEffect(() => {
     (async () => {
-      if (!session?.user) { setLoading(false); return; }
+      if (!session?.user) {
+        setLoading(false);
+        return;
+      }
       const { getProfile } = await import("@/lib/db");
       const p = await getProfile(session.user.id);
       if (p?.personality?.energy != null) setEnergy(p.personality.energy);
@@ -1000,7 +1293,9 @@ export const Personality = ({ go }) => {
     setSaving(true);
     const { upsertProfile, getProfile } = await import("@/lib/db");
     const existing = await getProfile(session.user.id);
-    await upsertProfile(session.user.id, { personality: { ...(existing?.personality || {}), energy } });
+    await upsertProfile(session.user.id, {
+      personality: { ...(existing?.personality || {}), energy },
+    });
     setSaving(false);
     go?.("goal");
   };
@@ -1008,33 +1303,64 @@ export const Personality = ({ go }) => {
   return (
     <div className="relative h-full w-full bg-haze overflow-y-auto phone-scroll">
       <StatusBar />
-      <TopBar title="Energy" onBack={() => go?.("interest")} right={<span className="text-[11px] text-white/60">3 / 4</span>} />
+      <TopBar
+        title="Energy"
+        onBack={() => go?.("interest")}
+        right={<span className="text-[11px] text-white/60">3 / 4</span>}
+      />
       <div className="px-7 pb-32">
-        <div className="h-1 rounded-full bg-white/10 overflow-hidden mb-6"><div className="h-full w-3/4 gradient-brand" /></div>
-        <h2 className="text-[28px] font-semibold tracking-tighter">Your energy tonight</h2>
-        <p className="text-white/50 text-[13px] mt-1">Slide to calibrate. This helps us match your rhythm.</p>
+        <div className="h-1 rounded-full bg-white/10 overflow-hidden mb-6">
+          <div className="h-full w-3/4 gradient-brand" />
+        </div>
+        <h2 className="text-[28px] font-semibold tracking-tighter">
+          Your energy tonight
+        </h2>
+        <p className="text-white/50 text-[13px] mt-1">
+          Slide to calibrate. This helps us match your rhythm.
+        </p>
 
         <div className="mt-8 flex flex-col items-center">
           <div className="text-[64px] leading-none">{vibe.emoji}</div>
-          <div className="mt-3 text-[24px] font-semibold tracking-tighter">{vibe.l}</div>
-          <div className="mt-1 text-[12px] text-white/60">{label.l} · {energy}%</div>
+          <div className="mt-3 text-[24px] font-semibold tracking-tighter">
+            {vibe.l}
+          </div>
+          <div className="mt-1 text-[12px] text-white/60">
+            {label.l} · {energy}%
+          </div>
         </div>
 
         <div className="mt-10">
           <div className="flex items-center justify-between text-[12px] text-white/60 mb-3">
-            <span>🌙 Chill</span><span>✨ Relax</span><span>🔥 Hyper</span>
+            <span>🌙 Chill</span>
+            <span>✨ Relax</span>
+            <span>🔥 Hyper</span>
           </div>
-          <input type="range" min="0" max="100" value={energy} onChange={e=>setEnergy(Number(e.target.value))}
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={energy}
+            onChange={(e) => setEnergy(Number(e.target.value))}
             className="w-full h-2 rounded-full bg-white/10 appearance-none cursor-pointer accent-[#FF2F92]
               [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:h-2 [&::-webkit-slider-runnable-track]:bg-transparent
               [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-[0_0_20px_rgba(255,47,146,0.8)] [&::-webkit-slider-thumb]:-mt-2"
-            style={{ background: `linear-gradient(to right, #FF2F92 0%, #A93CFF ${energy/2}%, #00E5FF ${energy}%, rgba(255,255,255,0.1) ${energy}%)` }}
+            style={{
+              background: `linear-gradient(to right, #FF2F92 0%, #A93CFF ${energy / 2}%, #00E5FF ${energy}%, rgba(255,255,255,0.1) ${energy}%)`,
+            }}
           />
         </div>
-        {loading && <div className="mt-4 text-[12px] text-white/40">Loading…</div>}
+        {loading && (
+          <div className="mt-4 text-[12px] text-white/40">Loading…</div>
+        )}
       </div>
       <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black via-black/85 to-transparent">
-        <BigButton onClick={next} disabled={saving} icon={saving ? null : <ArrowRight className="w-4 h-4"/>}>{saving ? "Saving…" : "Continue"}</BigButton>
+        <BigButton
+          onClick={next}
+          disabled={saving}
+          icon={saving ? null : <ArrowRight className="w-4 h-4" />}
+        >
+          {saving ? "Saving…" : "Continue"}
+        </BigButton>
       </div>
     </div>
   );
@@ -1049,7 +1375,10 @@ export const Goal = ({ go }) => {
 
   React.useEffect(() => {
     (async () => {
-      if (!session?.user) { setLoading(false); return; }
+      if (!session?.user) {
+        setLoading(false);
+        return;
+      }
       const { getProfile } = await import("@/lib/db");
       const p = await getProfile(session.user.id);
       if (p?.personality?.tonight) setSel(p.personality.tonight);
@@ -1060,7 +1389,14 @@ export const Goal = ({ go }) => {
 
   const { TONIGHT_OPTIONS } = require("@/lib/vibe");
 
-  const gradients = ["from-[#A93CFF] to-[#00E5FF]", "from-[#FF2F92] to-[#A93CFF]", "from-[#FF2F92] to-[#00E5FF]", "from-[#00E5FF] to-[#A93CFF]", "from-[#A93CFF] to-[#FF2F92]", "from-[#00E5FF] to-[#FF2F92]"];
+  const gradients = [
+    "from-[#A93CFF] to-[#00E5FF]",
+    "from-[#FF2F92] to-[#A93CFF]",
+    "from-[#FF2F92] to-[#00E5FF]",
+    "from-[#00E5FF] to-[#A93CFF]",
+    "from-[#A93CFF] to-[#FF2F92]",
+    "from-[#00E5FF] to-[#FF2F92]",
+  ];
 
   const finish = async () => {
     if (!sel) return;
@@ -1078,145 +1414,286 @@ export const Goal = ({ go }) => {
   return (
     <div className="relative h-full w-full bg-haze overflow-y-auto phone-scroll">
       <StatusBar />
-      <TopBar title="Tonight" onBack={() => go?.("personality")} right={<span className="text-[11px] text-white/60">4 / 4</span>} />
+      <TopBar
+        title="Tonight"
+        onBack={() => go?.("personality")}
+        right={<span className="text-[11px] text-white/60">4 / 4</span>}
+      />
       <div className="px-7 pb-32">
-        <div className="h-1 rounded-full bg-white/10 overflow-hidden mb-6"><div className="h-full w-full gradient-brand" /></div>
-        <h2 className="text-[28px] font-semibold tracking-tighter">Tonight I'm here for</h2>
-        <p className="text-white/50 text-[13px] mt-1">Choose one. Changes anytime.</p>
+        <div className="h-1 rounded-full bg-white/10 overflow-hidden mb-6">
+          <div className="h-full w-full gradient-brand" />
+        </div>
+        <h2 className="text-[28px] font-semibold tracking-tighter">
+          Tonight I'm here for
+        </h2>
+        <p className="text-white/50 text-[13px] mt-1">
+          Choose one. Changes anytime.
+        </p>
         <div className="mt-6 space-y-3">
           {TONIGHT_OPTIONS.map((g, i) => {
             const on = sel === g.id;
             return (
-              <button key={g.id} onClick={() => setSel(g.id)}
-                className={`relative w-full rounded-3xl p-4 text-left flex items-center gap-4 overflow-hidden active:scale-[0.99] transition ${on ? "" : "glass"}`}>
-                {on && <div className={`absolute inset-0 bg-gradient-to-br ${gradients[i]} opacity-95`} />}
+              <button
+                key={g.id}
+                onClick={() => setSel(g.id)}
+                className={`relative w-full rounded-3xl p-4 text-left flex items-center gap-4 overflow-hidden active:scale-[0.99] transition ${on ? "" : "glass"}`}
+              >
+                {on && (
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${gradients[i]} opacity-95`}
+                  />
+                )}
                 {on && <div className="absolute inset-0 bg-black/20" />}
-                <div className={`relative w-12 h-12 rounded-2xl ${on ? "bg-white/15" : "bg-white/[0.06]"} flex items-center justify-center text-[22px]`}>
+                <div
+                  className={`relative w-12 h-12 rounded-2xl ${on ? "bg-white/15" : "bg-white/[0.06]"} flex items-center justify-center text-[22px]`}
+                >
                   {g.emoji}
                 </div>
                 <div className="relative flex-1">
                   <div className="text-[15px] font-semibold">{g.label}</div>
                 </div>
-                <div className={`relative w-6 h-6 rounded-full flex items-center justify-center ${on ? "bg-white text-black" : "border border-white/25"}`}>
-                  {on && <Check className="w-3.5 h-3.5"/>}
+                <div
+                  className={`relative w-6 h-6 rounded-full flex items-center justify-center ${on ? "bg-white text-black" : "border border-white/25"}`}
+                >
+                  {on && <Check className="w-3.5 h-3.5" />}
                 </div>
               </button>
             );
           })}
         </div>
-        {loading && <div className="mt-4 text-[12px] text-white/40">Loading…</div>}
+        {loading && (
+          <div className="mt-4 text-[12px] text-white/40">Loading…</div>
+        )}
       </div>
       <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black via-black/85 to-transparent">
-        <BigButton onClick={finish} disabled={saving || !sel} icon={saving ? null : <ArrowRight className="w-4 h-4"/>}>{saving ? "Saving…" : "Enter sirgaZ"}</BigButton>
+        <BigButton
+          onClick={finish}
+          disabled={saving || !sel}
+          icon={saving ? null : <ArrowRight className="w-4 h-4" />}
+        >
+          {saving ? "Saving…" : "Enter sirgaZ"}
+        </BigButton>
       </div>
     </div>
   );
 };
 
-/* ---------- 10 HOME ---------- */
+/* ---------- 10 HOME ---------- */ /*fix name profile*/
 export const HomeScreen = ({ go }) => {
   const [events, setEvents] = React.useState([]);
   const [loadingEvents, setLoadingEvents] = React.useState(true);
+  const [profile, setProfile] = React.useState(null);
+
   React.useEffect(() => {
     (async () => {
-      const { listPublishedEvents } = await import("@/lib/db");
+      const { listPublishedEvents, getProfile } = await import("@/lib/db");
+      const { getSupabase } = await import("@/lib/supabaseClient");
+
+      const sb = getSupabase();
+      const { data: authData } = await sb.auth.getUser();
+      if (authData?.user) {
+        const p = await getProfile(authData.user.id);
+        setProfile(p);
+      }
+
       const list = await listPublishedEvents();
       setEvents(list);
       setLoadingEvents(false);
     })();
   }, []);
+
   return (
-  <div className="relative h-full w-full bg-haze overflow-y-auto phone-scroll">
-    <StatusBar />
-    <div className="px-6 pt-2 pb-4 flex items-center justify-between">
-      <div className="flex items-center gap-3">
-        <div className="w-11 h-11 rounded-full gradient-brand p-[2px]">
-          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200" className="w-full h-full rounded-full object-cover"/>
-        </div>
-        <div>
-          <div className="text-[11px] text-white/50">Good evening</div>
-          <div className="text-[15px] font-semibold tracking-tight">Nadia P. <span className="text-[#FF2F92]">◆</span></div>
-        </div>
-      </div>
-      <div className="flex items-center gap-2">
-        <button className="w-10 h-10 rounded-full glass flex items-center justify-center"><Search className="w-4 h-4"/></button>
-        <button className="relative w-10 h-10 rounded-full glass flex items-center justify-center"><Bell className="w-4 h-4"/><span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#FF2F92]" /></button>
-      </div>
-    </div>
-
-    <div className="px-6 pb-32">
-      {/* Profile summary */}
-      <div className="glass rounded-3xl p-4 flex items-center gap-4">
-        <div className="relative w-14 h-14 rounded-2xl gradient-brand p-[2px]">
-          <div className="w-full h-full rounded-2xl bg-black/40 flex items-center justify-center text-[18px] font-bold">87</div>
-        </div>
-        <div className="flex-1">
-          <div className="text-[13px] font-medium">Match Energy · Level 4</div>
-          <div className="mt-1.5 h-1.5 rounded-full bg-white/10 overflow-hidden">
-            <div className="h-full w-[72%] gradient-brand rounded-full"/>
+    <div className="relative h-full w-full bg-haze overflow-y-auto phone-scroll">
+      <StatusBar />
+      <div className="px-6 pt-2 pb-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 rounded-full gradient-brand p-[2px]">
+            <img
+              src={
+                profile?.avatar_url ||
+                "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200"
+              }
+              className="w-full h-full rounded-full object-cover"
+            />
           </div>
-          <div className="text-[11px] text-white/50 mt-1">120 XP to Level 5</div>
-        </div>
-      </div>
-
-      {/* Upcoming */}
-      <div className="mt-6 flex items-center justify-between">
-        <div>
-          <div className="text-[11px] uppercase tracking-widest text-white/40">Upcoming</div>
-          <div className="text-[20px] font-semibold tracking-tight">Tonight for you</div>
-        </div>
-        <button className="text-[12px] text-white/60 flex items-center gap-1">See all <ChevronRight className="w-3.5 h-3.5"/></button>
-      </div>
-      <div className="mt-4">
-        {loadingEvents && <div className="text-white/40 text-[12px]">Loading events…</div>}
-        {!loadingEvents && events[0] && (
-          <EventCard title={events[0].title} venue={events[0].venue_name || events[0].venues?.name || "Venue"} date={events[0].starts_at ? new Date(events[0].starts_at).toLocaleString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' }) : "TBD"} tag={events[0].tags?.[0] || "Featured"} onClick={() => { if (typeof window !== "undefined") window.location.href = `/e/${events[0].id}`; }} />
-        )}
-        {!loadingEvents && !events[0] && (
-          <EventCard title="NEONVERSE · Techno Ritual" venue="Potato Head, Bali" date="Tonight · 22:00" tag="Demo" onClick={() => go?.("eventDetail")} />
-        )}
-      </div>
-
-      {/* Recommended */}
-      <div className="mt-8 flex items-center justify-between">
-        <div className="text-[20px] font-semibold tracking-tight">Recommended</div>
-        <span className="text-[11px] text-white/40">AI curated</span>
-      </div>
-      <div className="mt-4 -mx-6 px-6 flex gap-3 overflow-x-auto phone-scroll pb-2">
-        {events.slice(1, 5).map((e, i) => (
-          <div key={e.id} className="min-w-[240px]">
-            <EventCard title={e.title} venue={e.venue_name || e.venues?.name || "Venue"} date={e.starts_at ? new Date(e.starts_at).toLocaleDateString() : "TBD"} tag={e.tags?.[0] || "Event"} hue={i%2 ? "cyan" : "purple"} onClick={() => { if (typeof window !== "undefined") window.location.href = `/e/${e.id}`; }} />
-          </div>
-        ))}
-        {events.length <= 1 && (
-          <>
-            <div className="min-w-[240px]"><EventCard title="Aurora Rooftop" venue="SCBD, Jakarta" date="Sat · 20:00" tag="Rooftop" hue="purple" onClick={() => go?.("eventDetail")}/></div>
-            <div className="min-w-[240px]"><EventCard title="After Sunset" venue="Canggu" date="Sun · 18:30" tag="Beach" hue="cyan" onClick={() => go?.("eventDetail")}/></div>
-          </>
-        )}
-      </div>
-
-      {/* Activity */}
-      <div className="mt-8 text-[20px] font-semibold tracking-tight">Recent activity</div>
-      <div className="mt-3 space-y-2.5">
-        {[
-          { t: "You matched with Raka at NEONVERSE", s: "2h ago", Icon: Heart },
-          { t: "+120 XP · Mission complete", s: "Yesterday", Icon: Zap },
-          { t: "New voucher unlocked · 20% off drinks", s: "2d ago", Icon: Gift },
-        ].map((r, i) => (
-          <div key={i} className="glass rounded-2xl p-3.5 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl gradient-brand-soft flex items-center justify-center"><r.Icon className="w-4 h-4"/></div>
-            <div className="flex-1">
-              <div className="text-[13px] font-medium">{r.t}</div>
-              <div className="text-[11px] text-white/45">{r.s}</div>
+          <div>
+            <div className="text-[11px] text-white/50">Good evening</div>
+            <div className="text-[15px] font-semibold tracking-tight">
+              {profile?.name || "there"}{" "}
+              <span className="text-[#FF2F92]">◆</span>
             </div>
-            <ChevronRight className="w-4 h-4 text-white/40"/>
           </div>
-        ))}
+        </div>
+        <div className="flex items-center gap-2">
+          <button className="w-10 h-10 rounded-full glass flex items-center justify-center">
+            <Search className="w-4 h-4" />
+          </button>
+          <button className="relative w-10 h-10 rounded-full glass flex items-center justify-center">
+            <Bell className="w-4 h-4" />
+            <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#FF2F92]" />
+          </button>
+        </div>
       </div>
+
+      <div className="px-6 pb-32">
+        {/* Profile summary */}
+        <div className="glass rounded-3xl p-4 flex items-center gap-4">
+          <div className="relative w-14 h-14 rounded-2xl gradient-brand p-[2px]">
+            <div className="w-full h-full rounded-2xl bg-black/40 flex items-center justify-center text-[18px] font-bold">
+              87
+            </div>
+          </div>
+          <div className="flex-1">
+            <div className="text-[13px] font-medium">
+              Match Energy · Level 4
+            </div>
+            <div className="mt-1.5 h-1.5 rounded-full bg-white/10 overflow-hidden">
+              <div className="h-full w-[72%] gradient-brand rounded-full" />
+            </div>
+            <div className="text-[11px] text-white/50 mt-1">
+              120 XP to Level 5
+            </div>
+          </div>
+        </div>
+
+        {/* Upcoming */}
+        <div className="mt-6 flex items-center justify-between">
+          <div>
+            <div className="text-[11px] uppercase tracking-widest text-white/40">
+              Upcoming
+            </div>
+            <div className="text-[20px] font-semibold tracking-tight">
+              Tonight for you
+            </div>
+          </div>
+          <button className="text-[12px] text-white/60 flex items-center gap-1">
+            See all <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+        <div className="mt-4">
+          {loadingEvents && (
+            <div className="text-white/40 text-[12px]">Loading events…</div>
+          )}
+          {!loadingEvents && events[0] && (
+            <EventCard
+              title={events[0].title}
+              venue={events[0].venue_name || events[0].venues?.name || "Venue"}
+              date={
+                events[0].starts_at
+                  ? new Date(events[0].starts_at).toLocaleString([], {
+                      weekday: "short",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  : "TBD"
+              }
+              tag={events[0].tags?.[0] || "Featured"}
+              onClick={() => {
+                if (typeof window !== "undefined")
+                  window.location.href = `/e/${events[0].id}`;
+              }}
+            />
+          )}
+          {!loadingEvents && !events[0] && (
+            <EventCard
+              title="NEONVERSE · Techno Ritual"
+              venue="Potato Head, Bali"
+              date="Tonight · 22:00"
+              tag="Demo"
+              onClick={() => go?.("eventDetail")}
+            />
+          )}
+        </div>
+
+        {/* Recommended */}
+        <div className="mt-8 flex items-center justify-between">
+          <div className="text-[20px] font-semibold tracking-tight">
+            Recommended
+          </div>
+          <span className="text-[11px] text-white/40">AI curated</span>
+        </div>
+        <div className="mt-4 -mx-6 px-6 flex gap-3 overflow-x-auto phone-scroll pb-2">
+          {events.slice(1, 5).map((e, i) => (
+            <div key={e.id} className="min-w-[240px]">
+              <EventCard
+                title={e.title}
+                venue={e.venue_name || e.venues?.name || "Venue"}
+                date={
+                  e.starts_at
+                    ? new Date(e.starts_at).toLocaleDateString()
+                    : "TBD"
+                }
+                tag={e.tags?.[0] || "Event"}
+                hue={i % 2 ? "cyan" : "purple"}
+                onClick={() => {
+                  if (typeof window !== "undefined")
+                    window.location.href = `/e/${e.id}`;
+                }}
+              />
+            </div>
+          ))}
+          {events.length <= 1 && (
+            <>
+              <div className="min-w-[240px]">
+                <EventCard
+                  title="Aurora Rooftop"
+                  venue="SCBD, Jakarta"
+                  date="Sat · 20:00"
+                  tag="Rooftop"
+                  hue="purple"
+                  onClick={() => go?.("eventDetail")}
+                />
+              </div>
+              <div className="min-w-[240px]">
+                <EventCard
+                  title="After Sunset"
+                  venue="Canggu"
+                  date="Sun · 18:30"
+                  tag="Beach"
+                  hue="cyan"
+                  onClick={() => go?.("eventDetail")}
+                />
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Activity */}
+        <div className="mt-8 text-[20px] font-semibold tracking-tight">
+          Recent activity
+        </div>
+        <div className="mt-3 space-y-2.5">
+          {[
+            {
+              t: "You matched with Raka at NEONVERSE",
+              s: "2h ago",
+              Icon: Heart,
+            },
+            { t: "+120 XP · Mission complete", s: "Yesterday", Icon: Zap },
+            {
+              t: "New voucher unlocked · 20% off drinks",
+              s: "2d ago",
+              Icon: Gift,
+            },
+          ].map((r, i) => (
+            <div
+              key={i}
+              className="glass rounded-2xl p-3.5 flex items-center gap-3"
+            >
+              <div className="w-10 h-10 rounded-xl gradient-brand-soft flex items-center justify-center">
+                <r.Icon className="w-4 h-4" />
+              </div>
+              <div className="flex-1">
+                <div className="text-[13px] font-medium">{r.t}</div>
+                <div className="text-[11px] text-white/45">{r.s}</div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-white/40" />
+            </div>
+          ))}
+        </div>
+      </div>
+      <BottomNav active="home" onNavigate={go} />
     </div>
-    <BottomNav active="home" onNavigate={go} />
-  </div>
   );
 };
 
@@ -1224,61 +1701,116 @@ export const HomeScreen = ({ go }) => {
 export const EventDetail = ({ go }) => (
   <div className="relative h-full w-full bg-black overflow-y-auto phone-scroll">
     <div className="relative h-[380px]">
-      <img src="https://images.pexels.com/photos/5192289/pexels-photo-5192289.jpeg" className="absolute inset-0 w-full h-full object-cover" />
+      <img
+        src="https://images.pexels.com/photos/5192289/pexels-photo-5192289.jpeg"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black" />
       <StatusBar />
       <div className="px-6 pt-2 flex items-center justify-between">
-        <button onClick={() => go?.("home")} className="w-10 h-10 rounded-full glass flex items-center justify-center"><ChevronLeft className="w-5 h-5"/></button>
+        <button
+          onClick={() => go?.("home")}
+          className="w-10 h-10 rounded-full glass flex items-center justify-center"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
         <div className="flex gap-2">
-          <button className="w-10 h-10 rounded-full glass flex items-center justify-center"><Heart className="w-4 h-4"/></button>
-          <button className="w-10 h-10 rounded-full glass flex items-center justify-center"><MoreHorizontal className="w-4 h-4"/></button>
+          <button className="w-10 h-10 rounded-full glass flex items-center justify-center">
+            <Heart className="w-4 h-4" />
+          </button>
+          <button className="w-10 h-10 rounded-full glass flex items-center justify-center">
+            <MoreHorizontal className="w-4 h-4" />
+          </button>
         </div>
       </div>
       <div className="absolute bottom-6 left-6 right-6">
-        <span className="text-[11px] font-medium px-2.5 py-1 rounded-full glass-strong">Techno · 18+</span>
-        <h1 className="mt-3 text-[30px] font-bold tracking-tighter leading-tight">NEONVERSE<br/>Techno Ritual</h1>
+        <span className="text-[11px] font-medium px-2.5 py-1 rounded-full glass-strong">
+          Techno · 18+
+        </span>
+        <h1 className="mt-3 text-[30px] font-bold tracking-tighter leading-tight">
+          NEONVERSE
+          <br />
+          Techno Ritual
+        </h1>
       </div>
     </div>
     <div className="px-6 pb-40 -mt-6 relative z-10">
       <div className="glass-strong rounded-3xl p-5 space-y-4">
-        <Row Icon={MapPin} title="Potato Head Beach Club" sub="Jl. Petitenget No.51B, Bali" />
-        <Row Icon={Calendar} title="Sat, 21 Jun · 22:00" sub="Doors open 21:00" />
-        <Row Icon={Users} title="1,240 going" sub="182 matches predicted for you" />
+        <Row
+          Icon={MapPin}
+          title="Potato Head Beach Club"
+          sub="Jl. Petitenget No.51B, Bali"
+        />
+        <Row
+          Icon={Calendar}
+          title="Sat, 21 Jun · 22:00"
+          sub="Doors open 21:00"
+        />
+        <Row
+          Icon={Users}
+          title="1,240 going"
+          sub="182 matches predicted for you"
+        />
       </div>
 
       <div className="mt-6">
-        <div className="text-[11px] uppercase tracking-widest text-white/40">About</div>
+        <div className="text-[11px] uppercase tracking-widest text-white/40">
+          About
+        </div>
         <p className="mt-2 text-[13.5px] text-white/75 leading-relaxed">
-          A ritual of sound, light, and human connection. Curated by sirgaZ — every attendee is matched by AI for meaningful encounters between sets.
+          A ritual of sound, light, and human connection. Curated by sirgaZ —
+          every attendee is matched by AI for meaningful encounters between
+          sets.
         </p>
       </div>
 
       <div className="mt-6 grid grid-cols-3 gap-3">
-        {[["Match rate","94%"],["Vibe","Deep"],["Avg age","24"]].map(([l,v]) => (
+        {[
+          ["Match rate", "94%"],
+          ["Vibe", "Deep"],
+          ["Avg age", "24"],
+        ].map(([l, v]) => (
           <div key={l} className="glass rounded-2xl p-3.5 text-center">
-            <div className="text-[18px] font-semibold tracking-tighter">{v}</div>
+            <div className="text-[18px] font-semibold tracking-tighter">
+              {v}
+            </div>
             <div className="text-[11px] text-white/50">{l}</div>
           </div>
         ))}
       </div>
 
       <div className="mt-6 flex -space-x-3">
-        {[1,2,3,4,5].map(i => (
-          <div key={i} className="w-9 h-9 rounded-full border-2 border-black overflow-hidden">
-            <img src={`https://i.pravatar.cc/80?img=${i+8}`} className="w-full h-full object-cover"/>
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div
+            key={i}
+            className="w-9 h-9 rounded-full border-2 border-black overflow-hidden"
+          >
+            <img
+              src={`https://i.pravatar.cc/80?img=${i + 8}`}
+              className="w-full h-full object-cover"
+            />
           </div>
         ))}
-        <div className="pl-5 self-center text-[12px] text-white/60">+1,235 attending</div>
+        <div className="pl-5 self-center text-[12px] text-white/60">
+          +1,235 attending
+        </div>
       </div>
     </div>
     <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black via-black/90 to-transparent">
-      <BigButton onClick={() => go?.("qr")} icon={<QrCode className="w-4 h-4"/>}>Join Event · Free RSVP</BigButton>
+      <BigButton
+        onClick={() => go?.("qr")}
+        icon={<QrCode className="w-4 h-4" />}
+      >
+        Join Event · Free RSVP
+      </BigButton>
     </div>
   </div>
 );
 const Row = ({ Icon, title, sub }) => (
   <div className="flex items-center gap-3">
-    <div className="w-10 h-10 rounded-2xl bg-white/6 flex items-center justify-center"><Icon className="w-4 h-4"/></div>
+    <div className="w-10 h-10 rounded-2xl bg-white/6 flex items-center justify-center">
+      <Icon className="w-4 h-4" />
+    </div>
     <div className="flex-1">
       <div className="text-[14px] font-medium">{title}</div>
       <div className="text-[11.5px] text-white/50">{sub}</div>
@@ -1292,13 +1824,17 @@ export const QRScreen = ({ go }) => (
     <StatusBar />
     <TopBar title="Check in" onBack={() => go?.("eventDetail")} />
     <div className="px-7">
-      <h2 className="text-[24px] font-semibold tracking-tighter">Scan venue QR</h2>
-      <p className="text-white/50 text-[13px] mt-1">Point your camera at the sirgaZ marker at the venue.</p>
+      <h2 className="text-[24px] font-semibold tracking-tighter">
+        Scan venue QR
+      </h2>
+      <p className="text-white/50 text-[13px] mt-1">
+        Point your camera at the sirgaZ marker at the venue.
+      </p>
     </div>
     <div className="mt-6 mx-6 relative aspect-square rounded-[32px] overflow-hidden">
-      <div className="absolute inset-0 bg-[#0a0a0a]"/>
-      <div className="absolute inset-0 grid-lines opacity-30"/>
-      <div className="absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_50%,rgba(255,47,146,0.25),transparent_70%)]"/>
+      <div className="absolute inset-0 bg-[#0a0a0a]" />
+      <div className="absolute inset-0 grid-lines opacity-30" />
+      <div className="absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_50%,rgba(255,47,146,0.25),transparent_70%)]" />
       {/* Frame */}
       <div className="absolute inset-6 rounded-3xl border border-white/10">
         {[
@@ -1306,22 +1842,33 @@ export const QRScreen = ({ go }) => (
           "top-0 right-0 border-t-2 border-r-2 rounded-tr-3xl",
           "bottom-0 left-0 border-b-2 border-l-2 rounded-bl-3xl",
           "bottom-0 right-0 border-b-2 border-r-2 rounded-br-3xl",
-        ].map((c,i) => <div key={i} className={`absolute w-12 h-12 border-[#FF2F92] ${c}`} />)}
+        ].map((c, i) => (
+          <div key={i} className={`absolute w-12 h-12 border-[#FF2F92] ${c}`} />
+        ))}
       </div>
       {/* Scan line */}
       <div className="absolute left-6 right-6 top-6 bottom-6 overflow-hidden rounded-3xl">
-        <div className="scan-line absolute inset-x-0 h-24 bg-gradient-to-b from-transparent via-[#FF2F92]/70 to-transparent blur-md"/>
+        <div className="scan-line absolute inset-x-0 h-24 bg-gradient-to-b from-transparent via-[#FF2F92]/70 to-transparent blur-md" />
       </div>
       {/* Fake QR pattern */}
       <div className="absolute inset-16 opacity-30">
         <div className="grid grid-cols-10 grid-rows-10 gap-[3px] w-full h-full">
-          {Array.from({length: 100}).map((_,i) => <div key={i} className={`${Math.random() > 0.55 ? "bg-white" : "bg-transparent"}`} />)}
+          {Array.from({ length: 100 }).map((_, i) => (
+            <div
+              key={i}
+              className={`${Math.random() > 0.55 ? "bg-white" : "bg-transparent"}`}
+            />
+          ))}
         </div>
       </div>
     </div>
-    <div className="mt-6 px-7 text-center text-[13px] text-white/60">Hold steady — verifying identity</div>
+    <div className="mt-6 px-7 text-center text-[13px] text-white/60">
+      Hold steady — verifying identity
+    </div>
     <div className="absolute bottom-0 left-0 right-0 p-5">
-      <BigButton onClick={() => go?.("waitingRoom")} variant="ghost">Enter manually</BigButton>
+      <BigButton onClick={() => go?.("waitingRoom")} variant="ghost">
+        Enter manually
+      </BigButton>
     </div>
   </div>
 );
@@ -1330,14 +1877,31 @@ export const QRScreen = ({ go }) => (
 export const WaitingRoom = ({ go }) => (
   <div className="relative h-full w-full bg-haze overflow-y-auto phone-scroll">
     <StatusBar />
-    <TopBar title="Waiting room" onBack={() => go?.("eventDetail")} right={<span className="text-[11px] font-medium text-[#00E5FF] flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-pulse"/>Live</span>} />
+    <TopBar
+      title="Waiting room"
+      onBack={() => go?.("eventDetail")}
+      right={
+        <span className="text-[11px] font-medium text-[#00E5FF] flex items-center gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-pulse" />
+          Live
+        </span>
+      }
+    />
     <div className="px-6">
       <div className="glass-strong rounded-3xl p-5 text-center">
-        <div className="text-[11px] uppercase tracking-widest text-white/50">Matching starts in</div>
-        <div className="mt-2 text-[56px] font-bold tracking-tighter text-gradient">02:14</div>
+        <div className="text-[11px] uppercase tracking-widest text-white/50">
+          Matching starts in
+        </div>
+        <div className="mt-2 text-[56px] font-bold tracking-tighter text-gradient">
+          02:14
+        </div>
         <div className="mt-3 flex items-center justify-center gap-4 text-[12px] text-white/60">
-          <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5"/> 842 inside</span>
-          <span className="flex items-center gap-1"><Radio className="w-3.5 h-3.5"/> Room A</span>
+          <span className="flex items-center gap-1">
+            <Users className="w-3.5 h-3.5" /> 842 inside
+          </span>
+          <span className="flex items-center gap-1">
+            <Radio className="w-3.5 h-3.5" /> Room A
+          </span>
         </div>
       </div>
 
@@ -1346,28 +1910,42 @@ export const WaitingRoom = ({ go }) => (
         <span className="text-[11px] text-white/50">842 online</span>
       </div>
       <div className="mt-3 grid grid-cols-4 gap-3">
-        {[10,12,15,18,22,25,28,31,34,38,41,44].map(i => (
+        {[10, 12, 15, 18, 22, 25, 28, 31, 34, 38, 41, 44].map((i) => (
           <div key={i} className="relative">
             <div className="w-full aspect-square rounded-2xl overflow-hidden">
-              <img src={`https://i.pravatar.cc/200?img=${i}`} className="w-full h-full object-cover"/>
+              <img
+                src={`https://i.pravatar.cc/200?img=${i}`}
+                className="w-full h-full object-cover"
+              />
             </div>
-            {i%3===0 && <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#00E5FF] border-2 border-black"/>}
+            {i % 3 === 0 && (
+              <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#00E5FF] border-2 border-black" />
+            )}
           </div>
         ))}
       </div>
 
       <div className="mt-6 glass rounded-3xl p-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl gradient-brand flex items-center justify-center"><Volume2 className="w-4 h-4"/></div>
+          <div className="w-10 h-10 rounded-2xl gradient-brand flex items-center justify-center">
+            <Volume2 className="w-4 h-4" />
+          </div>
           <div className="flex-1">
             <div className="text-[13px] font-medium">DJ Isha · Warm-up set</div>
-            <div className="text-[11px] text-white/50">Now playing in Room A</div>
+            <div className="text-[11px] text-white/50">
+              Now playing in Room A
+            </div>
           </div>
         </div>
       </div>
     </div>
     <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black via-black/85 to-transparent">
-      <BigButton onClick={() => go?.("countdown")} icon={<ArrowRight className="w-4 h-4"/>}>I'm ready</BigButton>
+      <BigButton
+        onClick={() => go?.("countdown")}
+        icon={<ArrowRight className="w-4 h-4" />}
+      >
+        I'm ready
+      </BigButton>
     </div>
   </div>
 );
@@ -1376,27 +1954,66 @@ export const WaitingRoom = ({ go }) => (
 export const Countdown = ({ go }) => {
   const [n, setN] = React.useState(3);
   React.useEffect(() => {
-    if (n <= 0) { const t = setTimeout(() => go?.("aiMatching"), 500); return () => clearTimeout(t); }
-    const t = setTimeout(() => setN(n - 1), 900); return () => clearTimeout(t);
+    if (n <= 0) {
+      const t = setTimeout(() => go?.("aiMatching"), 500);
+      return () => clearTimeout(t);
+    }
+    const t = setTimeout(() => setN(n - 1), 900);
+    return () => clearTimeout(t);
   }, [n, go]);
   return (
     <div className="relative h-full w-full bg-haze overflow-hidden flex items-center justify-center">
       <div className="absolute w-[520px] h-[520px] rounded-full bg-[#FF2F92]/25 blur-3xl pulse-slow" />
-      <div className="absolute w-[380px] h-[380px] rounded-full bg-[#A93CFF]/25 blur-3xl pulse-slow" style={{animationDelay:".3s"}}/>
+      <div
+        className="absolute w-[380px] h-[380px] rounded-full bg-[#A93CFF]/25 blur-3xl pulse-slow"
+        style={{ animationDelay: ".3s" }}
+      />
       <AnimatePresence mode="wait">
-        <motion.div key={n} initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.6, opacity: 0 }} transition={{ duration: 0.7, ease: "easeOut" }}
-          className="text-[220px] font-bold leading-none tracking-tighter text-gradient text-glow-white">
+        <motion.div
+          key={n}
+          initial={{ scale: 0.4, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 1.6, opacity: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className="text-[220px] font-bold leading-none tracking-tighter text-gradient text-glow-white"
+        >
           {n > 0 ? n : "GO"}
         </motion.div>
       </AnimatePresence>
-      <div className="absolute bottom-20 text-[13px] text-white/60 tracking-widest uppercase">Prepare to be matched</div>
+      <div className="absolute bottom-20 text-[13px] text-white/60 tracking-widest uppercase">
+        Prepare to be matched
+      </div>
     </div>
   );
 };
 
 /* ---------- 15 AI MATCHING ---------- */
-export const AIMatching = ({ go }) => {
-  React.useEffect(() => { const t = setTimeout(() => go?.("matchResult"), 3200); return () => clearTimeout(t); }, [go]);
+export const AIMatching = ({ go, params }) => {
+  const eventId = params?.eventId;
+
+  React.useEffect(() => {
+    (async () => {
+      const { getSupabase } = await import("@/lib/supabaseClient");
+      const { findOrCreateMatch } = await import("@/lib/db");
+      const sb = getSupabase();
+      const { data: authData } = await sb.auth.getUser();
+      const meId = authData?.user?.id;
+
+      const minDelay = new Promise((r) => setTimeout(r, 3200));
+      const matchPromise =
+        meId && eventId
+          ? findOrCreateMatch(eventId, meId)
+          : Promise.resolve(null);
+
+      const [match] = await Promise.all([matchPromise, minDelay]);
+
+      if (match) {
+        go?.("matchResult", { matchId: match.id, eventId });
+      } else {
+        go?.("waitingRoom", { eventId });
+      }
+    })();
+  }, [go, eventId]);
   return (
     <div className="relative h-full w-full bg-black overflow-hidden">
       <div className="absolute -inset-32 aurora">
@@ -1411,15 +2028,25 @@ export const AIMatching = ({ go }) => {
           <div className="absolute w-48 h-48 rounded-full border border-white/15 animate-[spin_7s_linear_infinite_reverse]"></div>
           <div className="absolute w-32 h-32 rounded-full border border-[#FF2F92]/50 animate-[spin_5s_linear_infinite]"></div>
           <div className="relative w-24 h-24 rounded-full gradient-brand glow-pink flex items-center justify-center">
-            <Sparkles className="w-8 h-8"/>
+            <Sparkles className="w-8 h-8" />
           </div>
         </div>
-        <div className="mt-14 text-[22px] font-semibold tracking-tighter">Reading the room…</div>
-        <div className="mt-2 text-white/60 text-[13px]">Analyzing 842 energies · 2.4M signals</div>
+        <div className="mt-14 text-[22px] font-semibold tracking-tighter">
+          Reading the room…
+        </div>
+        <div className="mt-2 text-white/60 text-[13px]">
+          Analyzing 842 energies · 2.4M signals
+        </div>
         <div className="mt-6 flex gap-2">
-          <span className="dot w-2 h-2 rounded-full bg-white/80"/>
-          <span className="dot w-2 h-2 rounded-full bg-white/80" style={{animationDelay:'.15s'}}/>
-          <span className="dot w-2 h-2 rounded-full bg-white/80" style={{animationDelay:'.3s'}}/>
+          <span className="dot w-2 h-2 rounded-full bg-white/80" />
+          <span
+            className="dot w-2 h-2 rounded-full bg-white/80"
+            style={{ animationDelay: ".15s" }}
+          />
+          <span
+            className="dot w-2 h-2 rounded-full bg-white/80"
+            style={{ animationDelay: ".3s" }}
+          />
         </div>
       </div>
     </div>
@@ -1427,45 +2054,119 @@ export const AIMatching = ({ go }) => {
 };
 
 /* ---------- 16 MATCH RESULT ---------- */
-export const MatchResult = ({ go }) => (
-  <div className="relative h-full w-full bg-black overflow-hidden">
-    <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=900" className="absolute inset-0 w-full h-full object-cover opacity-80"/>
-    <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black"/>
-    <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_20%,rgba(255,47,146,0.35),transparent_70%)]"/>
-    <StatusBar />
-    <TopBar title="Your match" onBack={() => go?.("home")} right={<X className="w-4 h-4"/>}/>
-    <div className="relative px-7 mt-2 flex flex-col items-center">
-      <div className="relative">
-        <svg width="240" height="240" viewBox="0 0 240 240">
-          <defs>
-            <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#FF2F92"/><stop offset="60%" stopColor="#A93CFF"/><stop offset="100%" stopColor="#00E5FF"/>
-            </linearGradient>
-          </defs>
-          <circle cx="120" cy="120" r="108" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="6"/>
-          <circle cx="120" cy="120" r="108" fill="none" stroke="url(#ring)" strokeWidth="6" strokeLinecap="round"
-            strokeDasharray={`${2*Math.PI*108*0.94} ${2*Math.PI*108}`} transform="rotate(-90 120 120)"/>
-        </svg>
-        <div className="absolute inset-4 rounded-full overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=600" className="w-full h-full object-cover"/>
-        </div>
-        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full gradient-brand text-[12px] font-semibold glow-pink">94% Match</div>
-      </div>
-      <div className="mt-8 text-[32px] font-bold tracking-tighter">Raka Wibisana</div>
-      <div className="mt-1 text-white/70 text-[13px]">Music Producer · 25 · Jakarta</div>
-      <div className="mt-4 flex gap-2 flex-wrap justify-center">
-        {["Music","Festival","Fashion","Coffee"].map(t => (
-          <span key={t} className="text-[11px] px-2.5 py-1 rounded-full glass">{t}</span>
-        ))}
-      </div>
-    </div>
-    <div className="absolute bottom-0 left-0 right-0 p-5 flex gap-3 bg-gradient-to-t from-black via-black/90 to-transparent">
-      <button className="w-14 h-14 rounded-2xl glass flex items-center justify-center"><X className="w-5 h-5"/></button>
-      <div className="flex-1"><BigButton onClick={() => go?.("compatibility")}>See compatibility</BigButton></div>
-    </div>
-  </div>
-);
+export const MatchResult = ({ go, params }) => {
+  const matchId = params?.matchId;
+  const [match, setMatch] = React.useState(null);
+  const [peer, setPeer] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
 
+  React.useEffect(() => {
+    if (!matchId) {
+      setLoading(false);
+      return;
+    }
+    (async () => {
+      const { getSupabase } = await import("@/lib/supabaseClient");
+      const { getMatch, getMatchPeer } = await import("@/lib/db");
+      const sb = getSupabase();
+      const { data: authData } = await sb.auth.getUser();
+      const meId = authData?.user?.id;
+
+      const m = await getMatch(matchId);
+      setMatch(m);
+      if (m && meId) {
+        const p = await getMatchPeer(m, meId);
+        setPeer(p);
+      }
+      setLoading(false);
+    })();
+  }, [matchId]);
+
+  if (loading)
+    return (
+      <div className="h-full flex items-center justify-center text-white/50">
+        Loading…
+      </div>
+    );
+  if (!match || !peer)
+    return (
+      <div className="h-full flex items-center justify-center text-white/50">
+        Match not found
+      </div>
+    );
+
+  const pct = Math.round(match.score || 0);
+
+  return (
+    <div className="relative h-full w-full bg-black overflow-hidden">
+      <img
+        src={
+          peer.avatar_url ||
+          "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=900"
+        }
+        className="absolute inset-0 w-full h-full object-cover opacity-80"
+      />
+      {/* ...gradient overlays tetap... */}
+      <StatusBar />
+      <TopBar
+        title="Your match"
+        onBack={() => go?.("home")}
+        right={<X className="w-4 h-4" />}
+      />
+      <div className="relative px-7 mt-2 flex flex-col items-center">
+        <div className="relative">
+          <svg width="240" height="240" viewBox="0 0 240 240">
+            {/* ...defs & background circle sama... */}
+            <circle
+              cx="120"
+              cy="120"
+              r="108"
+              fill="none"
+              stroke="url(#ring)"
+              strokeWidth="6"
+              strokeLinecap="round"
+              strokeDasharray={`${2 * Math.PI * 108 * (pct / 100)} ${2 * Math.PI * 108}`}
+              transform="rotate(-90 120 120)"
+            />
+          </svg>
+          <div className="absolute inset-4 rounded-full overflow-hidden">
+            <img
+              src={peer.avatar_url || `https://i.pravatar.cc/300?u=${peer.id}`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full gradient-brand text-[12px] font-semibold glow-pink">
+            {pct}% Match
+          </div>
+        </div>
+        <div className="mt-8 text-[32px] font-bold tracking-tighter">
+          {peer.name}
+        </div>
+        <div className="mt-1 text-white/70 text-[13px]">{peer.bio}</div>
+        <div className="mt-4 flex gap-2 flex-wrap justify-center">
+          {(peer.interests || []).slice(0, 4).map((t) => (
+            <span
+              key={t}
+              className="text-[11px] px-2.5 py-1 rounded-full glass"
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
+      <div className="absolute bottom-0 left-0 right-0 p-5 flex gap-3 bg-gradient-to-t from-black via-black/90 to-transparent">
+        <button className="w-14 h-14 rounded-2xl glass flex items-center justify-center">
+          <X className="w-5 h-5" />
+        </button>
+        <div className="flex-1">
+          <BigButton onClick={() => go?.("compatibility", { matchId })}>
+            See compatibility
+          </BigButton>
+        </div>
+      </div>
+    </div>
+  );
+};
 /* ---------- 17 COMPATIBILITY (Radar) ---------- */
 export const Compatibility = ({ go }) => {
   const data = [
@@ -1483,23 +2184,44 @@ export const Compatibility = ({ go }) => {
       <div className="px-6 pb-32">
         <div className="glass-strong rounded-3xl p-5">
           <div className="flex items-center gap-3">
-            <img src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=200" className="w-12 h-12 rounded-full object-cover"/>
+            <img
+              src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=200"
+              className="w-12 h-12 rounded-full object-cover"
+            />
             <div className="flex-1">
               <div className="text-[15px] font-semibold">You & Raka</div>
-              <div className="text-[11px] text-white/50">Multi-dimensional analysis</div>
+              <div className="text-[11px] text-white/50">
+                Multi-dimensional analysis
+              </div>
             </div>
-            <div className="px-2.5 py-1 rounded-full gradient-brand text-[11px] font-bold glow-pink">94%</div>
+            <div className="px-2.5 py-1 rounded-full gradient-brand text-[11px] font-bold glow-pink">
+              94%
+            </div>
           </div>
           <div className="mt-2 h-56">
             <ResponsiveContainer>
               <RadarChart data={data}>
-                <PolarGrid stroke="rgba(255,255,255,0.12)"/>
-                <PolarAngleAxis dataKey="k" tick={{ fill: "rgba(255,255,255,0.7)", fontSize: 11 }}/>
-                <PolarRadiusAxis tick={false} axisLine={false} domain={[0, 100]}/>
-                <Radar dataKey="v" stroke="#FF2F92" fill="url(#g1)" fillOpacity={0.55} strokeWidth={2}/>
+                <PolarGrid stroke="rgba(255,255,255,0.12)" />
+                <PolarAngleAxis
+                  dataKey="k"
+                  tick={{ fill: "rgba(255,255,255,0.7)", fontSize: 11 }}
+                />
+                <PolarRadiusAxis
+                  tick={false}
+                  axisLine={false}
+                  domain={[0, 100]}
+                />
+                <Radar
+                  dataKey="v"
+                  stroke="#FF2F92"
+                  fill="url(#g1)"
+                  fillOpacity={0.55}
+                  strokeWidth={2}
+                />
                 <defs>
                   <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#FF2F92"/><stop offset="100%" stopColor="#00E5FF"/>
+                    <stop offset="0%" stopColor="#FF2F92" />
+                    <stop offset="100%" stopColor="#00E5FF" />
                   </linearGradient>
                 </defs>
               </RadarChart>
@@ -1516,16 +2238,29 @@ export const Compatibility = ({ go }) => {
           ].map((r) => (
             <div key={r.l} className="glass rounded-2xl p-4">
               <div className="text-[11px] text-white/50">{r.l}</div>
-              <div className="mt-2 text-[26px] font-semibold tracking-tighter">{r.v}%</div>
+              <div className="mt-2 text-[26px] font-semibold tracking-tighter">
+                {r.v}%
+              </div>
               <div className="mt-2 h-1.5 rounded-full bg-white/8 overflow-hidden">
-                <div className="h-full rounded-full" style={{ width: `${r.v}%`, background: `linear-gradient(90deg, ${r.c}, #00E5FF)` }}/>
+                <div
+                  className="h-full rounded-full"
+                  style={{
+                    width: `${r.v}%`,
+                    background: `linear-gradient(90deg, ${r.c}, #00E5FF)`,
+                  }}
+                />
               </div>
             </div>
           ))}
         </div>
       </div>
       <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black via-black/85 to-transparent">
-        <BigButton onClick={() => go?.("iceBreaker")} icon={<Sparkles className="w-4 h-4"/>}>Get AI ice-breakers</BigButton>
+        <BigButton
+          onClick={() => go?.("iceBreaker")}
+          icon={<Sparkles className="w-4 h-4" />}
+        >
+          Get AI ice-breakers
+        </BigButton>
       </div>
     </div>
   );
@@ -1534,8 +2269,16 @@ export const Compatibility = ({ go }) => {
 /* ---------- 18 AI CONVERSATION STARTER ---------- */
 export const IceBreaker = ({ go }) => {
   const suggestions = [
-    { t: "Serious vibe", q: "Which producer would you kill to see live once?", tag: "Music" },
-    { t: "Funny", q: "Rate your dance moves 1-10. Be honest, I'll cross-check tonight.", tag: "Playful" },
+    {
+      t: "Serious vibe",
+      q: "Which producer would you kill to see live once?",
+      tag: "Music",
+    },
+    {
+      t: "Funny",
+      q: "Rate your dance moves 1-10. Be honest, I'll cross-check tonight.",
+      tag: "Playful",
+    },
     { t: "Deep", q: "What made you say yes to tonight?", tag: "Emotional" },
     { t: "Local", q: "Best late night food spot in Bali. GO.", tag: "Food" },
   ];
@@ -1545,30 +2288,51 @@ export const IceBreaker = ({ go }) => {
       <TopBar title="Ice-breakers" onBack={() => go?.("compatibility")} />
       <div className="px-6 pb-32">
         <div className="glass-strong rounded-3xl p-4 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl gradient-brand flex items-center justify-center"><Sparkles className="w-4 h-4"/></div>
+          <div className="w-10 h-10 rounded-2xl gradient-brand flex items-center justify-center">
+            <Sparkles className="w-4 h-4" />
+          </div>
           <div>
-            <div className="text-[13px] font-medium">sirgaZ AI wrote these for you</div>
-            <div className="text-[11px] text-white/50">Based on you & Raka's shared signals</div>
+            <div className="text-[13px] font-medium">
+              sirgaZ AI wrote these for you
+            </div>
+            <div className="text-[11px] text-white/50">
+              Based on you & Raka's shared signals
+            </div>
           </div>
         </div>
         <div className="mt-4 space-y-3">
           {suggestions.map((s, i) => (
             <div key={i} className="glass rounded-3xl p-4">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] uppercase tracking-widest text-white/40">{s.t}</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-white/60">{s.tag}</span>
+                <span className="text-[11px] uppercase tracking-widest text-white/40">
+                  {s.t}
+                </span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-white/60">
+                  {s.tag}
+                </span>
               </div>
-              <div className="mt-2 text-[15px] leading-snug font-medium">"{s.q}"</div>
+              <div className="mt-2 text-[15px] leading-snug font-medium">
+                "{s.q}"
+              </div>
               <div className="mt-3 flex gap-2">
-                <button className="h-9 px-3 rounded-full glass text-[12px] flex items-center gap-1.5"><Send className="w-3 h-3"/> Send</button>
-                <button className="h-9 px-3 rounded-full bg-white/5 text-[12px] text-white/70">Remix</button>
+                <button className="h-9 px-3 rounded-full glass text-[12px] flex items-center gap-1.5">
+                  <Send className="w-3 h-3" /> Send
+                </button>
+                <button className="h-9 px-3 rounded-full bg-white/5 text-[12px] text-white/70">
+                  Remix
+                </button>
               </div>
             </div>
           ))}
         </div>
       </div>
       <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black via-black/85 to-transparent">
-        <BigButton onClick={() => go?.("mission")} icon={<Target className="w-4 h-4"/>}>Start your mission</BigButton>
+        <BigButton
+          onClick={() => go?.("mission")}
+          icon={<Target className="w-4 h-4" />}
+        >
+          Start your mission
+        </BigButton>
       </div>
     </div>
   );
@@ -1581,10 +2345,16 @@ export const Mission = ({ go }) => (
     <TopBar title="Your mission" onBack={() => go?.("iceBreaker")} />
     <div className="px-6 pb-32">
       <div className="relative rounded-3xl overflow-hidden p-6 gradient-brand glow-pink">
-        <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_100%_0%,rgba(255,255,255,0.3),transparent_60%)]"/>
+        <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_100%_0%,rgba(255,255,255,0.3),transparent_60%)]" />
         <div className="relative">
-          <div className="text-[11px] uppercase tracking-widest opacity-80">Live mission</div>
-          <div className="mt-1 text-[26px] font-bold tracking-tighter leading-tight">Find Raka.<br/>Say hi. Get 200 XP.</div>
+          <div className="text-[11px] uppercase tracking-widest opacity-80">
+            Live mission
+          </div>
+          <div className="mt-1 text-[26px] font-bold tracking-tighter leading-tight">
+            Find Raka.
+            <br />
+            Say hi. Get 200 XP.
+          </div>
         </div>
       </div>
       <div className="mt-5 space-y-3">
@@ -1594,9 +2364,18 @@ export const Mission = ({ go }) => (
           { l: "Near the main bar", ok: false },
           { l: "Holding a mezcal", ok: false },
         ].map((c, i) => (
-          <div key={i} className="glass rounded-2xl p-4 flex items-center gap-3">
-            <div className={`w-6 h-6 rounded-full flex items-center justify-center ${c.ok ? "bg-[#00E5FF] text-black" : "border border-white/25"}`}>
-              {c.ok ? <Check className="w-3.5 h-3.5"/> : <Circle className="w-3 h-3 opacity-40"/>}
+          <div
+            key={i}
+            className="glass rounded-2xl p-4 flex items-center gap-3"
+          >
+            <div
+              className={`w-6 h-6 rounded-full flex items-center justify-center ${c.ok ? "bg-[#00E5FF] text-black" : "border border-white/25"}`}
+            >
+              {c.ok ? (
+                <Check className="w-3.5 h-3.5" />
+              ) : (
+                <Circle className="w-3 h-3 opacity-40" />
+              )}
             </div>
             <div className="flex-1 text-[14px]">{c.l}</div>
           </div>
@@ -1604,18 +2383,31 @@ export const Mission = ({ go }) => (
       </div>
 
       <div className="mt-6 glass-strong rounded-3xl p-4">
-        <div className="text-[11px] uppercase tracking-widest text-white/40">Reward preview</div>
+        <div className="text-[11px] uppercase tracking-widest text-white/40">
+          Reward preview
+        </div>
         <div className="mt-2 flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl gradient-brand flex items-center justify-center"><Zap className="w-5 h-5"/></div>
+          <div className="w-12 h-12 rounded-2xl gradient-brand flex items-center justify-center">
+            <Zap className="w-5 h-5" />
+          </div>
           <div className="flex-1">
-            <div className="text-[14px] font-medium">+200 XP · 20% off drinks</div>
-            <div className="text-[11px] text-white/50">Redeemable at NEONVERSE bar</div>
+            <div className="text-[14px] font-medium">
+              +200 XP · 20% off drinks
+            </div>
+            <div className="text-[11px] text-white/50">
+              Redeemable at NEONVERSE bar
+            </div>
           </div>
         </div>
       </div>
     </div>
     <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black via-black/85 to-transparent">
-      <BigButton onClick={() => go?.("missionProgress")} icon={<Flame className="w-4 h-4"/>}>Accept mission</BigButton>
+      <BigButton
+        onClick={() => go?.("missionProgress")}
+        icon={<Flame className="w-4 h-4" />}
+      >
+        Accept mission
+      </BigButton>
     </div>
   </div>
 );
@@ -1628,13 +2420,22 @@ export const MissionProgress = ({ go }) => (
     <div className="px-6 pb-32">
       <div className="glass-strong rounded-3xl p-5">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] uppercase tracking-widest text-white/40">Progress</span>
+          <span className="text-[11px] uppercase tracking-widest text-white/40">
+            Progress
+          </span>
           <span className="text-[11px] text-[#00E5FF]">2 of 4</span>
         </div>
         <div className="mt-3 h-2 rounded-full bg-white/8 overflow-hidden">
-          <motion.div initial={{width:0}} animate={{width:"50%"}} transition={{duration:1}} className="h-full gradient-brand rounded-full"/>
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: "50%" }}
+            transition={{ duration: 1 }}
+            className="h-full gradient-brand rounded-full"
+          />
         </div>
-        <div className="mt-3 text-[13px] text-white/70">You're halfway there. Keep going.</div>
+        <div className="mt-3 text-[13px] text-white/70">
+          You're halfway there. Keep going.
+        </div>
       </div>
 
       <div className="mt-5 space-y-3">
@@ -1643,22 +2444,46 @@ export const MissionProgress = ({ go }) => (
           { l: "Confirmed white shoes", s: "22:18", ok: "done" },
           { l: "Approach the bar", s: "in progress", ok: "live" },
           { l: "Say hi to Raka", s: "locked", ok: "pending" },
-        ].map((r,i) => (
-          <div key={i} className="glass rounded-2xl p-4 flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${r.ok==="done" ? "bg-[#00E5FF]/20 text-[#00E5FF]" : r.ok==="live" ? "gradient-brand" : "bg-white/5 text-white/40"}`}>
-              {r.ok==="done" ? <Check className="w-4 h-4"/> : r.ok==="live" ? <Activity className="w-4 h-4"/> : <Lock className="w-4 h-4"/>}
+        ].map((r, i) => (
+          <div
+            key={i}
+            className="glass rounded-2xl p-4 flex items-center gap-3"
+          >
+            <div
+              className={`w-10 h-10 rounded-2xl flex items-center justify-center ${r.ok === "done" ? "bg-[#00E5FF]/20 text-[#00E5FF]" : r.ok === "live" ? "gradient-brand" : "bg-white/5 text-white/40"}`}
+            >
+              {r.ok === "done" ? (
+                <Check className="w-4 h-4" />
+              ) : r.ok === "live" ? (
+                <Activity className="w-4 h-4" />
+              ) : (
+                <Lock className="w-4 h-4" />
+              )}
             </div>
             <div className="flex-1">
               <div className="text-[13.5px] font-medium">{r.l}</div>
               <div className="text-[11px] text-white/50">{r.s}</div>
             </div>
-            <span className={`text-[10px] px-2 py-1 rounded-full ${r.ok==="done" ? "bg-[#00E5FF]/15 text-[#00E5FF]" : r.ok==="live" ? "gradient-brand" : "bg-white/5 text-white/40"}`}>{r.ok==="done"?"Completed":r.ok==="live"?"Live":"Pending"}</span>
+            <span
+              className={`text-[10px] px-2 py-1 rounded-full ${r.ok === "done" ? "bg-[#00E5FF]/15 text-[#00E5FF]" : r.ok === "live" ? "gradient-brand" : "bg-white/5 text-white/40"}`}
+            >
+              {r.ok === "done"
+                ? "Completed"
+                : r.ok === "live"
+                  ? "Live"
+                  : "Pending"}
+            </span>
           </div>
         ))}
       </div>
     </div>
     <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black via-black/85 to-transparent">
-      <BigButton onClick={() => go?.("reward")} icon={<Award className="w-4 h-4"/>}>Claim rewards</BigButton>
+      <BigButton
+        onClick={() => go?.("reward")}
+        icon={<Award className="w-4 h-4" />}
+      >
+        Claim rewards
+      </BigButton>
     </div>
   </div>
 );
@@ -1670,11 +2495,18 @@ export const Reward = ({ go }) => (
     <TopBar title="Rewards" onBack={() => go?.("missionProgress")} />
     <div className="px-6 pb-32">
       <div className="relative rounded-3xl overflow-hidden p-6 gradient-brand glow-pink text-center">
-        <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_0%,rgba(255,255,255,0.35),transparent_60%)]"/>
+        <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_0%,rgba(255,255,255,0.35),transparent_60%)]" />
         <div className="relative">
-          <div className="text-[11px] uppercase tracking-widest opacity-80">You earned</div>
-          <div className="mt-2 text-[64px] font-bold tracking-tighter">+280<span className="text-[24px] align-top ml-2 opacity-90">XP</span></div>
-          <div className="mt-2 text-[13px] opacity-90">Level 4 · 120 XP to next</div>
+          <div className="text-[11px] uppercase tracking-widest opacity-80">
+            You earned
+          </div>
+          <div className="mt-2 text-[64px] font-bold tracking-tighter">
+            +280
+            <span className="text-[24px] align-top ml-2 opacity-90">XP</span>
+          </div>
+          <div className="mt-2 text-[13px] opacity-90">
+            Level 4 · 120 XP to next
+          </div>
         </div>
       </div>
       <div className="mt-5 grid grid-cols-3 gap-3">
@@ -1684,8 +2516,10 @@ export const Reward = ({ go }) => (
           { v: "3", l: "Badges", Icon: Award },
         ].map((r) => (
           <div key={r.l} className="glass rounded-2xl p-4 text-center">
-            <r.Icon className="w-4 h-4 mx-auto text-[#FF2F92]"/>
-            <div className="mt-2 text-[20px] font-semibold tracking-tighter">{r.v}</div>
+            <r.Icon className="w-4 h-4 mx-auto text-[#FF2F92]" />
+            <div className="mt-2 text-[20px] font-semibold tracking-tighter">
+              {r.v}
+            </div>
             <div className="text-[11px] text-white/50">{r.l}</div>
           </div>
         ))}
@@ -1693,26 +2527,55 @@ export const Reward = ({ go }) => (
       <div className="mt-6 text-[15px] font-semibold">Vouchers unlocked</div>
       <div className="mt-3 space-y-3">
         {[
-          { t: "20% off drinks", s: "NEONVERSE · valid tonight", Icon: Gift, hue: "from-[#FF2F92] to-[#A93CFF]" },
-          { t: "Free entry next event", s: "Aurora Rooftop · Sat", Icon: PartyPopper, hue: "from-[#A93CFF] to-[#00E5FF]" },
-          { t: "1 free ride home", s: "Partner: Grab", Icon: Plane, hue: "from-[#00E5FF] to-[#FF2F92]" },
-        ].map((r,i) => (
-          <div key={i} className="relative glass rounded-3xl p-4 overflow-hidden">
-            <div className={`absolute -right-8 -top-8 w-40 h-40 rounded-full bg-gradient-to-br ${r.hue} opacity-40 blur-2xl`}/>
+          {
+            t: "20% off drinks",
+            s: "NEONVERSE · valid tonight",
+            Icon: Gift,
+            hue: "from-[#FF2F92] to-[#A93CFF]",
+          },
+          {
+            t: "Free entry next event",
+            s: "Aurora Rooftop · Sat",
+            Icon: PartyPopper,
+            hue: "from-[#A93CFF] to-[#00E5FF]",
+          },
+          {
+            t: "1 free ride home",
+            s: "Partner: Grab",
+            Icon: Plane,
+            hue: "from-[#00E5FF] to-[#FF2F92]",
+          },
+        ].map((r, i) => (
+          <div
+            key={i}
+            className="relative glass rounded-3xl p-4 overflow-hidden"
+          >
+            <div
+              className={`absolute -right-8 -top-8 w-40 h-40 rounded-full bg-gradient-to-br ${r.hue} opacity-40 blur-2xl`}
+            />
             <div className="relative flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl glass-strong flex items-center justify-center"><r.Icon className="w-5 h-5"/></div>
+              <div className="w-12 h-12 rounded-2xl glass-strong flex items-center justify-center">
+                <r.Icon className="w-5 h-5" />
+              </div>
               <div className="flex-1">
                 <div className="text-[14px] font-semibold">{r.t}</div>
                 <div className="text-[11px] text-white/55">{r.s}</div>
               </div>
-              <button className="h-9 px-3 rounded-full bg-white text-black text-[12px] font-semibold">Redeem</button>
+              <button className="h-9 px-3 rounded-full bg-white text-black text-[12px] font-semibold">
+                Redeem
+              </button>
             </div>
           </div>
         ))}
       </div>
     </div>
     <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black via-black/85 to-transparent">
-      <BigButton onClick={() => go?.("chat")} icon={<MessageCircle className="w-4 h-4"/>}>Message Raka</BigButton>
+      <BigButton
+        onClick={() => go?.("chat")}
+        icon={<MessageCircle className="w-4 h-4" />}
+      >
+        Message Raka
+      </BigButton>
     </div>
   </div>
 );
@@ -1722,99 +2585,208 @@ export const Chat = ({ go }) => (
   <div className="relative h-full w-full bg-haze overflow-hidden flex flex-col">
     <StatusBar />
     <div className="px-4 pt-2 pb-3 flex items-center gap-3 border-b border-white/5">
-      <button onClick={() => go?.("home")} className="w-10 h-10 rounded-full glass flex items-center justify-center"><ChevronLeft className="w-5 h-5"/></button>
-      <img src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=100" className="w-10 h-10 rounded-full object-cover"/>
+      <button
+        onClick={() => go?.("home")}
+        className="w-10 h-10 rounded-full glass flex items-center justify-center"
+      >
+        <ChevronLeft className="w-5 h-5" />
+      </button>
+      <img
+        src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=100"
+        className="w-10 h-10 rounded-full object-cover"
+      />
       <div className="flex-1">
-        <div className="text-[14px] font-semibold flex items-center gap-1.5">Raka <span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF]"/></div>
-        <div className="text-[11px] text-white/50">Matched 94% · at NEONVERSE</div>
+        <div className="text-[14px] font-semibold flex items-center gap-1.5">
+          Raka <span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF]" />
+        </div>
+        <div className="text-[11px] text-white/50">
+          Matched 94% · at NEONVERSE
+        </div>
       </div>
-      <button className="w-10 h-10 rounded-full glass flex items-center justify-center"><Phone className="w-4 h-4"/></button>
+      <button className="w-10 h-10 rounded-full glass flex items-center justify-center">
+        <Phone className="w-4 h-4" />
+      </button>
     </div>
     <div className="flex-1 overflow-y-auto phone-scroll px-4 py-4 space-y-3">
       <div className="text-center text-[11px] text-white/40">Today · 22:24</div>
-      <Bubble side="left">Which producer would you kill to see live once?</Bubble>
+      <Bubble side="left">
+        Which producer would you kill to see live once?
+      </Bubble>
       <Bubble side="right">Fred again.. Any day. You?</Bubble>
       <Bubble side="left">Bicep. Saw them in Amsterdam, life changed.</Bubble>
       <Bubble side="right">Okay we're doing that trip 😅</Bubble>
       <div className="flex items-center gap-2 text-[11px] text-white/50 pl-2">
-        <div className="flex gap-1"><span className="dot w-1.5 h-1.5 rounded-full bg-white/50"/><span className="dot w-1.5 h-1.5 rounded-full bg-white/50" style={{animationDelay:".1s"}}/><span className="dot w-1.5 h-1.5 rounded-full bg-white/50" style={{animationDelay:".2s"}}/></div>
+        <div className="flex gap-1">
+          <span className="dot w-1.5 h-1.5 rounded-full bg-white/50" />
+          <span
+            className="dot w-1.5 h-1.5 rounded-full bg-white/50"
+            style={{ animationDelay: ".1s" }}
+          />
+          <span
+            className="dot w-1.5 h-1.5 rounded-full bg-white/50"
+            style={{ animationDelay: ".2s" }}
+          />
+        </div>
         typing…
       </div>
     </div>
     <div className="p-4 pt-2">
       <div className="glass rounded-full h-12 flex items-center px-2 pr-1.5 gap-2">
-        <button className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center"><Plus className="w-4 h-4"/></button>
-        <input placeholder="Message" className="flex-1 bg-transparent outline-none text-[14px] placeholder-white/30"/>
-        <button className="w-9 h-9 rounded-full gradient-brand flex items-center justify-center glow-pink"><Send className="w-4 h-4"/></button>
+        <button className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center">
+          <Plus className="w-4 h-4" />
+        </button>
+        <input
+          placeholder="Message"
+          className="flex-1 bg-transparent outline-none text-[14px] placeholder-white/30"
+        />
+        <button className="w-9 h-9 rounded-full gradient-brand flex items-center justify-center glow-pink">
+          <Send className="w-4 h-4" />
+        </button>
       </div>
     </div>
   </div>
 );
 const Bubble = ({ side, children }) => (
-  <div className={`flex ${side==="right"?"justify-end":"justify-start"}`}>
-    <div className={`max-w-[78%] px-3.5 py-2.5 text-[13.5px] leading-relaxed ${side==="right" ? "gradient-brand rounded-[20px] rounded-br-md text-white" : "glass rounded-[20px] rounded-bl-md"}`}>{children}</div>
+  <div className={`flex ${side === "right" ? "justify-end" : "justify-start"}`}>
+    <div
+      className={`max-w-[78%] px-3.5 py-2.5 text-[13.5px] leading-relaxed ${side === "right" ? "gradient-brand rounded-[20px] rounded-br-md text-white" : "glass rounded-[20px] rounded-bl-md"}`}
+    >
+      {children}
+    </div>
   </div>
 );
 
 /* ---------- 23 LEADERBOARD ---------- */
 export const Leaderboard = ({ go }) => {
   const [tab, setTab] = React.useState("connections");
-  const rows = [
-    { r: 1, n: "Kaia S.", p: 4820, img: 5, badge: "Crown" },
-    { r: 2, n: "Aditya M.", p: 4610, img: 12 },
-    { r: 3, n: "Nadia P. (you)", p: 4400, img: 8, you: true },
-    { r: 4, n: "Sinta R.", p: 4210, img: 15 },
-    { r: 5, n: "Bimo T.", p: 4050, img: 21 },
-    { r: 6, n: "Jill K.", p: 3820, img: 22 },
-  ];
+  const [rows, setRows] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [myId, setMyId] = React.useState(null);
+
+  React.useEffect(() => {
+    (async () => {
+      const { getSupabase } = await import("@/lib/supabaseClient");
+      const sb = getSupabase();
+
+      const { data: authData } = await sb.auth.getUser();
+      const uid = authData?.user?.id || null;
+      setMyId(uid);
+
+      const { data } = await sb
+        .from("profiles")
+        .select("id, name, avatar_url, xp")
+        .order("xp", { ascending: false })
+        .limit(20);
+
+      const mapped = (data || []).map((p, i) => ({
+        r: i + 1,
+        id: p.id,
+        n: p.id === uid ? `${p.name || "You"} (you)` : p.name || "Anon",
+        p: p.xp || 0,
+        avatar: p.avatar_url,
+        you: p.id === uid,
+      }));
+
+      setRows(mapped);
+      setLoading(false);
+    })();
+  }, []);
+
+  const top3 = rows.slice(0, 3);
+  const podiumOrder =
+    top3.length === 3
+      ? [top3[1], top3[0], top3[2]] // #2, #1, #3 layout
+      : top3;
+
   return (
     <div className="relative h-full w-full bg-haze overflow-y-auto phone-scroll">
       <StatusBar />
       <TopBar title="Leaderboard" onBack={() => go?.("home")} />
       <div className="px-6 pb-32">
         <div className="glass rounded-full p-1 flex text-[12px]">
-          {[["connections","Top Connections"],["participants","Top Participants"]].map(([k,l]) => (
-            <button key={k} onClick={()=>setTab(k)} className={`flex-1 h-10 rounded-full font-medium transition ${tab===k?"gradient-brand text-white glow-pink":"text-white/60"}`}>{l}</button>
-          ))}
-        </div>
-        {/* Podium */}
-        <div className="mt-6 grid grid-cols-3 gap-3 items-end">
           {[
-            { r: 2, h: "h-24", n: "Aditya", p: 4610, img: 12 },
-            { r: 1, h: "h-32", n: "Kaia", p: 4820, img: 5, crown: true },
-            { r: 3, h: "h-20", n: "You", p: 4400, img: 8 },
-          ].map(p => (
-            <div key={p.r} className="flex flex-col items-center">
-              <div className="relative">
-                {p.crown && <Crown className="absolute -top-5 left-1/2 -translate-x-1/2 w-5 h-5 text-[#FF2F92]"/>}
-                <div className={`w-16 h-16 rounded-full p-[2px] ${p.r===1?"gradient-brand glow-pink":"bg-white/10"}`}>
-                  <img src={`https://i.pravatar.cc/160?img=${p.img}`} className="w-full h-full rounded-full object-cover"/>
+            ["connections", "Top Connections"],
+            ["participants", "Top Participants"],
+          ].map(([k, l]) => (
+            <button
+              key={k}
+              onClick={() => setTab(k)}
+              className={`flex-1 h-10 rounded-full font-medium transition ${tab === k ? "gradient-brand text-white glow-pink" : "text-white/60"}`}
+            >
+              {l}
+            </button>
+          ))}
+        </div>
+
+        {loading && (
+          <div className="mt-6 text-[12px] text-white/40">Loading…</div>
+        )}
+
+        {!loading && rows.length === 0 && (
+          <div className="mt-6 text-[12px] text-white/40">Belum ada data.</div>
+        )}
+
+        {!loading && rows.length > 0 && (
+          <>
+            {/* Podium */}
+            <div className="mt-6 grid grid-cols-3 gap-3 items-end">
+              {podiumOrder.map((p) => (
+                <div key={p.r} className="flex flex-col items-center">
+                  <div className="relative">
+                    {p.r === 1 && (
+                      <Crown className="absolute -top-5 left-1/2 -translate-x-1/2 w-5 h-5 text-[#FF2F92]" />
+                    )}
+                    <div
+                      className={`w-16 h-16 rounded-full p-[2px] ${p.r === 1 ? "gradient-brand glow-pink" : "bg-white/10"}`}
+                    >
+                      <img
+                        src={p.avatar || `https://i.pravatar.cc/160?u=${p.id}`}
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    className={`mt-2 ${p.r === 1 ? "h-32" : p.r === 2 ? "h-24" : "h-20"} w-full glass rounded-t-2xl flex flex-col items-center justify-end pb-2`}
+                  >
+                    <div className="text-[11px] text-white/50">#{p.r}</div>
+                    <div className="text-[12.5px] font-medium">
+                      {p.you ? "You" : p.n}
+                    </div>
+                    <div className="text-[10.5px] text-white/50">{p.p} pts</div>
+                  </div>
                 </div>
-              </div>
-              <div className={`mt-2 ${p.h} w-full glass rounded-t-2xl flex flex-col items-center justify-end pb-2`}>
-                <div className="text-[11px] text-white/50">#{p.r}</div>
-                <div className="text-[12.5px] font-medium">{p.n}</div>
-                <div className="text-[10.5px] text-white/50">{p.p} pts</div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
-        {/* List */}
-        <div className="mt-6 space-y-2">
-          {rows.map(r => (
-            <div key={r.r} className={`glass rounded-2xl p-3 flex items-center gap-3 ${r.you?"ring-1 ring-[#FF2F92]/60":""}`}>
-              <div className="w-7 text-center text-[13px] font-semibold text-white/60">#{r.r}</div>
-              <img src={`https://i.pravatar.cc/80?img=${r.img}`} className="w-10 h-10 rounded-full object-cover"/>
-              <div className="flex-1">
-                <div className="text-[13px] font-medium">{r.n}</div>
-                <div className="text-[11px] text-white/45 flex items-center gap-1"><Zap className="w-3 h-3 text-[#FF2F92]"/>{r.p} pts</div>
-              </div>
-              <TrendingUp className="w-4 h-4 text-[#00E5FF]"/>
+
+            {/* List */}
+            <div className="mt-6 space-y-2">
+              {rows.map((r) => (
+                <div
+                  key={r.id}
+                  className={`glass rounded-2xl p-3 flex items-center gap-3 ${r.you ? "ring-1 ring-[#FF2F92]/60" : ""}`}
+                >
+                  <div className="w-7 text-center text-[13px] font-semibold text-white/60">
+                    #{r.r}
+                  </div>
+                  <img
+                    src={r.avatar || `https://i.pravatar.cc/80?u=${r.id}`}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <div className="flex-1">
+                    <div className="text-[13px] font-medium">{r.n}</div>
+                    <div className="text-[11px] text-white/45 flex items-center gap-1">
+                      <Zap className="w-3 h-3 text-[#FF2F92]" />
+                      {r.p} pts
+                    </div>
+                  </div>
+                  <TrendingUp className="w-4 h-4 text-[#00E5FF]" />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
-      <BottomNav active="leaderboard" onNavigate={go}/>
+      <BottomNav active="leaderboard" onNavigate={go} />
     </div>
   );
 };
@@ -1825,33 +2797,65 @@ export const History = ({ go }) => (
     <StatusBar />
     <TopBar title="History" onBack={() => go?.("profile")} />
     <div className="px-6 pb-32">
-      <div className="text-[11px] uppercase tracking-widest text-white/40">Previous matches</div>
+      <div className="text-[11px] uppercase tracking-widest text-white/40">
+        Previous matches
+      </div>
       <div className="mt-3 grid grid-cols-3 gap-3">
-        {[3,7,13,20,25,29,33,42].map((i,ix) => (
-          <div key={i} className="relative aspect-[3/4] rounded-2xl overflow-hidden">
-            <img src={`https://i.pravatar.cc/300?img=${i}`} className="w-full h-full object-cover"/>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"/>
+        {[3, 7, 13, 20, 25, 29, 33, 42].map((i, ix) => (
+          <div
+            key={i}
+            className="relative aspect-[3/4] rounded-2xl overflow-hidden"
+          >
+            <img
+              src={`https://i.pravatar.cc/300?img=${i}`}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
             <div className="absolute bottom-2 left-2 right-2">
-              <div className="text-[11px] font-semibold">{["Raka","Aditya","Kaia","Sinta","Bimo","Jill","Rico","Ines"][ix]}</div>
-              <div className="text-[10px] text-white/70">{[94,88,82,79,76,74,71,68][ix]}%</div>
+              <div className="text-[11px] font-semibold">
+                {
+                  [
+                    "Raka",
+                    "Aditya",
+                    "Kaia",
+                    "Sinta",
+                    "Bimo",
+                    "Jill",
+                    "Rico",
+                    "Ines",
+                  ][ix]
+                }
+              </div>
+              <div className="text-[10px] text-white/70">
+                {[94, 88, 82, 79, 76, 74, 71, 68][ix]}%
+              </div>
             </div>
           </div>
         ))}
       </div>
-      <div className="mt-8 text-[11px] uppercase tracking-widest text-white/40">Previous events</div>
+      <div className="mt-8 text-[11px] uppercase tracking-widest text-white/40">
+        Previous events
+      </div>
       <div className="mt-3 space-y-3">
         {[
           { t: "NEONVERSE · Techno Ritual", d: "21 Jun · Bali", m: 3 },
           { t: "Aurora Rooftop", d: "14 Jun · Jakarta", m: 1 },
           { t: "Sunset Sessions", d: "07 Jun · Canggu", m: 2 },
-        ].map((e,i) => (
-          <div key={i} className="glass rounded-2xl p-4 flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl gradient-brand-soft flex items-center justify-center"><Calendar className="w-4 h-4"/></div>
+        ].map((e, i) => (
+          <div
+            key={i}
+            className="glass rounded-2xl p-4 flex items-center gap-3"
+          >
+            <div className="w-12 h-12 rounded-2xl gradient-brand-soft flex items-center justify-center">
+              <Calendar className="w-4 h-4" />
+            </div>
             <div className="flex-1">
               <div className="text-[13.5px] font-medium">{e.t}</div>
-              <div className="text-[11px] text-white/50">{e.d} · {e.m} matches</div>
+              <div className="text-[11px] text-white/50">
+                {e.d} · {e.m} matches
+              </div>
             </div>
-            <ChevronRight className="w-4 h-4 text-white/40"/>
+            <ChevronRight className="w-4 h-4 text-white/40" />
           </div>
         ))}
       </div>
@@ -1867,87 +2871,139 @@ export const Profile = ({ go }) => {
 
   React.useEffect(() => {
     (async () => {
-      if (!session?.user) { setLoading(false); return; }
+      if (!session?.user) {
+        setLoading(false);
+        return;
+      }
       const { getProfile } = await import("@/lib/db");
       setProfile(await getProfile(session.user.id));
       setLoading(false);
     })();
   }, [session]);
 
-  const { normalizeVibe, getInterestEmoji, getTonightLabel, getTonightEmoji } = require("@/lib/vibe");
+  const {
+    normalizeVibe,
+    getInterestEmoji,
+    getTonightLabel,
+    getTonightEmoji,
+  } = require("@/lib/vibe");
   const v = normalizeVibe(profile);
 
   return (
-  <div className="relative h-full w-full bg-haze overflow-y-auto phone-scroll">
-    <StatusBar />
-    <div className="px-6 pt-2 flex items-center justify-between">
-      <button onClick={()=>go?.("home")} className="w-10 h-10 rounded-full glass flex items-center justify-center"><ChevronLeft className="w-5 h-5"/></button>
-      <div className="text-[15px] font-semibold">Profile</div>
-      <button onClick={()=>go?.("settings")} className="w-10 h-10 rounded-full glass flex items-center justify-center"><SettingsIcon className="w-4 h-4"/></button>
-    </div>
-    <div className="px-6 pt-6 pb-32">
-      <div className="flex flex-col items-center">
-        <div className="w-28 h-28 rounded-full gradient-brand p-[2px] glow-pink">
-          <img src={v?.avatar_url || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400"} className="w-full h-full rounded-full object-cover"/>
-        </div>
-        <div className="mt-4 text-[22px] font-semibold tracking-tighter">{v?.name || (loading ? "Loading…" : "Guest")}</div>
-        <div className="text-[12px] text-white/60 flex items-center gap-2 mt-1">
-          {v?.age && <span>{v.age}</span>}
-          {v?.zodiac && <span>{v.zodiac.emoji} {v.zodiac.name}</span>}
-          {v?.vibeTitle && <span>{v.vibeTitle.emoji} {v.vibeTitle.l}</span>}
-        </div>
-
-        {v?.interests?.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1.5 justify-center">
-            {v.interests.slice(0,5).map(i => (
-              <span key={i} className="text-[11px] px-2.5 py-1 rounded-full glass flex items-center gap-1">
-                <span>{getInterestEmoji(i)}</span>{i}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {v?.tonight && (
-          <div className="mt-3 flex items-center gap-2">
-            <span className="text-[11px] text-white/50 uppercase tracking-widest">Tonight</span>
-            <span className="text-[11.5px] px-2.5 py-1 rounded-full gradient-brand-soft flex items-center gap-1">
-              <span>{getTonightEmoji(v.tonight)}</span>{getTonightLabel(v.tonight)}
-            </span>
-          </div>
-        )}
-
-        {v?.bio && <div className="mt-4 max-w-[280px] text-center text-[13px] text-white/70 leading-relaxed">{v.bio}</div>}
-
-        <button onClick={()=>go?.("createProfile")} className="mt-4 h-9 px-4 rounded-full glass text-[12px] font-medium flex items-center gap-1.5">
-          <Edit3 className="w-3 h-3"/> Edit profile
+    <div className="relative h-full w-full bg-haze overflow-y-auto phone-scroll">
+      <StatusBar />
+      <div className="px-6 pt-2 flex items-center justify-between">
+        <button
+          onClick={() => go?.("home")}
+          className="w-10 h-10 rounded-full glass flex items-center justify-center"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <div className="text-[15px] font-semibold">Profile</div>
+        <button
+          onClick={() => go?.("settings")}
+          className="w-10 h-10 rounded-full glass flex items-center justify-center"
+        >
+          <SettingsIcon className="w-4 h-4" />
         </button>
       </div>
-
-      <div className="mt-6 grid grid-cols-3 gap-3">
-        {[
-          { v: "0", l: "Events" },
-          { v: "0", l: "Matches" },
-          { v: v?.xp || 0, l: "XP" },
-        ].map(s => (
-          <div key={s.l} className="glass rounded-2xl p-4 text-center">
-            <div className="text-[22px] font-semibold tracking-tighter">{s.v}</div>
-            <div className="text-[11px] text-white/50">{s.l}</div>
+      <div className="px-6 pt-6 pb-32">
+        <div className="flex flex-col items-center">
+          <div className="w-28 h-28 rounded-full gradient-brand p-[2px] glow-pink">
+            <img
+              src={
+                v?.avatar_url ||
+                "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400"
+              }
+              className="w-full h-full rounded-full object-cover"
+            />
           </div>
-        ))}
-      </div>
+          <div className="mt-4 text-[22px] font-semibold tracking-tighter">
+            {v?.name || (loading ? "Loading…" : "Guest")}
+          </div>
+          <div className="text-[12px] text-white/60 flex items-center gap-2 mt-1">
+            {v?.age && <span>{v.age}</span>}
+            {v?.zodiac && (
+              <span>
+                {v.zodiac.emoji} {v.zodiac.name}
+              </span>
+            )}
+            {v?.vibeTitle && (
+              <span>
+                {v.vibeTitle.emoji} {v.vibeTitle.l}
+              </span>
+            )}
+          </div>
 
-      <div className="mt-6 glass-strong rounded-3xl p-4">
-        <div className="flex items-center justify-between">
-          <div className="text-[13px] font-semibold">Level 1 · {v?.vibeTitle?.l || "New"}</div>
-          <div className="text-[11px] text-white/50">{v?.xp || 0} pts</div>
+          {v?.interests?.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5 justify-center">
+              {v.interests.slice(0, 5).map((i) => (
+                <span
+                  key={i}
+                  className="text-[11px] px-2.5 py-1 rounded-full glass flex items-center gap-1"
+                >
+                  <span>{getInterestEmoji(i)}</span>
+                  {i}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {v?.tonight && (
+            <div className="mt-3 flex items-center gap-2">
+              <span className="text-[11px] text-white/50 uppercase tracking-widest">
+                Tonight
+              </span>
+              <span className="text-[11.5px] px-2.5 py-1 rounded-full gradient-brand-soft flex items-center gap-1">
+                <span>{getTonightEmoji(v.tonight)}</span>
+                {getTonightLabel(v.tonight)}
+              </span>
+            </div>
+          )}
+
+          {v?.bio && (
+            <div className="mt-4 max-w-[280px] text-center text-[13px] text-white/70 leading-relaxed">
+              {v.bio}
+            </div>
+          )}
+
+          <button
+            onClick={() => go?.("createProfile")}
+            className="mt-4 h-9 px-4 rounded-full glass text-[12px] font-medium flex items-center gap-1.5"
+          >
+            <Edit3 className="w-3 h-3" /> Edit profile
+          </button>
         </div>
-        <div className="mt-3 h-2 rounded-full bg-white/8 overflow-hidden">
-          <div className="h-full w-[10%] gradient-brand rounded-full"/>
+
+        <div className="mt-6 grid grid-cols-3 gap-3">
+          {[
+            { v: "0", l: "Events" },
+            { v: "0", l: "Matches" },
+            { v: v?.xp || 0, l: "XP" },
+          ].map((s) => (
+            <div key={s.l} className="glass rounded-2xl p-4 text-center">
+              <div className="text-[22px] font-semibold tracking-tighter">
+                {s.v}
+              </div>
+              <div className="text-[11px] text-white/50">{s.l}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 glass-strong rounded-3xl p-4">
+          <div className="flex items-center justify-between">
+            <div className="text-[13px] font-semibold">
+              Level 1 · {v?.vibeTitle?.l || "New"}
+            </div>
+            <div className="text-[11px] text-white/50">{v?.xp || 0} pts</div>
+          </div>
+          <div className="mt-3 h-2 rounded-full bg-white/8 overflow-hidden">
+            <div className="h-full w-[10%] gradient-brand rounded-full" />
+          </div>
         </div>
       </div>
+      <BottomNav active="profile" onNavigate={go} />
     </div>
-    <BottomNav active="profile" onNavigate={go}/>
-  </div>
   );
 };
 
@@ -1963,35 +3019,68 @@ export const Settings = ({ go }) => {
   };
   const Item = ({ Icon, l, s, right }) => (
     <div className="glass rounded-2xl px-4 py-3.5 flex items-center gap-3">
-      <div className="w-9 h-9 rounded-xl bg-white/[0.06] flex items-center justify-center"><Icon className="w-4 h-4"/></div>
+      <div className="w-9 h-9 rounded-xl bg-white/[0.06] flex items-center justify-center">
+        <Icon className="w-4 h-4" />
+      </div>
       <div className="flex-1">
         <div className="text-[13.5px] font-medium">{l}</div>
         {s && <div className="text-[11px] text-white/45">{s}</div>}
       </div>
-      {right || <ChevronRight className="w-4 h-4 text-white/40"/>}
+      {right || <ChevronRight className="w-4 h-4 text-white/40" />}
     </div>
   );
   const Toggle = ({ on = true }) => (
-    <div className={`w-10 h-6 rounded-full flex items-center px-0.5 ${on ? "gradient-brand" : "bg-white/10"}`}>
-      <div className={`w-5 h-5 rounded-full bg-white transition ${on ? "ml-auto" : ""}`}/>
+    <div
+      className={`w-10 h-6 rounded-full flex items-center px-0.5 ${on ? "gradient-brand" : "bg-white/10"}`}
+    >
+      <div
+        className={`w-5 h-5 rounded-full bg-white transition ${on ? "ml-auto" : ""}`}
+      />
     </div>
   );
   return (
     <div className="relative h-full w-full bg-haze overflow-y-auto phone-scroll">
       <StatusBar />
-      <TopBar title="Settings" onBack={()=>go?.("profile")} />
+      <TopBar title="Settings" onBack={() => go?.("profile")} />
       <div className="px-6 pb-32 space-y-3">
-        <div className="text-[11px] uppercase tracking-widest text-white/40 mt-2">Preferences</div>
-        <Item Icon={BellRing} l="Notifications" s="Matches, missions, events" right={<Toggle on/>}/>
-        <Item Icon={Lock} l="Privacy" s="Visibility, blocklist"/>
-        <Item Icon={Globe} l="Language" s="English"/>
-        <div className="text-[11px] uppercase tracking-widest text-white/40 mt-4">Account</div>
-        <Item Icon={ShieldCheck} l="Verified profile" s="Identity confirmed" right={<span className="text-[11px] text-[#00E5FF] font-medium">Verified</span>}/>
-        <Item Icon={User} l="Personal information"/>
-        <div className="mt-4">
-          <button onClick={onLogout} disabled={loggingOut} className="w-full h-14 rounded-2xl glass flex items-center justify-center gap-2 text-[#FF2F92] font-semibold disabled:opacity-60"><LogOut className="w-4 h-4"/> {loggingOut ? "Logging out…" : "Log out"}</button>
+        <div className="text-[11px] uppercase tracking-widest text-white/40 mt-2">
+          Preferences
         </div>
-        <div className="mt-2 text-center text-[10px] text-white/30">sirgaZ v1.0.0 · Made with ♥ in Bali</div>
+        <Item
+          Icon={BellRing}
+          l="Notifications"
+          s="Matches, missions, events"
+          right={<Toggle on />}
+        />
+        <Item Icon={Lock} l="Privacy" s="Visibility, blocklist" />
+        <Item Icon={Globe} l="Language" s="English" />
+        <div className="text-[11px] uppercase tracking-widest text-white/40 mt-4">
+          Account
+        </div>
+        <Item
+          Icon={ShieldCheck}
+          l="Verified profile"
+          s="Identity confirmed"
+          right={
+            <span className="text-[11px] text-[#00E5FF] font-medium">
+              Verified
+            </span>
+          }
+        />
+        <Item Icon={User} l="Personal information" />
+        <div className="mt-4">
+          <button
+            onClick={onLogout}
+            disabled={loggingOut}
+            className="w-full h-14 rounded-2xl glass flex items-center justify-center gap-2 text-[#FF2F92] font-semibold disabled:opacity-60"
+          >
+            <LogOut className="w-4 h-4" />{" "}
+            {loggingOut ? "Logging out…" : "Log out"}
+          </button>
+        </div>
+        <div className="mt-2 text-center text-[10px] text-white/30">
+          sirgaZ v1.0.0 · Made with ♥ in Bali
+        </div>
       </div>
     </div>
   );
@@ -2002,22 +3091,50 @@ export const AdminLogin = ({ go }) => (
   <div className="relative h-full w-full bg-haze overflow-hidden">
     <StatusBar />
     <div className="px-7 pt-6">
-      <div className="w-12 h-12 rounded-2xl glass-strong flex items-center justify-center"><ShieldCheck className="w-5 h-5 text-[#00E5FF]"/></div>
-      <div className="mt-6 text-[11px] uppercase tracking-widest text-white/40">Admin panel</div>
-      <h2 className="mt-1 text-[30px] font-semibold tracking-tighter">Secure sign-in</h2>
-      <p className="text-white/50 text-[13px] mt-2">For sirgaZ venue partners & operators only.</p>
+      <div className="w-12 h-12 rounded-2xl glass-strong flex items-center justify-center">
+        <ShieldCheck className="w-5 h-5 text-[#00E5FF]" />
+      </div>
+      <div className="mt-6 text-[11px] uppercase tracking-widest text-white/40">
+        Admin panel
+      </div>
+      <h2 className="mt-1 text-[30px] font-semibold tracking-tighter">
+        Secure sign-in
+      </h2>
+      <p className="text-white/50 text-[13px] mt-2">
+        For sirgaZ venue partners & operators only.
+      </p>
       <div className="mt-8 space-y-3">
         <div className="glass rounded-2xl px-4 py-3">
-          <div className="text-[11px] uppercase tracking-widest text-white/40">Work email</div>
-          <input defaultValue="admin@potatohead.co" className="w-full mt-1 bg-transparent outline-none text-[14px]"/>
+          <div className="text-[11px] uppercase tracking-widest text-white/40">
+            Work email
+          </div>
+          <input
+            defaultValue="admin@potatohead.co"
+            className="w-full mt-1 bg-transparent outline-none text-[14px]"
+          />
         </div>
         <div className="glass rounded-2xl px-4 py-3">
-          <div className="text-[11px] uppercase tracking-widest text-white/40">Password</div>
-          <input type="password" defaultValue="••••••••••" className="w-full mt-1 bg-transparent outline-none text-[14px]"/>
+          <div className="text-[11px] uppercase tracking-widest text-white/40">
+            Password
+          </div>
+          <input
+            type="password"
+            defaultValue="••••••••••"
+            className="w-full mt-1 bg-transparent outline-none text-[14px]"
+          />
         </div>
       </div>
-      <div className="mt-6"><BigButton onClick={()=>go?.("venueDashboard")} icon={<ArrowRight className="w-4 h-4"/>}>Enter dashboard</BigButton></div>
-      <div className="mt-6 text-[11px] text-white/40 text-center">Protected by biometrics · Encrypted E2E</div>
+      <div className="mt-6">
+        <BigButton
+          onClick={() => go?.("venueDashboard")}
+          icon={<ArrowRight className="w-4 h-4" />}
+        >
+          Enter dashboard
+        </BigButton>
+      </div>
+      <div className="mt-6 text-[11px] text-white/40 text-center">
+        Protected by biometrics · Encrypted E2E
+      </div>
     </div>
   </div>
 );
@@ -2032,17 +3149,37 @@ export const AdminDashboard = ({ go }) => (
         <div className="text-[15px] font-semibold">Potato Head · Bali</div>
       </div>
       <div className="flex gap-2">
-        <button onClick={()=>go?.("adminAnalytics")} className="w-10 h-10 rounded-full glass flex items-center justify-center"><BarChart3 className="w-4 h-4"/></button>
-        <button onClick={()=>go?.("adminLive")} className="w-10 h-10 rounded-full glass flex items-center justify-center"><Radio className="w-4 h-4"/></button>
+        <button
+          onClick={() => go?.("adminAnalytics")}
+          className="w-10 h-10 rounded-full glass flex items-center justify-center"
+        >
+          <BarChart3 className="w-4 h-4" />
+        </button>
+        <button
+          onClick={() => go?.("adminLive")}
+          className="w-10 h-10 rounded-full glass flex items-center justify-center"
+        >
+          <Radio className="w-4 h-4" />
+        </button>
       </div>
     </div>
     <div className="px-6 pb-32">
       <div className="mt-4 relative rounded-3xl p-5 overflow-hidden gradient-brand-soft glow-pink">
-        <div className="absolute inset-0 bg-black/25"/>
+        <div className="absolute inset-0 bg-black/25" />
         <div className="relative">
-          <div className="text-[11px] uppercase tracking-widest opacity-80">Live tonight</div>
-          <div className="mt-1 text-[36px] font-bold tracking-tighter">1,240<span className="text-[16px] opacity-80 ml-2 font-medium">attendees</span></div>
-          <div className="mt-1 text-[12px] opacity-90 flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"/> NEONVERSE · Room A</div>
+          <div className="text-[11px] uppercase tracking-widest opacity-80">
+            Live tonight
+          </div>
+          <div className="mt-1 text-[36px] font-bold tracking-tighter">
+            1,240
+            <span className="text-[16px] opacity-80 ml-2 font-medium">
+              attendees
+            </span>
+          </div>
+          <div className="mt-1 text-[12px] opacity-90 flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />{" "}
+            NEONVERSE · Room A
+          </div>
         </div>
       </div>
 
@@ -2050,12 +3187,22 @@ export const AdminDashboard = ({ go }) => (
         {[
           { l: "Matches made", v: "312", d: "+18% vs last", Icon: Heart },
           { l: "Missions live", v: "84", d: "12 completed", Icon: Target },
-          { l: "Revenue tonight", v: "$4.8k", d: "Vouchers redeemed", Icon: DollarSign },
+          {
+            l: "Revenue tonight",
+            v: "$4.8k",
+            d: "Vouchers redeemed",
+            Icon: DollarSign,
+          },
           { l: "Avg vibe", v: "4.8", d: "out of 5", Icon: Sparkles },
         ].map((s) => (
           <div key={s.l} className="glass rounded-2xl p-4">
-            <div className="flex items-center gap-2 text-white/60"><s.Icon className="w-3.5 h-3.5"/><span className="text-[11px]">{s.l}</span></div>
-            <div className="mt-2 text-[24px] font-semibold tracking-tighter">{s.v}</div>
+            <div className="flex items-center gap-2 text-white/60">
+              <s.Icon className="w-3.5 h-3.5" />
+              <span className="text-[11px]">{s.l}</span>
+            </div>
+            <div className="mt-2 text-[24px] font-semibold tracking-tighter">
+              {s.v}
+            </div>
             <div className="text-[11px] text-[#00E5FF]">{s.d}</div>
           </div>
         ))}
@@ -2068,9 +3215,15 @@ export const AdminDashboard = ({ go }) => (
           { l: "Live participants", Icon: Users, go: "adminLive" },
           { l: "Analytics", Icon: BarChart3, go: "adminAnalytics" },
           { l: "Broadcast", Icon: Volume2, go: "adminDashboard" },
-        ].map(a => (
-          <button key={a.l} onClick={()=>go?.(a.go)} className="glass rounded-2xl p-4 text-left">
-            <div className="w-10 h-10 rounded-xl gradient-brand flex items-center justify-center mb-2"><a.Icon className="w-4 h-4"/></div>
+        ].map((a) => (
+          <button
+            key={a.l}
+            onClick={() => go?.(a.go)}
+            className="glass rounded-2xl p-4 text-left"
+          >
+            <div className="w-10 h-10 rounded-xl gradient-brand flex items-center justify-center mb-2">
+              <a.Icon className="w-4 h-4" />
+            </div>
             <div className="text-[13px] font-medium">{a.l}</div>
           </button>
         ))}
@@ -2083,21 +3236,37 @@ export const AdminDashboard = ({ go }) => (
 export const AdminLive = ({ go }) => (
   <div className="relative h-full w-full bg-haze overflow-y-auto phone-scroll">
     <StatusBar />
-    <TopBar title="Live participants" onBack={()=>go?.("adminDashboard")} right={<span className="text-[11px] text-[#00E5FF] flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-pulse"/>Live</span>}/>
+    <TopBar
+      title="Live participants"
+      onBack={() => go?.("adminDashboard")}
+      right={
+        <span className="text-[11px] text-[#00E5FF] flex items-center gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] animate-pulse" />
+          Live
+        </span>
+      }
+    />
     <div className="px-6 pb-32">
       <div className="grid grid-cols-3 gap-3">
         {[
-          ["1,240","Total"],["842","In room"],["312","Matched"],
-        ].map(([v,l]) => (
+          ["1,240", "Total"],
+          ["842", "In room"],
+          ["312", "Matched"],
+        ].map(([v, l]) => (
           <div key={l} className="glass rounded-2xl p-3.5 text-center">
-            <div className="text-[20px] font-semibold tracking-tighter">{v}</div>
+            <div className="text-[20px] font-semibold tracking-tighter">
+              {v}
+            </div>
             <div className="text-[11px] text-white/50">{l}</div>
           </div>
         ))}
       </div>
       <div className="mt-5 glass rounded-2xl h-11 flex items-center px-3 gap-2">
-        <Search className="w-4 h-4 text-white/50"/>
-        <input placeholder="Search participants" className="flex-1 bg-transparent outline-none text-[13px]"/>
+        <Search className="w-4 h-4 text-white/50" />
+        <input
+          placeholder="Search participants"
+          className="flex-1 bg-transparent outline-none text-[13px]"
+        />
       </div>
       <div className="mt-5 space-y-2">
         {[
@@ -2107,15 +3276,26 @@ export const AdminLive = ({ go }) => (
           { n: "Sinta R.", s: "Room A · matched", m: 91, i: 15 },
           { n: "Bimo T.", s: "Lobby", m: 71, i: 22 },
           { n: "Jill K.", s: "Room A · chat", m: 84, i: 34 },
-        ].map((r,i) => (
-          <div key={i} className="glass rounded-2xl p-3 flex items-center gap-3">
-            <img src={`https://i.pravatar.cc/80?img=${r.i}`} className="w-10 h-10 rounded-full object-cover"/>
+        ].map((r, i) => (
+          <div
+            key={i}
+            className="glass rounded-2xl p-3 flex items-center gap-3"
+          >
+            <img
+              src={`https://i.pravatar.cc/80?img=${r.i}`}
+              className="w-10 h-10 rounded-full object-cover"
+            />
             <div className="flex-1">
-              <div className="text-[13px] font-medium flex items-center gap-2">{r.n}<span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF]"/></div>
+              <div className="text-[13px] font-medium flex items-center gap-2">
+                {r.n}
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF]" />
+              </div>
               <div className="text-[11px] text-white/50">{r.s}</div>
             </div>
             <div className="text-right">
-              <div className="text-[12px] font-semibold text-gradient">{r.m}%</div>
+              <div className="text-[12px] font-semibold text-gradient">
+                {r.m}%
+              </div>
               <div className="text-[10px] text-white/40">match</div>
             </div>
           </div>
@@ -2129,22 +3309,36 @@ export const AdminLive = ({ go }) => (
 export const AdminAnalytics = ({ go }) => (
   <div className="relative h-full w-full bg-haze overflow-y-auto phone-scroll">
     <StatusBar />
-    <TopBar title="Analytics" onBack={()=>go?.("adminDashboard")} />
+    <TopBar title="Analytics" onBack={() => go?.("adminDashboard")} />
     <div className="px-6 pb-32">
       <div className="glass-strong rounded-3xl p-5">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-[11px] uppercase tracking-widest text-white/50">Matches this week</div>
-            <div className="mt-1 text-[32px] font-bold tracking-tighter">1,842</div>
+            <div className="text-[11px] uppercase tracking-widest text-white/50">
+              Matches this week
+            </div>
+            <div className="mt-1 text-[32px] font-bold tracking-tighter">
+              1,842
+            </div>
           </div>
-          <div className="text-[11px] px-2 py-1 rounded-full bg-[#00E5FF]/15 text-[#00E5FF]">+24%</div>
+          <div className="text-[11px] px-2 py-1 rounded-full bg-[#00E5FF]/15 text-[#00E5FF]">
+            +24%
+          </div>
         </div>
         {/* Bar chart */}
         <div className="mt-4 flex items-end justify-between gap-2 h-32">
-          {[42,58,66,49,73,88,95].map((h,i) => (
+          {[42, 58, 66, 49, 73, 88, 95].map((h, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
-              <div className="w-full rounded-t-xl" style={{ height: `${h}%`, background: `linear-gradient(180deg,#FF2F92, #A93CFF ${h/2}%, #00E5FF)` }}/>
-              <div className="text-[10px] text-white/40">{["M","T","W","T","F","S","S"][i]}</div>
+              <div
+                className="w-full rounded-t-xl"
+                style={{
+                  height: `${h}%`,
+                  background: `linear-gradient(180deg,#FF2F92, #A93CFF ${h / 2}%, #00E5FF)`,
+                }}
+              />
+              <div className="text-[10px] text-white/40">
+                {["M", "T", "W", "T", "F", "S", "S"][i]}
+              </div>
             </div>
           ))}
         </div>
@@ -2156,10 +3350,15 @@ export const AdminAnalytics = ({ go }) => (
           { l: "Avg match time", v: "3m 12s", Icon: Clock },
           { l: "Vibe rating", v: "4.8", Icon: Sparkles },
           { l: "Voucher redeem", v: "68%", Icon: Gift },
-        ].map(k => (
+        ].map((k) => (
           <div key={k.l} className="glass rounded-2xl p-4">
-            <div className="flex items-center gap-2 text-white/60"><k.Icon className="w-3.5 h-3.5"/><span className="text-[11px]">{k.l}</span></div>
-            <div className="mt-2 text-[22px] font-semibold tracking-tighter">{k.v}</div>
+            <div className="flex items-center gap-2 text-white/60">
+              <k.Icon className="w-3.5 h-3.5" />
+              <span className="text-[11px]">{k.l}</span>
+            </div>
+            <div className="mt-2 text-[22px] font-semibold tracking-tighter">
+              {k.v}
+            </div>
           </div>
         ))}
       </div>
@@ -2172,11 +3371,17 @@ export const AdminAnalytics = ({ go }) => (
             { l: "Festival", v: 78 },
             { l: "Fashion", v: 61 },
             { l: "Coffee", v: 54 },
-          ].map(r => (
+          ].map((r) => (
             <div key={r.l}>
-              <div className="flex items-center justify-between text-[11px] text-white/60"><span>{r.l}</span><span>{r.v}%</span></div>
+              <div className="flex items-center justify-between text-[11px] text-white/60">
+                <span>{r.l}</span>
+                <span>{r.v}%</span>
+              </div>
               <div className="mt-1 h-1.5 rounded-full bg-white/8 overflow-hidden">
-                <div className="h-full gradient-brand" style={{ width: `${r.v}%` }}/>
+                <div
+                  className="h-full gradient-brand"
+                  style={{ width: `${r.v}%` }}
+                />
               </div>
             </div>
           ))}

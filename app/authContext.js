@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { getSupabase } from "@/lib/supabaseClient";
+import { supabase } from "../lib/supabaseClient";
 
 const AuthCtx = React.createContext(null);
 
@@ -19,31 +19,43 @@ export const AuthProvider = ({ children }) => {
   const [pendingPhone, setPendingPhone] = React.useState("");
 
   React.useEffect(() => {
-    const sb = getSupabase();
-    if (!sb) { setSessionLoading(false); return; }
+    const sb = supabase;
+
+    if (!sb) {
+      setSessionLoading(false);
+      return;
+    }
+
+    // Get initial session
     sb.auth.getSession().then(({ data }) => {
       setSession(data.session || null);
       setSessionLoading(false);
     });
+
+    // Listen for auth changes
     const { data: sub } = sb.auth.onAuthStateChange((_event, s) => {
       setSession(s || null);
+      setSessionLoading(false);
     });
+
     return () => sub?.subscription?.unsubscribe?.();
   }, []);
 
   /* ---------------- EMAIL OTP (active) ---------------- */
-  const isValidEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e || "").trim());
+  const isValidEmail = (e) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e || "").trim());
 
   const sendEmailOtp = async (emailRaw) => {
-    const sb = getSupabase();
+    const sb = supabase;
     if (!sb) return { error: "Auth not configured" };
-    const email = String(emailRaw || "").trim().toLowerCase();
+    const email = String(emailRaw || "")
+      .trim()
+      .toLowerCase();
     if (!isValidEmail(email)) return { error: "Enter a valid email address" };
     setPendingEmail(email);
     const { error } = await sb.auth.signInWithOtp({
       email,
       options: {
-        // Create user if not exists (default true)
         shouldCreateUser: true,
       },
     });
@@ -52,10 +64,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const verifyEmailOtp = async (code) => {
-    const sb = getSupabase();
+    const sb = supabase;
     if (!sb) return { error: "Auth not configured" };
-    if (!pendingEmail) return { error: "No email to verify. Please try again." };
-    if (!code || String(code).length < 6) return { error: "Enter the 6 digit code" };
+    if (!pendingEmail)
+      return { error: "No email to verify. Please try again." };
+    if (!code || String(code).length < 6)
+      return { error: "Enter the 6 digit code" };
     const { data, error } = await sb.auth.verifyOtp({
       email: pendingEmail,
       token: String(code),
@@ -68,8 +82,12 @@ export const AuthProvider = ({ children }) => {
 
   const resendEmailOtp = async () => {
     if (!pendingEmail) return { error: "No pending email" };
-    const sb = getSupabase();
-    const { error } = await sb.auth.signInWithOtp({ email: pendingEmail, options: { shouldCreateUser: true } });
+    const sb = supabase;
+    if (!sb) return { error: "Auth not configured" };
+    const { error } = await sb.auth.signInWithOtp({
+      email: pendingEmail,
+      options: { shouldCreateUser: true },
+    });
     if (error) return { error: error.message };
     return { success: true };
   };
@@ -82,39 +100,56 @@ export const AuthProvider = ({ children }) => {
     if (v.startsWith("0")) v = v.slice(1);
     return "+62" + v;
   };
+
   const sendPhoneOtp = async (phoneRaw) => {
-    const sb = getSupabase(); if (!sb) return { error: "Auth not configured" };
+    const sb = supabase;
+    if (!sb) return { error: "Auth not configured" };
     const phone = formatPhone(phoneRaw);
     if (phone.length < 8) return { error: "Enter a valid phone number" };
     setPendingPhone(phone);
-    const { error } = await sb.auth.signInWithOtp({ phone, options: { channel: "sms" } });
+    const { error } = await sb.auth.signInWithOtp({
+      phone,
+      options: { channel: "sms" },
+    });
     if (error) return { error: error.message };
     return { success: true, phone };
   };
+
   const verifyPhoneOtp = async (code) => {
-    const sb = getSupabase(); if (!sb) return { error: "Auth not configured" };
+    const sb = supabase;
+    if (!sb) return { error: "Auth not configured" };
     if (!pendingPhone) return { error: "No phone to verify." };
-    const { data, error } = await sb.auth.verifyOtp({ phone: pendingPhone, token: String(code), type: "sms" });
+    const { data, error } = await sb.auth.verifyOtp({
+      phone: pendingPhone,
+      token: String(code),
+      type: "sms",
+    });
     if (error) return { error: error.message };
     setSession(data.session || null);
     return { success: true, user: data.user };
   };
+
   const resendPhoneOtp = async () => {
     if (!pendingPhone) return { error: "No pending phone" };
-    const sb = getSupabase();
-    const { error } = await sb.auth.signInWithOtp({ phone: pendingPhone, options: { channel: "sms" } });
+    const sb = supabase;
+    if (!sb) return { error: "Auth not configured" };
+    const { error } = await sb.auth.signInWithOtp({
+      phone: pendingPhone,
+      options: { channel: "sms" },
+    });
     if (error) return { error: error.message };
     return { success: true };
   };
 
-  /* ---------------- Unified interface (used by screens) ---------------- */
+  /* ---------------- Unified interface ---------------- */
   const sendOtp = AUTH_METHOD === "email" ? sendEmailOtp : sendPhoneOtp;
   const verifyOtp = AUTH_METHOD === "email" ? verifyEmailOtp : verifyPhoneOtp;
   const resendOtp = AUTH_METHOD === "email" ? resendEmailOtp : resendPhoneOtp;
-  const pendingIdentifier = AUTH_METHOD === "email" ? pendingEmail : pendingPhone;
+  const pendingIdentifier =
+    AUTH_METHOD === "email" ? pendingEmail : pendingPhone;
 
   const logout = async () => {
-    const sb = getSupabase();
+    const sb = supabase;
     if (!sb) return;
     await sb.auth.signOut();
     setSession(null);
@@ -123,18 +158,25 @@ export const AuthProvider = ({ children }) => {
   };
 
   const value = {
-    // meta
     authMethod: AUTH_METHOD,
-    session, sessionLoading,
-    // unified (email-backed for now)
-    sendOtp, verifyOtp, resendOtp, pendingIdentifier,
-    pendingEmail, pendingPhone, // exposed for display
-    // explicit method calls (available regardless of AUTH_METHOD toggle)
-    sendEmailOtp, verifyEmailOtp, resendEmailOtp,
-    sendPhoneOtp, verifyPhoneOtp, resendPhoneOtp,
+    session,
+    sessionLoading,
+    sendOtp,
+    verifyOtp,
+    resendOtp,
+    pendingIdentifier,
+    pendingEmail,
+    pendingPhone,
+    sendEmailOtp,
+    verifyEmailOtp,
+    resendEmailOtp,
+    sendPhoneOtp,
+    verifyPhoneOtp,
+    resendPhoneOtp,
     formatPhone,
     logout,
   };
+
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
 };
 

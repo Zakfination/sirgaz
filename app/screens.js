@@ -1487,9 +1487,9 @@ export const HomeScreen = ({ go }) => {
   React.useEffect(() => {
     (async () => {
       const { listPublishedEvents, getProfile } = await import("@/lib/db");
-      const { getSupabase } = await import("@/lib/supabaseClient");
-
-      const sb = getSupabase();
+      // KODE BARU
+      const { supabase } = await import("@/lib/supabaseClient");
+      const sb = supabase;
       const { data: authData } = await sb.auth.getUser();
       if (authData?.user) {
         const p = await getProfile(authData.user.id);

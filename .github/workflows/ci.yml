@@ -37,3 +37,8 @@ jobs:
           test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:3000/api/mission)" = "401"
           test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:3000/api/reward)" = "401"
           test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:3000/api/reward/redeem)" = "401"
+          headers="$(curl -sSI http://127.0.0.1:3000/)"
+          echo "$headers" | grep -qi 'x-content-type-options: nosniff'
+          echo "$headers" | grep -qi 'referrer-policy: strict-origin-when-cross-origin'
+          echo "$headers" | grep -qi 'content-security-policy:'
+          if echo "$headers" | grep -qi 'access-control-allow-origin: \*'; then exit 1; fi

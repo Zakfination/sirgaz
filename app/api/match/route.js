@@ -27,7 +27,6 @@ export async function POST(request) {
   if (!eventId) return json({ error: "eventId is required" }, 400);
 
   const admin = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
-
   const { data: mePart } = await admin.from("event_participants").select("*").eq("event_id", eventId).eq("user_id", user.id).maybeSingle();
   if (!mePart) return json({ error: "not an event participant" }, 403);
 
@@ -40,36 +39,31 @@ export async function POST(request) {
   const ids = (participants || []).map(p => p.user_id).filter(id => id !== user.id);
   if (!ids.length) return json({ match: null });
 
-  const { data: matches } = await admin.from("matches").select("user_a,user_b").eq("event_id", eventId);
-  const matched = new Set((matches || []).flatMap(m => [m.user_a, m.user_b]));
-  const candidateIds = ids.filter(id => !matched.has(id));
-  if (!candidateIds.length) return json({ match: null });
-
-  const { data: profiles, error: profileError } = await admin.from("profiles").select("*").in("id", [user.id, ...candidateIds]);
+  const { data: profiles, error: profileError } = await admin.from("profiles").select("*").in("id", [user.id, ...ids]);
   if (profileError) return json({ error: "could not load profiles" }, 500);
   const me = (profiles || []).find(p => p.id === user.id);
   if (!me) return json({ error: "profile incomplete" }, 400);
 
-  let best = null;
-  for (const candidate of (profiles || []).filter(p => candidateIds.includes(p.id))) {
+  const candidates = (profiles || []).filter(p => ids.includes(p.id));
+  candidates.sort((a, b) => computeServerVibeMatch(me, b).score - computeServerVibeMatch(me, a).score);
+
+  // The database function serializes the event and rechecks both users while locked.
+  // If a concurrent request claimed this candidate, try the next candidate.
+  for (const candidate of candidates) {
     const result = computeServerVibeMatch(me, candidate);
-    if (!best || result.score > best.score) best = { candidate, result };
-  }
-  if (!best) return json({ match: null });
+    const { data: created, error: atomicError } = await admin.rpc("create_match_atomic", {
+      p_event_id: eventId,
+      p_user_id: user.id,
+      p_candidate_id: candidate.id,
+      p_score: result.score,
+      p_breakdown: result.breakdown,
+    });
 
-  const { data: created, error: insertError } = await admin.from("matches").insert({
-    event_id: eventId,
-    user_a: user.id,
-    user_b: best.candidate.id,
-    score: best.result.score,
-    breakdown: best.result.breakdown,
-  }).select().single();
-
-  if (insertError) {
-    const { data: retry } = await admin.from("matches").select("*").eq("event_id", eventId).or(`user_a.eq.${user.id},user_b.eq.${user.id}`).limit(1).maybeSingle();
-    return retry ? json({ match: retry }) : json({ error: "match creation failed" }, 409);
+    if (!atomicError && created) return json({ match: created });
+    if (atomicError?.code === "40001" || atomicError?.code === "42501") continue;
+    if (atomicError?.code === "22023") return json({ error: "invalid match request" }, 400);
   }
 
-  await admin.from("event_participants").update({ status: "matched" }).eq("event_id", eventId).in("user_id", [user.id, best.candidate.id]);
-  return json({ match: created });
+  const { data: retry } = await admin.from("matches").select("*").eq("event_id", eventId).or(`user_a.eq.${user.id},user_b.eq.${user.id}`).limit(1).maybeSingle();
+  return retry ? json({ match: retry }) : json({ match: null });
 }

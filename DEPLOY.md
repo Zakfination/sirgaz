@@ -1,205 +1,270 @@
 # Production Deployment Checklist — sirgaZ
 
-End-to-end path: **Emergent → GitHub → Vercel → Hostinger DNS → sirgaz.com**
+End-to-end path: **GitHub → Railway → Supabase → sirgaz.com**
 
 ---
 
-## 1. GitHub ✅
+## 1. GitHub
 
-**Where**: Emergent chat UI → "Save to GitHub" button (or GitHub icon in top bar).
+Repository:
 
-1. Click **Save to GitHub** / **Connect GitHub** in the Emergent app UI
-2. Authorize the Emergent GitHub App on your account
-3. Choose **Create new repository** → name it exactly **`sirgaz`**
-4. Visibility: **Private** (recommended)
-5. Click **Push**
+`Zakfination/sirgaz`
 
-When the push completes you will get a repo URL like:
+Production branch:
 
-```
-https://github.com/<your-username>/sirgaz
-```
+`main`
 
-Save that URL — you'll need it in Step 2.
-
-### Verify
-- Open the repo URL in a browser
-- Confirm: `/app/page.js`, `/lib/db.js`, `/supabase/schema.sql`, `/supabase/002_venue_profile.sql`, `package.json`, `next.config.js`, `.env.example`, `README.md`, `DEPLOY.md`
-- Confirm: `.env` is **NOT** committed (it's in `.gitignore`)
-- Confirm: `node_modules/` is **NOT** committed
+Never commit `.env`, `.env.local`, Supabase service-role keys, database passwords, or other private credentials.
 
 ---
 
-## 2. Vercel ✅
+## 2. Railway — Next.js service
 
-1. Go to **https://vercel.com** → sign in with your GitHub account
-2. Click **Add New → Project**
-3. Pick the **`sirgaz`** repo → **Import**
+Create/connect a Railway service to:
 
-### Vercel project config
+`Zakfination/sirgaz`
+
+Use the `main` branch.
+
+### Required Railway build configuration
 
 | Setting | Value |
 |---|---|
-| **Framework Preset** | **Next.js** (auto-detected) |
-| **Root Directory** | `.` (leave as default) |
-| **Build Command** | `next build` (leave as default) |
-| **Install Command** | `yarn install` (leave as default) |
-| **Output Directory** | `.next` (leave as default) |
-| **Node.js Version** | **20.x** (default) or 22.x — both work; 22 recommended if you want no Supabase deprecation warning |
+| Builder | Railpack |
+| Build command | `yarn build` |
+| Start command | `yarn start` |
+| Root directory | `/` |
+| Healthcheck | `/` |
+| Port | Railway `$PORT` |
+| Node | 20.x or newer supported by the repo |
+
+**Important:** sirgaZ is a Next.js application. Do NOT use `serve -s build`; that is a Create React App/static-site command and will not serve the `.next` output correctly.
+
+### Required Railway variables
+
+Set these on the **sirgaZ Railway web service**, for the Production environment:
+
+```text
+NEXT_PUBLIC_SUPABASE_URL=https://dmoaeewcsjklgdhaprsq.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_Vz6BlwKknK5aFyw_LLiu6w_X9WL_67X
+```
+
+The `NEXT_PUBLIC_SUPABASE_ANON_KEY` variable name is retained for application compatibility; the value is the modern Supabase publishable key.
+
+Do not add the Supabase `service_role` key to a `NEXT_PUBLIC_*` variable.
 
 ---
 
-## 3. Environment Variables ✅
+## 3. Supabase
 
-Under **Vercel Project → Settings → Environment Variables**, add these for **Production, Preview, and Development** environments:
+Production project:
 
-| Name | Value | Scope |
-|---|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | `https://dmoaeewcsjklgdhaprsq.supabase.co` | Production, Preview, Development |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `sb_publishable_Vz6BlwKknK5aFyw_LLiu6w_X9WL_67X` | Production, Preview, Development |
+`dmoaeewcsjklgdhaprsq`
 
-### Variables you must NOT copy from Emergent
+URL:
 
-| Emergent var | Reason to skip |
-|---|---|
-| `MONGO_URL` | Emergent-only local Mongo; not used by any code path in production |
-| `DB_NAME` | Same — legacy from the template |
-| `NEXT_PUBLIC_BASE_URL` | Emergent-specific preview URL; Vercel provides its own via `VERCEL_URL` |
-| `CORS_ORIGINS` | Only referenced in `next.config.js` headers as a fallback (`"*"` if unset); safe to omit |
+`https://dmoaeewcsjklgdhaprsq.supabase.co`
 
----
+Apply migrations in order:
 
-## 4. Supabase ✅
-
-### 4a. Confirm SQL migrations were run
-
-In Supabase → SQL Editor, verify these were previously executed (re-running is safe/idempotent):
-
-- `supabase/schema.sql`
-- `supabase/002_venue_profile.sql`
-
-Table Editor should show 7 tables: `venues`, `events`, `event_participants`, `profiles`, `matches`, `missions`, `rewards`.
-
-### 4b. Update Auth URL configuration
-
-Dashboard → **Authentication → URL Configuration**:
-
-**Site URL** (single value — primary origin):
-```
-https://sirgaz.com
+```text
+supabase/schema.sql
+supabase/002_venue_profile.sql
+supabase/003_chat.sql
+supabase/004_production_security.sql
+supabase/005_mvp_venue_admin.sql
+supabase/006_matchmaking_serialization.sql
 ```
 
-**Additional Redirect URLs** (whitelist of allowed callback origins for magic links / OAuth):
+Run the SQL preflight before production launch:
+
+```text
+supabase/SECURITY_PREFLIGHT.sql
 ```
+
+Do not skip the security migration. The frontend expects the RPCs and RLS rules introduced by the production-security migrations.
+
+### Auth
+
+Authentication → Providers → Email:
+
+- Email provider: ON
+- Email OTP: enabled
+- Configure production SMTP before high-volume events
+
+### Redirect URLs
+
+Add the production origin used by the deployed Railway service and the final custom domain.
+
+For production:
+
+```text
 https://sirgaz.com
 https://www.sirgaz.com
-https://sirgaz.vercel.app
-https://*.vercel.app
+```
+
+For local development:
+
+```text
 http://localhost:3000
 ```
 
-> Without this update, email OTP magic links will show "Invalid redirect URL" once the domain changes.
-
-### 4c. Confirm Email provider is enabled
-
-Dashboard → Authentication → Providers → **Email** → toggle **Enable Email provider** ON (default). No password sign-in required for our flow.
-
-### 4d. (Optional) Custom SMTP for higher email volume
-
-Supabase default: ~3–4 emails/hour per project (dev-tier).  
-For production, configure a real SMTP provider (Resend / SendGrid / Postmark) in Auth → Email → SMTP settings — lifts the limit.
+Only add preview URLs if they are actually used.
 
 ---
 
-## 5. Hostinger DNS → Vercel ✅
+## 4. Venue access security
 
-### 5a. First deploy on Vercel → assign custom domain
+A venue QR is not the same as a public event URL.
 
-After first successful deploy on Vercel:
+The production flow is:
 
-1. Vercel Project → **Settings → Domains**
-2. Enter `sirgaz.com` → **Add**
-3. Also add `www.sirgaz.com` → Vercel will offer to redirect one to the other. Pick the apex (`sirgaz.com`) as canonical.
+```text
+Venue QR
+  ↓
+check_in_to_event()
+  ↓
+venue_access_tokens
+  ↓
+venue_sessions
+  ↓
+event_participants
+```
 
-Vercel will then show you the DNS records to add. **These are the standard values** (verify in Vercel Domain settings before applying):
+The raw QR secret is only returned once when the QR is generated. The database stores its SHA-256 hash.
 
-| Type  | Host / Name | Value                       | TTL    |
-|-------|-------------|-----------------------------|--------|
-| A     | @           | `76.76.21.21`               | 14400  |
-| CNAME | www         | `cname.vercel-dns.com`      | 14400  |
-
-### 5b. Apply in Hostinger
-
-1. Log in to **Hostinger → hPanel → Domains → sirgaz.com**
-2. Ensure **Nameservers** are Hostinger's (`ns1.dns-parking.com` / `ns2.dns-parking.com`). If they were changed elsewhere, either revert to Hostinger's or edit DNS at whichever DNS provider currently owns the zone.
-3. **DNS / Nameservers → DNS Records**
-4. **Delete** any existing A records for `@` and any CNAME for `www` that point elsewhere (parking pages, other hosts)
-5. **Add** the two records from the table in 5a
-6. **Save**
-
-DNS propagation: 5–30 minutes usually, up to a few hours worst case. Check status at https://dnschecker.org (query `sirgaz.com` type A — should show `76.76.21.21` globally).
+A participant must have an active, unexpired `venue_session` to perform sensitive actions such as matchmaking and mission completion.
 
 ---
 
-## 6. sirgaz.com ✅
+## 5. Production architecture
 
-Once DNS propagates, Vercel automatically:
+```text
+Browser
+  ↓
+Next.js
+  ↓
+Supabase Auth
+  ↓
+RLS + SECURITY DEFINER RPC
+  ↓
+Postgres
+```
 
-- Attaches the domain to your project
-- Verifies ownership
-- Serves the app at `https://sirgaz.com` and `https://www.sirgaz.com`
+The browser must NOT:
 
----
-
-## 7. SSL ✅
-
-Automatic. Vercel issues Let's Encrypt certificates for both `sirgaz.com` and `www.sirgaz.com` within 1–10 minutes of DNS verification. You'll see a green **Valid Configuration** checkmark in **Settings → Domains**.
-
-No manual certificate upload. No manual renewal (Vercel auto-renews before 90-day expiry).
-
----
-
-## 8. Production verification ✅
-
-Run through this end-to-end sanity check:
-
-1. Open `https://sirgaz.com` in a fresh browser → splash → landing renders, no console errors
-2. Click **Sign in** → enter a real email → receive OTP email from Supabase → enter code → lands on Home
-3. From Home, jump to **Venue Dashboard** → if first login, redirects to **Venue Setup** with Hevn Station pre-filled → Save & continue
-4. **Create Event** → title → Publish → Event Manage → **Open QR** → verify QR renders and downloads a PNG
-5. Copy the `/e/{uuid}` URL → open in incognito → verify event landing shows Hevn Station
-6. Sign in as a second email → Join → Waiting Room → Countdown → **AI Vibe Match** card renders with reasons list
-7. Mission → tick clues → Claim → Reward with QR code
-8. In venue tab, go to **Reward Redeems** → paste reward code → verify "✓ Redeemed" flash
-9. Verify SSL padlock is green in browser bar
-10. Verify `https://www.sirgaz.com` redirects to `https://sirgaz.com` (or vice versa depending on canonical choice)
+- insert matches directly
+- create rewards directly
+- modify XP
+- complete another user's mission
+- enumerate the participant pool
+- read private matching attributes
+- redeem rewards outside its venue role
 
 ---
 
-## Post-launch — optional but recommended
+## 6. Railway domain
 
-- **Vercel Analytics**: Project → Analytics → Enable (free tier)
-- **Custom SMTP** in Supabase (see 4d)
-- **Vercel Speed Insights**: Project → Speed Insights → Enable
-- **Uptime monitoring**: pingdom.com / uptimerobot.com → monitor `https://sirgaz.com`
-- **Branch previews**: any PR against `main` auto-deploys to a preview URL like `sirgaz-pr-N.vercel.app` — add these to Supabase Redirect URLs if you use auth in previews (already whitelisted via `https://*.vercel.app`)
+After the Railway deployment succeeds:
+
+1. Open Railway → sirgaZ service → Settings → Networking.
+2. Generate a Railway public domain for initial verification.
+3. Add the production custom domain `sirgaz.com`.
+4. Add `www.sirgaz.com` if desired and configure the canonical redirect.
+5. Use the DNS records Railway provides for the custom domain. Do not copy DNS records from an old Vercel deployment.
 
 ---
 
-## Troubleshooting
+## 7. Production verification
+
+### Application
+
+1. Open the Railway public URL.
+2. Confirm landing page renders.
+3. Confirm browser console has no `getSupabase` export error.
+4. Confirm there is no `supabaseUrl is required` error.
+
+### Authentication
+
+1. Sign in with a real email.
+2. Receive Supabase Email OTP.
+3. Verify OTP.
+4. Confirm session persists after refresh.
+
+### Venue
+
+1. Open `/merchant`.
+2. Sign in with venue admin email.
+3. Create/select venue.
+4. Create a live event.
+5. Generate Secure QR.
+
+### Physical access
+
+1. Scan the event QR.
+2. Confirm `check_in_to_event()` creates a `venue_session`.
+3. Confirm the user becomes a participant.
+4. Try opening the event without the access token — sensitive participation actions must remain blocked.
+
+### Matchmaking
+
+1. Register two users into the same live event.
+2. Both must have active venue sessions.
+3. Run matchmaking.
+4. Confirm exactly one match is created.
+5. Confirm a third user cannot force a match with either participant.
+
+### Mission / reward
+
+1. Create mission for a valid match.
+2. Complete mission through the RPC.
+3. Confirm XP increases only through the trusted function.
+4. Confirm reward is issued once.
+5. Redeem with venue staff.
+6. Attempt a second redemption — it must fail atomically.
+
+---
+
+## 8. Troubleshooting
 
 | Symptom | Fix |
 |---|---|
-| Vercel build fails on `next build` | Check Node version is 20.x/22.x; ensure `yarn.lock` exists in repo |
-| "Invalid redirect URL" on sign-in | Add the current origin to Supabase Auth → Redirect URLs |
-| "email_provider_disabled" | Enable Email provider in Supabase Auth → Providers |
-| "Missing NEXT_PUBLIC_SUPABASE_URL" in Vercel logs | Env var not set on Production scope; re-add and redeploy |
-| Domain shows Vercel 404 | DNS still propagating; check dnschecker.org |
-| Domain shows Hostinger parking page | Old A record still cached / not removed; delete parking record in Hostinger DNS |
+| `getSupabase is not exported` | Ensure the latest `main` commit is deployed; `lib/supabaseClient.js` exports `getSupabase`. |
+| `supabaseUrl is required` during build | Set both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in the **sirgaZ Railway service** and redeploy. |
+| Build succeeds but auth fails | Verify Supabase Email provider and redirect URLs. |
+| `VENUE_ACCESS_REQUIRED` | User has not scanned a valid venue QR / has no active venue session. |
+| `VENUE_SESSION_REQUIRED` | Session expired/revoked; scan the current venue QR again. |
+| `MATCH_NOT_FOUND` | Match does not belong to the authenticated participant. |
+| `REWARD_ALREADY_REDEEMED` | Reward was already atomically redeemed. |
+| Railway serves a blank/static app | Check that Start Command is `yarn start`, NOT `serve -s build`. |
 
 ---
 
-## Rollback
+## 9. Rollback
 
-- **Vercel**: Deployments tab → pick any previous deployment → **Promote to Production**
-- **Database**: since RLS-scoped Supabase is the source of truth, code rollbacks don't destroy data. All SQL migrations are additive/idempotent.
+### Application
+
+Use Railway deployment history to roll back to the last known-good deployment.
+
+### Database
+
+Do not roll back SQL by deleting tables. The production migrations are designed to be additive. Fix forward with a new migration whenever possible.
+
+---
+
+## 10. Final production gate
+
+sirgaZ is considered production-ready only when:
+
+- Railway build succeeds
+- Railway runtime starts successfully
+- Supabase environment variables are present
+- Supabase migrations are applied
+- RLS preflight passes
+- venue session flow passes
+- matchmaking concurrency test passes
+- mission/reward test passes
+- atomic redemption test passes
+- production domain resolves
+- Auth redirect works
+

@@ -7,7 +7,7 @@
         "dev:no-reload": "next dev --hostname 0.0.0.0 --port 3000",
         "dev:webpack": "next dev --hostname 0.0.0.0 --port 3000",
         "build": "next build",
-        "start": "next start"
+        "start": "node .next/standalone/server.js"
     },
     "dependencies": {
         "@hookform/resolvers": "5.1.1",
@@ -82,6 +82,7 @@
         "form-data": "4.0.6",
         "**/micromatch/picomatch": "2.3.2",
         "**/anymatch/picomatch": "2.3.2",
+        "**/readdirp/picomatch": "2.3.2",
         "postcss": "8.5.10",
         "yaml": "2.8.3",
         "lodash": "4.18.1"

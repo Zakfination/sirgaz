@@ -2,31 +2,15 @@
 
 End-to-end path: **GitHub → Railway → Supabase → sirgaz.com**
 
----
-
 ## 1. GitHub
 
-Repository:
+Repository: `Zakfination/sirgaz`
 
-`Zakfination/sirgaz`
-
-Production branch:
-
-`main`
+Production branch: `main`
 
 Never commit `.env`, `.env.local`, Supabase service-role keys, database passwords, or other private credentials.
 
----
-
 ## 2. Railway — Next.js service
-
-Create/connect a Railway service to:
-
-`Zakfination/sirgaz`
-
-Use the `main` branch.
-
-### Required Railway build configuration
 
 | Setting | Value |
 |---|---|
@@ -36,55 +20,36 @@ Use the `main` branch.
 | Root directory | `/` |
 | Healthcheck | `/` |
 | Port | Railway `$PORT` |
-| Node | 20.x or newer supported by the repo |
+| Node | 20.x or newer |
 
-**Important:** sirgaZ is a Next.js application. Do NOT use `serve -s build`; that is a Create React App/static-site command and will not serve the `.next` output correctly.
-
-### Required Railway variables
-
-Set these on the **sirgaZ Railway web service**, for the Production environment:
-
-```text
-NEXT_PUBLIC_SUPABASE_URL=https://dmoaeewcsjklgdhaprsq.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_Vz6BlwKknK5aFyw_LLiu6w_X9WL_67X
-```
-
-The `NEXT_PUBLIC_SUPABASE_ANON_KEY` variable name is retained for application compatibility; the value is the modern Supabase publishable key.
-
-Do not add the Supabase `service_role` key to a `NEXT_PUBLIC_*` variable.
-
----
+The app uses Next.js standalone output and `yarn start` launches `.next/standalone/server.js`.
 
 ## 3. Supabase
 
-Production project:
+Production project: `dmoaeewcsjklgdhaprsq`
 
-`dmoaeewcsjklgdhaprsq`
-
-URL:
-
-`https://dmoaeewcsjklgdhaprsq.supabase.co`
-
-Apply migrations in order:
+Apply the repository migrations in order through Supabase migrations. The currently completed production database contains the historical migrations through `010_lockdown_remaining_public_policies`; the next repository migration is:
 
 ```text
-supabase/schema.sql
-supabase/002_venue_profile.sql
-supabase/003_chat.sql
-supabase/004_production_security.sql
-supabase/005_mvp_venue_admin.sql
-supabase/006_matchmaking_serialization.sql
+supabase/011_production_saas_completion.sql
 ```
 
-Run the SQL preflight before production launch:
+This migration adds:
 
-```text
-supabase/SECURITY_PREFLIGHT.sql
-```
+- market-level exclusivity
+- venue subscriptions
+- white-label branding
+- custom/subdomain records
+- feature flags
+- mission templates
+- reward catalog
+- webhook idempotency storage
+- rate-limit buckets
+- venue-scoped admin helpers
+- authenticated-only policy cleanup
+- production indexes
 
-Do not skip the security migration. The frontend expects the RPCs and RLS rules introduced by the production-security migrations.
-
-### Auth
+## 4. Authentication
 
 Authentication → Providers → Email:
 
@@ -92,30 +57,16 @@ Authentication → Providers → Email:
 - Email OTP: enabled
 - Configure production SMTP before high-volume events
 
-### Redirect URLs
-
-Add the production origin used by the deployed Railway service and the final custom domain.
-
-For production:
+Production redirect URLs:
 
 ```text
 https://sirgaz.com
 https://www.sirgaz.com
 ```
 
-For local development:
+Only add preview URLs when they are actually used.
 
-```text
-http://localhost:3000
-```
-
-Only add preview URLs if they are actually used.
-
----
-
-## 4. Venue access security
-
-A venue QR is not the same as a public event URL.
+## 5. Venue access security
 
 The production flow is:
 
@@ -131,13 +82,11 @@ venue_sessions
 event_participants
 ```
 
-The raw QR secret is only returned once when the QR is generated. The database stores its SHA-256 hash.
+The raw QR secret is returned only when the venue creates the token; the database stores only its SHA-256 hash.
 
-A participant must have an active, unexpired `venue_session` to perform sensitive actions such as matchmaking and mission completion.
+A participant must have an active, unexpired venue session before matchmaking or mission completion.
 
----
-
-## 5. Production architecture
+## 6. Production architecture
 
 ```text
 Browser
@@ -151,38 +100,44 @@ RLS + SECURITY DEFINER RPC
 Postgres
 ```
 
-The browser must NOT:
+The browser must not:
 
+- enumerate the participant pool
 - insert matches directly
-- create rewards directly
 - modify XP
 - complete another user's mission
-- enumerate the participant pool
 - read private matching attributes
 - redeem rewards outside its venue role
 
----
+## 7. SaaS model
 
-## 6. Railway domain
+### One market = one active venue
 
-After the Railway deployment succeeds:
+`markets.exclusive_venue_id` plus active-subscription uniqueness enforce venue exclusivity at the database layer.
 
-1. Open Railway → sirgaZ service → Settings → Networking.
-2. Generate a Railway public domain for initial verification.
-3. Add the production custom domain `sirgaz.com`.
-4. Add `www.sirgaz.com` if desired and configure the canonical redirect.
-5. Use the DNS records Railway provides for the custom domain. Do not copy DNS records from an old Vercel deployment.
+### White label
 
----
+`venue_branding`, `venue_domains`, and `venue_feature_flags` provide per-venue branding and feature configuration without code changes.
 
-## 7. Production verification
+### Merchant roles
+
+```text
+super_admin
+venue_admin
+staff
+participant
+```
+
+Venue-scoped operations are enforced by SECURITY DEFINER helpers and RLS.
+
+## 8. Production verification
 
 ### Application
 
 1. Open the Railway public URL.
 2. Confirm landing page renders.
-3. Confirm browser console has no `getSupabase` export error.
-4. Confirm there is no `supabaseUrl is required` error.
+3. Confirm no Supabase configuration errors.
+4. Confirm no browser console errors on the main customer flow.
 
 ### Authentication
 
@@ -194,53 +149,49 @@ After the Railway deployment succeeds:
 ### Venue
 
 1. Open `/merchant`.
-2. Sign in with venue admin email.
+2. Sign in with a venue admin account.
 3. Create/select venue.
 4. Create a live event.
-5. Generate Secure QR.
+5. Generate the secure venue QR.
 
 ### Physical access
 
 1. Scan the event QR.
 2. Confirm `check_in_to_event()` creates a `venue_session`.
-3. Confirm the user becomes a participant.
-4. Try opening the event without the access token — sensitive participation actions must remain blocked.
+3. Confirm the participant is registered.
+4. Try the event without a valid token; sensitive actions must remain blocked.
 
 ### Matchmaking
 
-1. Register two users into the same live event.
-2. Both must have active venue sessions.
-3. Run matchmaking.
+1. Register two users in the same live event.
+2. Give both active venue sessions.
+3. Run matchmaking concurrently.
 4. Confirm exactly one match is created.
-5. Confirm a third user cannot force a match with either participant.
+5. Confirm the same user cannot create a second match.
 
 ### Mission / reward
 
-1. Create mission for a valid match.
-2. Complete mission through the RPC.
-3. Confirm XP increases only through the trusted function.
-4. Confirm reward is issued once.
+1. Create a mission for a valid match.
+2. Complete it through the RPC.
+3. Confirm XP changes only through the trusted function.
+4. Confirm reward issuance is idempotent.
 5. Redeem with venue staff.
-6. Attempt a second redemption — it must fail atomically.
+6. Repeat redemption; it must fail atomically.
 
----
+### SaaS
 
-## 8. Troubleshooting
+1. Create a market.
+2. Attach a venue subscription.
+3. Attempt a second active venue in the same market; it must fail.
+4. Configure branding.
+5. Add a domain record.
+6. Toggle a venue feature flag.
 
-| Symptom | Fix |
-|---|---|
-| `getSupabase is not exported` | Ensure the latest `main` commit is deployed; `lib/supabaseClient.js` exports `getSupabase`. |
-| `supabaseUrl is required` during build | Set both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in the **sirgaZ Railway service** and redeploy. |
-| Build succeeds but auth fails | Verify Supabase Email provider and redirect URLs. |
-| `VENUE_ACCESS_REQUIRED` | User has not scanned a valid venue QR / has no active venue session. |
-| `VENUE_SESSION_REQUIRED` | Session expired/revoked; scan the current venue QR again. |
-| `MATCH_NOT_FOUND` | Match does not belong to the authenticated participant. |
-| `REWARD_ALREADY_REDEEMED` | Reward was already atomically redeemed. |
-| Railway serves a blank/static app | Check that Start Command is `yarn start`, NOT `serve -s build`. |
+## 9. Security / performance gate
 
----
+Run Supabase Security and Performance Advisors after every schema change. Warnings about anonymous policies, unindexed foreign keys, and duplicate permissive policies must be cleared or explicitly accepted before a production event.
 
-## 9. Rollback
+## 10. Rollback
 
 ### Application
 
@@ -248,23 +199,22 @@ Use Railway deployment history to roll back to the last known-good deployment.
 
 ### Database
 
-Do not roll back SQL by deleting tables. The production migrations are designed to be additive. Fix forward with a new migration whenever possible.
+Do not delete production tables to roll back. Fix forward with a new additive migration whenever possible.
 
----
+## 11. Final production gate
 
-## 10. Final production gate
-
-sirgaZ is considered production-ready only when:
+sirgaZ is production-ready only when:
 
 - Railway build succeeds
-- Railway runtime starts successfully
-- Supabase environment variables are present
+- standalone runtime starts successfully
 - Supabase migrations are applied
-- RLS preflight passes
+- security advisors have no high-severity findings
+- authenticated-only RLS is enforced
 - venue session flow passes
-- matchmaking concurrency test passes
-- mission/reward test passes
-- atomic redemption test passes
+- matchmaking concurrency passes
+- mission/reward idempotency passes
+- atomic redemption passes
+- market exclusivity passes
+- white-label configuration passes
 - production domain resolves
 - Auth redirect works
-

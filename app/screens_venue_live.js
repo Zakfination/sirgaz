@@ -10,7 +10,7 @@ import {
 import { useAuth } from "./authContext";
 import { getSupabase } from "@/lib/supabaseClient";
 import { StatusBar, TopBar, BigButton } from "./screens_extra";
-import { getMyVenue, listEvents, getEvent, listParticipants, countParticipants, redeemReward } from "@/lib/db";
+import { getMyVenue, listEvents, getEvent, listParticipants, countParticipants, redeemReward, getEventMatchAnalytics } from "@/lib/db";
 
 /* ================================================================
    Event picker — helper for live/analytics screens
@@ -103,7 +103,7 @@ export const VenueLive = ({ go, params }) => {
               {filtered.length === 0 && <div className="glass rounded-2xl p-6 text-center text-white/50 text-[13px]">No participants yet. Share the QR to fill the room.</div>}
               {filtered.map((p, i) => (
                 <div key={p.id} className="glass rounded-2xl p-3 flex items-center gap-3">
-                  <img src={p.profiles?.avatar_url || `https://i.pravatar.cc/80?img=${(i%70)+1}`} className="w-10 h-10 rounded-full object-cover"/>
+                  {p.profiles?.avatar_url ? <img src={p.profiles.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover"/> : <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-[13px] text-white/60">{(p.profiles?.name || "?").slice(0,1).toUpperCase()}</div>}
                   <div className="flex-1 min-w-0">
                     <div className="text-[13px] font-medium flex items-center gap-2 truncate">{p.profiles?.name || "Guest"}<span className="w-1.5 h-1.5 rounded-full bg-[#00E5FF]"/></div>
                     <div className="text-[11px] text-white/50 truncate">{(p.profiles?.interests || []).slice(0,3).join(" · ") || "No interests"}</div>
@@ -177,8 +177,8 @@ export const VenueMatches = ({ go, params }) => {
             {matches.map((m, i) => (
               <div key={m.id} className="glass rounded-2xl p-3 flex items-center gap-3">
                 <div className="flex -space-x-3">
-                  <div className="w-9 h-9 rounded-full border-2 border-black overflow-hidden bg-white/10"><img src={`https://i.pravatar.cc/80?u=${m.user_a}`} className="w-full h-full object-cover"/></div>
-                  <div className="w-9 h-9 rounded-full border-2 border-black overflow-hidden bg-white/10"><img src={`https://i.pravatar.cc/80?u=${m.user_b}`} className="w-full h-full object-cover"/></div>
+                  <div className="w-9 h-9 rounded-full border-2 border-black overflow-hidden bg-white/10"></div>
+                  <div className="w-9 h-9 rounded-full border-2 border-black overflow-hidden bg-white/10"></div>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-[13px] font-medium">Match #{i+1}</div>
@@ -297,10 +297,11 @@ export const VenueAnalytics = ({ go, params }) => {
   const refresh = React.useCallback(async () => {
     if (!eventId) return;
     const sb = getSupabase(); if (!sb) return;
-    const [pCount, mRes, rRes] = await Promise.all([
+    const [pCount, mRes, rRes, mmRes] = await Promise.all([
       countParticipants(eventId),
       sb.from("matches").select("score, created_at").eq("event_id", eventId),
       sb.from("rewards").select("redeemed_at, xp").eq("event_id", eventId),
+      getEventMatchAnalytics(eventId),
     ]);
     const matches = mRes.data || [];
     const rewards = rRes.data || [];
@@ -314,7 +315,7 @@ export const VenueAnalytics = ({ go, params }) => {
       const diff = Math.floor((now - d)/(1000*60*60*24));
       if (diff >= 0 && diff < 7) byDay[6-diff]++;
     });
-    setStats({ participants: pCount, matches: matches.length, avg, rewards: rewards.length, redeemPct, byDay });
+    setStats({ participants: pCount, matches: matches.length, avg, rewards: rewards.length, redeemPct, byDay, mm: mmRes?.data || null });
   }, [eventId]);
 
   React.useEffect(() => { refresh(); const t = setInterval(refresh, 5000); return () => clearInterval(t); }, [refresh]);
@@ -375,6 +376,28 @@ export const VenueAnalytics = ({ go, params }) => {
               ))}
             </div>
           </div>
+
+          {stats?.mm && (
+            <div className="mt-6 glass rounded-3xl p-4">
+              <div className="text-[13px] font-semibold">Random matchmaking</div>
+              <div className="mt-3 grid grid-cols-2 gap-2 text-[12px]">
+                {[
+                  ["Pria", stats.mm.participants_by_gender?.male ?? 0],
+                  ["Wanita", stats.mm.participants_by_gender?.female ?? 0],
+                  ["Profil lengkap", stats.mm.profiles_complete ?? 0],
+                  ["Match ditampilkan", stats.mm.matches_shown ?? 0],
+                  ["Match berulang", stats.mm.repeat_matches_shown ?? 0],
+                  ["Ganti gratis", stats.mm.rerolls_free ?? 0],
+                  ["Ganti berbayar", stats.mm.rerolls_paid ?? 0],
+                  ["Laporan terbuka", stats.mm.reports_open ?? 0],
+                ].map(([l, v]) => (
+                  <div key={l} className="rounded-xl bg-white/5 px-3 py-2 flex items-center justify-between">
+                    <span className="text-white/60">{l}</span><span className="font-semibold">{v}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <button onClick={() => go?.("venueLive", { eventId })} className="mt-6 w-full h-14 rounded-2xl glass flex items-center justify-center gap-2 font-semibold text-[14px]"><Radio className="w-4 h-4"/> Open live floor</button>
         </>}

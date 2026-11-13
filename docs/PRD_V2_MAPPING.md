@@ -18,11 +18,13 @@ klien hanya punya akses baca yang dibatasi RLS.
 | wallet_transactions    | `wallet_transactions` (ledger, `idempotency_key` unik) | Fase 1 |
 | user_blocks            | `user_blocks`                              | Fase 1 |
 | chat_reports           | `user_reports`                             | Fase 1 |
+| user_pokes             | `user_pokes`                               | Fase 1b |
+| (notifikasi)           | `user_notifications` (realtime)            | Fase 1b |
+| (hapus akun)           | `account_deletion_requests`                | Fase 1b |
 | payment_orders         | —                                          | Fase 2 |
 | chat_unlocks           | —                                          | Fase 2 |
 | conversations          | — (chat saat ini memakai `matches` + `messages`) | Fase 2 |
 | messages               | `messages`                                 | Ada, digating di fase 2 |
-| user_pokes             | —                                          | Fase 2 |
 
 ## Endpoint → RPC (`supabase.rpc(...)`, klien di `lib/db.js`)
 
@@ -36,9 +38,14 @@ klien hanya punya akses baca yang dibatasi RLS.
 | GET /matchmaking/eligibility              | `matchmaking_eligibility(p_event)` |
 | POST /users/:id/block, DELETE …/block     | `block_user(p_user)`, `unblock_user(p_user)` |
 | POST /reports                             | `report_user(p_user, p_reason, p_details, p_event, p_block)` |
+| POST /pokes, GET /pokes/received, /pokes/sent | `send_poke(p_event, p_target)`, `pokes_received(p_event)`, `pokes_sent(p_event)` |
+| POST /conversations/:id/read (notifikasi) | `mark_notifications_read(p_ids)` |
+| PATCH /admin/events/:id/match-settings    | update langsung `events` oleh admin venue (waktu mulai/selesai), dicatat `audit_event_settings` |
+| PATCH /admin/events/:id/monetization-settings | `update_event_monetization(...)` — super admin saja |
+| GET /admin/chat/reports                   | `list_reports(p_status)` + `review_report(...)`, `set_user_suspension(...)` (UI: `/admin`) |
+| Hapus akun (§10)                          | `delete_my_account()` |
 | POST /admin/events/:id/close              | `close_event(p_event)` (juga dipanggil saat venue set status `ended`) |
 | GET /admin/events/:id/match-analytics + reroll-analytics | `event_match_analytics(p_event)` |
-| GET /admin/chat/reports (moderasi)        | `select * from user_reports` (RLS: super admin / staf venue) + `review_report(...)` |
 | POST /payments/midtrans/webhook           | Fase 2: Edge Function → `credit_paid_rerolls(...)` (service_role saja) |
 
 Jembatan ke alur misi/hadiah yang sudah ada: `matchmaking_confirm(p_event)` membuat baris `matches`
@@ -64,6 +71,11 @@ Fungsi melempar kode PRD sebagai pesan error: `UNAUTHORIZED`, `EVENT_NOT_FOUND`,
 - Event berakhir → kuota tidak bisa dipakai; `close_event` / `expire_ended_events` mencatat `EXPIRE` di ledger.
 - Saldo dompet selalu = jumlah ledger (diuji).
 - `gender` hanya bisa diisi sekali oleh pengguna; `xp` dan `suspended_at` hanya oleh server.
+- Poke: hanya wanita → pria, hanya kepada orang yang pernah ditampilkan sistem kepadanya di event itu,
+  satu kali per pasangan per event, maks 20/jam, tidak membuka chat. Penerima mendapat notifikasi.
+- Kuota gratis, isi paket dan harga hanya bisa diubah super admin; event baru selalu mulai dari default
+  platform; setiap perubahan status/waktu/kuota/harga tercatat di `audit_logs`.
+- Hapus akun: profil dianonimkan, data privat dihapus, keluar dari semua sesi match; login dihapus job service-role.
 
 ## Keputusan yang perlu dikonfirmasi produk
 
@@ -76,5 +88,4 @@ Fungsi melempar kode PRD sebagai pesan error: `UNAUTHORIZED`, `EVENT_NOT_FOUND`,
 
 Midtrans (Snap + verifikasi signature di Edge Function, `payment_orders`), paket reroll Rp10.000,
 `chat_unlocks` Rp49.000 (pria → wanita, tanpa persetujuan, permanen, tanpa tagihan ganda, kompensasi
-kredit), `conversations` permanen, Poke gratis untuk wanita, notifikasi, pengaturan harga di dashboard,
-laporan pendapatan, antrean moderasi di UI admin.
+kredit), `conversations` permanen, laporan pendapatan, notifikasi push (saat ini hanya in-app).

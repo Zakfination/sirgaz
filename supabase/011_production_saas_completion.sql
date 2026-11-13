@@ -242,7 +242,12 @@ create policy reward_catalog_staff_all on public.venue_reward_catalog for all to
 -- 7. PERFORMANCE INDEXES
 -- ============================================================
 create index if not exists rewards_mission_idx on public.rewards(mission_id);
-create index if not exists venue_rewards_event_idx on public.venue_rewards(event_id);
+-- venue_rewards comes from an untracked migration (007-010); skip when absent.
+do $$ begin
+  if to_regclass('public.venue_rewards') is not null then
+    create index if not exists venue_rewards_event_idx on public.venue_rewards(event_id);
+  end if;
+end $$;
 create index if not exists event_participants_event_status_idx on public.event_participants(event_id,status);
 create index if not exists matches_event_created_idx on public.matches(event_id,created_at desc);
 create index if not exists missions_match_status_idx on public.missions(match_id,status);
@@ -279,10 +284,10 @@ create policy matches_read_authenticated on public.matches for select to authent
 create policy messages_read_authenticated on public.messages for select to authenticated using(exists(select 1 from public.matches m where m.id=match_id and ((select auth.uid())=m.user_a or (select auth.uid())=m.user_b)));
 create policy mission_completions_self_authenticated on public.mission_completions for select to authenticated using((select auth.uid())=user_id);
 create policy missions_read_authenticated on public.missions for select to authenticated using(exists(select 1 from public.matches m where m.id=match_id and ((select auth.uid())=m.user_a or (select auth.uid())=m.user_b)));
-create policy notifications_self_authenticated on public.notifications for select to authenticated using((select auth.uid())=user_id);
-create policy notifications_self_update_authenticated on public.notifications for update to authenticated using((select auth.uid())=user_id) with check((select auth.uid())=user_id);
-create policy points_self_read_authenticated on public.points_transactions for select to authenticated using((select auth.uid())=user_id);
+do $$ begin if to_regclass('public.notifications') is not null then execute $q$create policy notifications_self_authenticated on public.notifications for select to authenticated using((select auth.uid())=user_id)$q$; end if; end $$;
+do $$ begin if to_regclass('public.notifications') is not null then execute $q$create policy notifications_self_update_authenticated on public.notifications for update to authenticated using((select auth.uid())=user_id) with check((select auth.uid())=user_id)$q$; end if; end $$;
+do $$ begin if to_regclass('public.points_transactions') is not null then execute $q$create policy points_self_read_authenticated on public.points_transactions for select to authenticated using((select auth.uid())=user_id)$q$; end if; end $$;
 create policy rewards_self_read_authenticated on public.rewards for select to authenticated using((select auth.uid())=user_id);
-create policy reward_claims_self_authenticated on public.reward_claims for select to authenticated using((select auth.uid())=user_id);
+do $$ begin if to_regclass('public.reward_claims') is not null then execute $q$create policy reward_claims_self_authenticated on public.reward_claims for select to authenticated using((select auth.uid())=user_id)$q$; end if; end $$;
 
 commit;

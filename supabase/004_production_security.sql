@@ -3,6 +3,9 @@
 begin;
 create extension if not exists pgcrypto;
 
+-- venues.is_active is referenced by policies below; earlier migrations never created it.
+alter table public.venues add column if not exists is_active boolean not null default true;
+
 do $$ begin
   if not exists(select 1 from pg_type where typname='app_role') then
     create type public.app_role as enum('super_admin','venue_admin','staff','participant');

@@ -21,6 +21,8 @@ import {
   ShieldAlert,
   Ban,
   Camera,
+  Bell,
+  Hand,
 } from "lucide-react";
 import { AuthProvider, useAuth } from "../../authContext";
 import {
@@ -46,6 +48,11 @@ import {
   reportUser,
   REPORT_REASONS,
   matchErrorMessage,
+  sendPoke,
+  listNotifications,
+  markNotificationsRead,
+  subscribeNotifications,
+  unsubscribe,
 } from "@/lib/db";
 import {
   StatusBar,
@@ -99,6 +106,9 @@ const EventFlow = () => {
   const [mm, setMm] = React.useState(null);
   const [mmBusy, setMmBusy] = React.useState(false);
   const [mmError, setMmError] = React.useState("");
+  const [pokedIds, setPokedIds] = React.useState({});
+  const [notifs, setNotifs] = React.useState([]);
+  const [notifsOpen, setNotifsOpen] = React.useState(false);
   const [match, setMatch] = React.useState(null);
   const [peer, setPeer] = React.useState(null);
   const [mission, setMission] = React.useState(null);
@@ -252,6 +262,42 @@ const EventFlow = () => {
     return { error: null };
   };
 
+  // In-app notifications (poke received, report reviewed, ...) with realtime updates.
+  React.useEffect(() => {
+    const uid = session?.user?.id;
+    if (!uid) return;
+    let alive = true;
+    listNotifications().then((n) => alive && setNotifs(n));
+    const ch = subscribeNotifications(uid, (row) =>
+      setNotifs((prev) => (prev.some((x) => x.id === row.id) ? prev : [row, ...prev])),
+    );
+    return () => {
+      alive = false;
+      unsubscribe(ch);
+    };
+  }, [session]);
+  const unreadCount = notifs.filter((n) => !n.read_at).length;
+  const openNotifs = async () => {
+    setNotifsOpen(true);
+    if (unreadCount > 0) {
+      await markNotificationsRead();
+      const now = new Date().toISOString();
+      setNotifs((prev) => prev.map((n) => (n.read_at ? n : { ...n, read_at: now })));
+    }
+  };
+
+  // PRD V2 Alur E: women poke men for free; it only notifies, it never opens a chat.
+  const canPoke = me?.gender === "female" && peer?.gender === "male";
+  const doPoke = async () => {
+    if (!peer?.user_id) return;
+    setMmBusy(true);
+    setMmError("");
+    const { error, code } = await sendPoke(eventId, peer.user_id);
+    setMmBusy(false);
+    if (error) return setMmError(matchErrorMessage(code, error));
+    setPokedIds((prev) => ({ ...prev, [peer.user_id]: true }));
+  };
+
   const doConfirm = async () => {
     setMmBusy(true);
     setMmError("");
@@ -354,6 +400,11 @@ const EventFlow = () => {
               onBlock={doBlock}
               onReport={doReport}
               onNext={doConfirm}
+              canPoke={canPoke}
+              poked={!!(peer?.user_id && pokedIds[peer.user_id])}
+              onPoke={doPoke}
+              unread={unreadCount}
+              onOpenNotifs={openNotifs}
             />
           )}
           {phase === "compat" && (
@@ -380,6 +431,10 @@ const EventFlow = () => {
           )}
         </motion.div>
       </AnimatePresence>
+
+      {notifsOpen && (
+        <NotificationsSheet items={notifs} onClose={() => setNotifsOpen(false)} />
+      )}
 
       <SessionWatcher
         onAuthed={() => {
@@ -966,7 +1021,10 @@ const MatchingStep = () => (
 );
 
 /* Match Result Step — PRD V2: one random eligible person, reroll with quota, block/report */
-const MatchStep = ({ peer, me, quota, busy, error, onReroll, onBlock, onReport, onNext }) => {
+const MatchStep = ({
+  peer, me, quota, busy, error, onReroll, onBlock, onReport, onNext,
+  canPoke, poked, onPoke, unread = 0, onOpenNotifs,
+}) => {
   const [reportOpen, setReportOpen] = React.useState(false);
   const vibeMatch = React.useMemo(() => {
     if (me && peer) {
@@ -1016,6 +1074,18 @@ const MatchStep = ({ peer, me, quota, busy, error, onReroll, onBlock, onReport, 
             Match Kamu Malam Ini
           </div>
           <div className="flex gap-2">
+            <button
+              onClick={onOpenNotifs}
+              aria-label="Notifikasi"
+              className="relative w-9 h-9 rounded-full glass flex items-center justify-center"
+            >
+              <Bell className="w-4 h-4" />
+              {unread > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#FF2F92] text-[10px] font-bold flex items-center justify-center">
+                  {unread > 9 ? "9+" : unread}
+                </span>
+              )}
+            </button>
             <button
               onClick={() => setReportOpen(true)}
               disabled={busy}
@@ -1083,6 +1153,16 @@ const MatchStep = ({ peer, me, quota, busy, error, onReroll, onBlock, onReport, 
             {error}
           </div>
         )}
+        {canPoke && (
+          <button
+            onClick={onPoke}
+            disabled={busy || poked}
+            className="w-full h-12 rounded-2xl gradient-brand glow-pink flex items-center justify-center gap-2 text-[14px] font-semibold disabled:opacity-60"
+          >
+            <Hand className="w-4 h-4" />
+            {poked ? "Colekan terkirim" : "Colek (gratis)"}
+          </button>
+        )}
         {outOfQuota ? (
           <div className="glass rounded-2xl p-3 text-center">
             <div className="text-[13px] font-semibold">Kuota ganti match habis</div>
@@ -1122,6 +1202,39 @@ const MatchStep = ({ peer, me, quota, busy, error, onReroll, onBlock, onReport, 
     </div>
   );
 };
+
+/* Notifications sheet */
+const NotificationsSheet = ({ items, onClose }) => (
+  <div className="absolute inset-0 z-50 bg-black/70 flex items-end" onClick={onClose}>
+    <div
+      className="w-full glass-strong rounded-t-3xl p-5 max-h-[80%] overflow-y-auto"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="flex items-center justify-between">
+        <div className="text-[17px] font-semibold">Notifikasi</div>
+        <button onClick={onClose} className="text-[13px] text-white/60">
+          Tutup
+        </button>
+      </div>
+      <div className="mt-4 space-y-2">
+        {items.length === 0 && (
+          <div className="glass rounded-2xl p-6 text-center text-[13px] text-white/50">
+            Belum ada notifikasi.
+          </div>
+        )}
+        {items.map((n) => (
+          <div key={n.id} className="glass rounded-2xl p-3.5">
+            <div className="text-[13.5px] font-medium">{n.title}</div>
+            {n.body && <div className="text-[12px] text-white/60 mt-0.5">{n.body}</div>}
+            <div className="text-[10.5px] text-white/35 mt-1">
+              {new Date(n.created_at).toLocaleString("id-ID")}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
 
 /* Report bottom sheet (PRD V2 §6.4) — reporting also blocks */
 const ReportSheet = ({ name, onClose, onSubmit }) => {

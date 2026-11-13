@@ -296,8 +296,15 @@ export const VenueCreateEvent = ({ go }) => {
         <FieldB label="Description" value={description} onChange={setDescription} placeholder="A ritual of sound, light and connection…" multiline />
         <div className="grid grid-cols-2 gap-3">
           <FieldB label="Starts at" value={startsAt} onChange={setStartsAt} type="datetime-local" />
-          <FieldB label="Capacity" value={capacity} onChange={(v)=>setCapacity(Number(v)||0)} type="number" />
+          <FieldB label="Ends at" value={endsAt} onChange={setEndsAt} type="datetime-local" />
         </div>
+        <div className="text-[11px] text-white/45 -mt-1 px-1">Sisa kuota ganti match peserta hangus otomatis saat event selesai.</div>
+        <FieldB label="Capacity" value={capacity} onChange={(v)=>setCapacity(Number(v)||0)} type="number" />
+        <div className="glass rounded-2xl px-4 py-3 text-[12px] text-white/60">
+          Match: {event.free_rerolls ?? 3}× ganti gratis · paket {event.reroll_pack_size ?? 10}× Rp{(event.reroll_pack_price_idr ?? 10000).toLocaleString("id-ID")} · buka chat Rp{(event.chat_unlock_price_idr ?? 49000).toLocaleString("id-ID")}
+          <div className="text-[10.5px] text-white/35 mt-0.5">Diatur oleh admin SirGaZ.</div>
+        </div>
+        {saveError && <div className="px-4 py-2.5 rounded-xl bg-[#FF2F92]/10 border border-[#FF2F92]/30 text-[12px] text-[#FF2F92]">{saveError}</div>}
         <div className="glass rounded-2xl px-4 py-3">
           <div className="text-[11px] uppercase tracking-widest text-white/40">Tags</div>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -478,16 +485,20 @@ export const VenueEventSettings = ({ go, params }) => {
   const [description, setDescription] = React.useState("");
   const [venueName, setVenueName] = React.useState("");
   const [startsAt, setStartsAt] = React.useState("");
+  const [endsAt, setEndsAt] = React.useState("");
   const [capacity, setCapacity] = React.useState(200);
   const [tags, setTags] = React.useState([]);
   const [saving, setSaving] = React.useState(false);
+  const [saveError, setSaveError] = React.useState("");
   const eventId = params?.eventId;
+  // datetime-local wants local wall-clock time, not UTC.
+  const toLocalInput = (iso) => { if (!iso) return ""; const d = new Date(iso); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16); };
 
   React.useEffect(() => {
     (async () => {
       const e = await getEvent(eventId); if (!e) return;
       setEvent(e); setTitle(e.title||""); setDescription(e.description||"");
-      setVenueName(e.venue_name||""); setStartsAt(e.starts_at ? new Date(e.starts_at).toISOString().slice(0,16) : "");
+      setVenueName(e.venue_name||""); setStartsAt(toLocalInput(e.starts_at)); setEndsAt(toLocalInput(e.ends_at));
       setCapacity(e.capacity||200); setTags(e.tags||[]);
     })();
   }, [eventId]);
@@ -495,9 +506,12 @@ export const VenueEventSettings = ({ go, params }) => {
   const ALL_TAGS = ["Music","Techno","Rooftop","Beach","Festival","Fashion","18+","Chill","House","Party"];
   const toggle = (t) => setTags(prev => prev.includes(t) ? prev.filter(x=>x!==t) : [...prev, t]);
   const save = async () => {
+    setSaveError("");
+    if (startsAt && endsAt && new Date(endsAt) <= new Date(startsAt)) return setSaveError("Waktu selesai harus setelah waktu mulai.");
     setSaving(true);
-    await updateEvent(eventId, { title, description, venue_name: venueName, starts_at: startsAt ? new Date(startsAt).toISOString() : null, capacity, tags });
+    const { error } = await updateEvent(eventId, { title, description, venue_name: venueName, starts_at: startsAt ? new Date(startsAt).toISOString() : null, ends_at: endsAt ? new Date(endsAt).toISOString() : null, capacity, tags });
     setSaving(false);
+    if (error) return setSaveError(error);
     go?.("venueEventManage", { eventId });
   };
 

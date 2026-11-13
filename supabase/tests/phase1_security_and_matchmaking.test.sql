@@ -1,4 +1,5 @@
--- sirgaZ automated checks for 012 (security) + 013 (PRD V2 phase 1).
+-- sirgaZ automated checks for 012 (security), 013 (PRD V2 phase 1) and 015 (poke, notifications,
+-- auditable settings, moderation, account deletion).
 -- Runs inside one transaction and ROLLS BACK: safe for a local or staging database.
 -- DO NOT run against production.
 --   psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/phase1_security_and_matchmaking.test.sql
@@ -180,6 +181,7 @@ select pg_temp.ok((public.matchmaking_eligibility(pg_temp.id('E'))->>'eligible')
 select pg_temp.act(pg_temp.id('W2'));
 select pg_temp.ok(public.report_user(pg_temp.id('M2'), 'harassment', 'test', pg_temp.id('E'), true) is not null, 'SAFE-01 report created');
 select pg_temp.ok(exists(select 1 from public.user_blocks where blocker_id = auth.uid() and blocked_id = pg_temp.id('M2')), 'SAFE-02 report also blocks');
+select pg_temp.ok(public.my_blocks()->0->>'user_id' = pg_temp.id('M2')::text, 'SAFE-02b my_blocks lists blocked user with name');
 select pg_temp.expect_error($$select public.review_report((select id from public.user_reports limit 1), 'DISMISSED')$$, 'FORBIDDEN', 'SAFE-03 only super admin moderates');
 select pg_temp.expect_error($q$do $d$ begin for i in 1..10 loop perform public.report_user(pg_temp.id('M1'), 'spam', null, null, false); end loop; end $d$$q$, 'RATE_LIMITED', 'SAFE-04 report rate limit');
 
@@ -217,6 +219,88 @@ select pg_temp.act(pg_temp.id('W1'));
 select public.check_in_to_event(pg_temp.id('E2'), (select t2 from qr));
 select pg_temp.act(pg_temp.id('M1'));
 select pg_temp.ok((public.matchmaking_start(pg_temp.id('E2'))->'quota'->>'free_remaining')::int = 3, 'RR-10 new event grants 3 new free rerolls');
+
+
+-- ===================== 015: POKE / NOTIFICATIONS / SETTINGS / MODERATION / DELETION =========
+reset role;
+insert into ids values ('S','a0000000-0000-0000-0000-000000000099'),('W4','a0000000-0000-0000-0000-000000000024'),('M3','a0000000-0000-0000-0000-000000000013');
+insert into auth.users(id) select v from ids where k in ('S','W4','M3');
+insert into public.user_roles(user_id, role, venue_id) values (pg_temp.id('S'), 'super_admin', null);
+set local role authenticated;
+select pg_temp.onboard('W4','female','male',true,false);
+select pg_temp.onboard('M3','male','female',true,false);
+select pg_temp.onboard('S','male','any',true,false);
+select pg_temp.act(pg_temp.id('W4')); select public.check_in_to_event(pg_temp.id('E2'), (select t2 from qr));
+select pg_temp.act(pg_temp.id('M3')); select public.check_in_to_event(pg_temp.id('E2'), (select t2 from qr));
+
+select pg_temp.act(pg_temp.id('W4'));
+create temp table pk as select (public.matchmaking_start(pg_temp.id('E2'))->'match'->>'user_id')::uuid target;
+grant select on pk to public;
+select pg_temp.ok((select target is not null from pk), 'POKE-00 woman has a male match to poke');
+select pg_temp.ok((public.send_poke(pg_temp.id('E2'), (select target from pk))->>'already_sent')::boolean = false, 'POKE-01 woman pokes her match for free');
+select pg_temp.ok((public.send_poke(pg_temp.id('E2'), (select target from pk))->>'already_sent')::boolean = true, 'POKE-02 repeated poke is idempotent');
+select pg_temp.expect_error($$select public.send_poke(pg_temp.id('E2'), pg_temp.id('X'))$$, 'INVALID_TARGET', 'POKE-03 cannot poke someone never shown to her');
+select pg_temp.ok(jsonb_array_length(public.pokes_sent(pg_temp.id('E2'))) = 1, 'POKE-04 pokes_sent lists it');
+
+select pg_temp.act((select target from pk));
+select pg_temp.ok(jsonb_array_length(public.pokes_received(pg_temp.id('E2'))) = 1, 'POKE-05 man sees received poke');
+select pg_temp.ok((select count(*) from public.user_notifications where type = 'POKE_RECEIVED') = 1, 'NOTIF-01 poke creates exactly one notification');
+select pg_temp.ok((select count(*) from public.profiles where id = pg_temp.id('W4')) = 1, 'POKE-06 poked man can see the sender profile');
+select pg_temp.ok(not exists(select 1 from public.matches where event_id = pg_temp.id('E2') and pg_temp.id('W4') in (user_a, user_b)), 'POKE-07 poke does not open a chat/match');
+select pg_temp.ok(public.mark_notifications_read() = 1, 'NOTIF-02 mark all read');
+select pg_temp.ok((select count(*) from public.user_notifications where read_at is null) = 0, 'NOTIF-02b nothing left unread');
+select pg_temp.expect_error($$select public.send_poke(pg_temp.id('E2'), pg_temp.id('W4'))$$, 'FORBIDDEN_GENDER_ACTION', 'POKE-08 men cannot poke');
+
+select pg_temp.act(pg_temp.id('M3'));
+select pg_temp.ok((select count(*) from public.user_notifications) = (case when (select target from pk) = pg_temp.id('M3') then 1 else 0 end), 'NOTIF-03 users only see their own notifications');
+
+-- Event settings
+select pg_temp.act(pg_temp.id('A'));
+select pg_temp.expect_error($$update public.events set free_rerolls = 50 where id = pg_temp.id('E2')$$, 'MONETIZATION_SETTINGS_SUPER_ADMIN_ONLY', 'SET-01 venue admin cannot change free quota');
+select pg_temp.expect_error($$update public.events set chat_unlock_price_idr = 1 where id = pg_temp.id('E2')$$, 'MONETIZATION_SETTINGS_SUPER_ADMIN_ONLY', 'SET-02 venue admin cannot change prices');
+update public.events set ends_at = now() + interval '8 hours' where id = pg_temp.id('E2');
+select pg_temp.ok(exists(select 1 from public.audit_logs where event_id = pg_temp.id('E2') and action = 'event.settings_changed' and metadata ? 'ends_at'), 'SET-03 schedule change is audited');
+select pg_temp.expect_error($$update public.events set starts_at = now() + interval '9 hours' where id = pg_temp.id('E2')$$, 'EVENT_ENDS_BEFORE_START', 'SET-04 end must be after start');
+insert into public.events(venue_id, title, status, free_rerolls, chat_unlock_price_idr) values (pg_temp.id('V'), 'Sneaky', 'draft', 99, 1);
+select pg_temp.ok((select free_rerolls = 3 and chat_unlock_price_idr = 49000 from public.events where title = 'Sneaky'), 'SET-05 new events get platform defaults');
+select pg_temp.expect_error($$select public.update_event_monetization(pg_temp.id('E2'), 5)$$, 'FORBIDDEN', 'SET-06 monetization RPC is super-admin only');
+select pg_temp.act(pg_temp.id('S'));
+select pg_temp.ok((public.update_event_monetization(pg_temp.id('E2'), 5, null, 12000, null)).free_rerolls = 5, 'SET-07 super admin updates quota & price');
+select pg_temp.ok(exists(select 1 from public.audit_logs where event_id = pg_temp.id('E2') and action = 'event.settings_changed' and metadata ? 'reroll_pack_price_idr'), 'SET-08 price change is audited');
+
+-- Moderation
+select pg_temp.ok(jsonb_array_length(public.list_reports('OPEN')) >= 1, 'MOD-01 super admin sees open reports');
+create temp table rep as select id, reporter_id, reported_id from public.user_reports where reason = 'harassment' limit 1;
+grant select on rep to public;
+select public.review_report((select id from rep), 'ACTION_TAKEN', 'confirmed', true);
+select pg_temp.ok((select suspended_at is not null from public.profiles where id = (select reported_id from rep)), 'MOD-02 review can suspend the reported user');
+select pg_temp.ok(not exists(select 1 from public.event_match_sessions where current_match_user_id = (select reported_id from rep)), 'MOD-03 suspended user removed from current matches');
+select pg_temp.ok(not exists(select 1 from public.user_notifications where user_id <> auth.uid()), 'MOD-04a super admin cannot read other users notifications');
+reset role;
+select pg_temp.ok(exists(select 1 from public.user_notifications where user_id = (select reporter_id from rep) and type = 'REPORT_RESOLVED'), 'MOD-04 reporter is notified');
+set local role authenticated;
+select pg_temp.act(pg_temp.id('S'));
+select public.set_user_suspension((select reported_id from rep), false, 'appeal ok');
+select pg_temp.ok((select suspended_at is null from public.profiles where id = (select reported_id from rep)), 'MOD-05 super admin can lift suspension');
+select pg_temp.act(pg_temp.id('A'));
+select pg_temp.expect_error($$select public.list_reports()$$, 'FORBIDDEN', 'MOD-06 venue admin cannot open the platform moderation queue');
+
+-- Account deletion
+select pg_temp.act(pg_temp.id('M3'));
+select public.delete_my_account();
+select pg_temp.ok((select name = 'Akun dihapus' and avatar_url is null and deleted_at is not null from public.profiles where id = auth.uid()), 'DEL-01 profile anonymised');
+select pg_temp.ok(not exists(select 1 from public.profile_private where user_id = auth.uid()), 'DEL-02 private data removed');
+select pg_temp.expect_error($$update public.profiles set name = 'back' where id = auth.uid()$$, 'ACCOUNT_DELETED', 'DEL-03 deleted profile cannot be edited');
+reset role;
+select pg_temp.ok(exists(select 1 from public.account_deletion_requests where user_id = pg_temp.id('M3')), 'DEL-04 auth deletion queued');
+set local role authenticated;
+select pg_temp.act(pg_temp.id('W4'));
+do $$ declare i int; begin
+  for i in 1..10 loop
+    if (public.matchmaking_current(pg_temp.id('E2'))->'match'->>'user_id')::uuid = pg_temp.id('M3') then raise exception 'FAIL DEL-05'; end if;
+  end loop;
+end $$;
+select pg_temp.ok(true, 'DEL-05 deleted user is never matched');
 
 \echo 'ALL CHECKS PASSED'
 rollback;

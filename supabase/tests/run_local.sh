@@ -6,7 +6,7 @@ set -eu
 cd "$(dirname "$0")/.."
 PSQL="psql $DATABASE_URL -q -v ON_ERROR_STOP=1"
 $PSQL -f tests/supabase_stub.sql
-MIGRATIONS="schema.sql 002_venue_profile.sql 003_chat.sql 004_production_security.sql 005_mvp_venue_admin.sql 006_matchmaking_serialization.sql 011_production_saas_completion.sql 012_security_hardening.sql 013_random_matchmaking_phase1.sql 014_avatar_storage.sql"
+MIGRATIONS="schema.sql 002_venue_profile.sql 003_chat.sql 004_production_security.sql 005_mvp_venue_admin.sql 006_matchmaking_serialization.sql 011_production_saas_completion.sql 012_security_hardening.sql 013_random_matchmaking_phase1.sql 014_avatar_storage.sql 015_pokes_notifications_moderation.sql"
 for pass in 1 2; do
   for f in $MIGRATIONS; do
     [ "$pass" = 2 ] && case "$f" in schema.sql|002_*|003_*|004_*|005_*|006_*|011_*) continue;; esac

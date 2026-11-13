@@ -40,6 +40,20 @@ Run the migrations **in this order** in Supabase → SQL Editor (all are idempot
 8. `supabase/012_security_hardening.sql` — **audit fixes** (profile privacy, venue data leak, XP guard, QR token on PG < 18)
 9. `supabase/013_random_matchmaking_phase1.sql` — **PRD V2 phase 1**: gender/preference, random match sessions, 3 free rerolls + wallet ledger, block & report, close event, analytics
 10. `supabase/014_avatar_storage.sql` — `avatars` storage bucket for profile photos
+11. `supabase/015_pokes_notifications_moderation.sql` — Poke (women → men, free), in-app notifications, auditable event settings (quota & prices: super admin only), moderation, account deletion
+
+### Platform admin
+
+`/admin` is the super-admin console (moderation queue, per-event quota & prices). Grant the role once in SQL:
+
+```sql
+insert into public.user_roles(user_id, role, venue_id)
+select id, 'super_admin', null from auth.users where email = 'you@sirgaz.com';
+```
+
+Account deletion anonymises the profile immediately and queues the login in
+`account_deletion_requests`; a service-role job must delete those `auth.users` rows and their
+`avatars/<user_id>/` files.
 
 > Migrations 007–010 exist only in the production database. Export them with
 > `supabase db dump --schema public` and commit them so the repo can rebuild production.

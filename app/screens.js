@@ -35,6 +35,7 @@ import {
   Circle,
   Star,
   ShieldCheck,
+  Trash2,
   Globe,
   LogOut,
   BellRing,
@@ -3011,6 +3012,39 @@ export const Profile = ({ go }) => {
 export const Settings = ({ go }) => {
   const { logout } = useAuth();
   const [loggingOut, setLoggingOut] = React.useState(false);
+  const [sheet, setSheet] = React.useState(null); // null | "blocks" | "delete"
+  const [blocks, setBlocks] = React.useState([]);
+  const [confirmText, setConfirmText] = React.useState("");
+  const [working, setWorking] = React.useState(false);
+  const [sheetError, setSheetError] = React.useState("");
+  const openBlocks = async () => {
+    setSheet("blocks");
+    setSheetError("");
+    const { myBlocks } = await import("@/lib/db");
+    const { data, error } = await myBlocks();
+    if (error) setSheetError(error);
+    setBlocks(data || []);
+  };
+  const doUnblock = async (userId) => {
+    const { unblockUser } = await import("@/lib/db");
+    const { error } = await unblockUser(userId);
+    if (error) return setSheetError(error);
+    setBlocks((prev) => prev.filter((b) => b.user_id !== userId));
+  };
+  // PRD V2 §10: account deletion. Profile is anonymised at once; the login is removed by a server job.
+  const doDelete = async () => {
+    setWorking(true);
+    setSheetError("");
+    const { deleteMyAccount } = await import("@/lib/db");
+    const { error } = await deleteMyAccount();
+    if (error) {
+      setWorking(false);
+      return setSheetError(error);
+    }
+    await logout();
+    setWorking(false);
+    go?.("landing");
+  };
   const onLogout = async () => {
     setLoggingOut(true);
     await logout();
@@ -3052,21 +3086,13 @@ export const Settings = ({ go }) => {
           s="Matches, missions, events"
           right={<Toggle on />}
         />
-        <Item Icon={Lock} l="Privacy" s="Visibility, blocklist" />
+        <button onClick={openBlocks} className="w-full text-left">
+          <Item Icon={Lock} l="Privasi" s="Daftar pengguna yang kamu blokir" />
+        </button>
         <Item Icon={Globe} l="Language" s="English" />
         <div className="text-[11px] uppercase tracking-widest text-white/40 mt-4">
           Account
         </div>
-        <Item
-          Icon={ShieldCheck}
-          l="Verified profile"
-          s="Identity confirmed"
-          right={
-            <span className="text-[11px] text-[#00E5FF] font-medium">
-              Verified
-            </span>
-          }
-        />
         <Item Icon={User} l="Personal information" />
         <div className="mt-4">
           <button
@@ -3077,11 +3103,62 @@ export const Settings = ({ go }) => {
             <LogOut className="w-4 h-4" />{" "}
             {loggingOut ? "Logging out…" : "Log out"}
           </button>
+          <button
+            onClick={() => { setSheet("delete"); setConfirmText(""); setSheetError(""); }}
+            className="mt-3 w-full h-12 rounded-2xl flex items-center justify-center gap-2 text-white/50 text-[13px]"
+          >
+            <Trash2 className="w-4 h-4" /> Hapus akun
+          </button>
         </div>
         <div className="mt-2 text-center text-[10px] text-white/30">
           sirgaZ v1.0.0 · Made with ♥ in Bali
         </div>
       </div>
+
+      {sheet && (
+        <div className="absolute inset-0 z-50 bg-black/70 flex items-end" onClick={() => !working && setSheet(null)}>
+          <div className="w-full glass-strong rounded-t-3xl p-5 max-h-[80%] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            {sheet === "blocks" && (
+              <>
+                <div className="text-[17px] font-semibold">Pengguna diblokir</div>
+                <div className="mt-4 space-y-2">
+                  {blocks.length === 0 && <div className="glass rounded-2xl p-6 text-center text-[13px] text-white/50">Kamu belum memblokir siapa pun.</div>}
+                  {blocks.map((b) => (
+                    <div key={b.user_id} className="glass rounded-2xl p-3 flex items-center gap-3">
+                      {b.avatar_url ? <img src={b.avatar_url} alt="" className="w-9 h-9 rounded-full object-cover" /> : <div className="w-9 h-9 rounded-full bg-white/10" />}
+                      <div className="flex-1 text-[13.5px]">{b.name || "Pengguna"}</div>
+                      <button onClick={() => doUnblock(b.user_id)} className="h-8 px-3 rounded-full glass text-[12px]">Buka blokir</button>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+            {sheet === "delete" && (
+              <>
+                <div className="text-[17px] font-semibold">Hapus akun?</div>
+                <div className="text-[12.5px] text-white/60 mt-2 leading-relaxed">
+                  Profil, foto, dan preferensimu langsung dihapus dan kamu tidak akan muncul di matchmaking lagi.
+                  Data login dihapus permanen oleh sistem setelahnya. Tindakan ini tidak bisa dibatalkan.
+                </div>
+                <input
+                  value={confirmText}
+                  onChange={(e) => setConfirmText(e.target.value)}
+                  placeholder='Ketik "HAPUS" untuk konfirmasi'
+                  className="mt-4 w-full glass rounded-2xl px-4 h-12 bg-transparent outline-none text-[14px]"
+                />
+                <button
+                  onClick={doDelete}
+                  disabled={working || confirmText.trim() !== "HAPUS"}
+                  className="mt-3 w-full h-12 rounded-2xl bg-[#FF2F92] text-[14px] font-semibold disabled:opacity-40"
+                >
+                  {working ? "Menghapus…" : "Hapus akun permanen"}
+                </button>
+              </>
+            )}
+            {sheetError && <div className="mt-3 text-[12px] text-[#FF2F92]">{sheetError}</div>}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

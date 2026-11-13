@@ -28,10 +28,32 @@ No server-only secrets are required for the current MVP.
 
 ## Database setup
 
-Run both SQL migrations in Supabase → SQL Editor:
+Run the migrations **in this order** in Supabase → SQL Editor (all are idempotent):
 
 1. `supabase/schema.sql` — base schema (venues, events, participants, profiles, matches, missions, rewards + RLS)
-2. `supabase/002_venue_profile.sql` — adds venue profile columns (category, description, instagram, logo_url) + migrates any legacy "My Venue" rows
+2. `supabase/002_venue_profile.sql` — venue profile columns
+3. `supabase/003_chat.sql` — chat messages
+4. `supabase/004_production_security.sql` — roles, QR access tokens, server-side matching/rewards
+5. `supabase/005_mvp_venue_admin.sql` — self-serve venue creation
+6. `supabase/006_matchmaking_serialization.sql` — serialized legacy matching
+7. `supabase/011_production_saas_completion.sql` — markets, branding, catalog (007–010 were never committed; see below)
+8. `supabase/012_security_hardening.sql` — **audit fixes** (profile privacy, venue data leak, XP guard, QR token on PG < 18)
+9. `supabase/013_random_matchmaking_phase1.sql` — **PRD V2 phase 1**: gender/preference, random match sessions, 3 free rerolls + wallet ledger, block & report, close event, analytics
+10. `supabase/014_avatar_storage.sql` — `avatars` storage bucket for profile photos
+
+> Migrations 007–010 exist only in the production database. Export them with
+> `supabase db dump --schema public` and commit them so the repo can rebuild production.
+
+Optional: expire quota of events whose `ends_at` passed without "End event", every 5 minutes:
+`select cron.schedule('sirgaz-expire-events', '*/5 * * * *', 'select public.expire_ended_events()');`
+
+### Database tests
+
+`supabase/tests/run_local.sh` applies every migration to an empty Postgres (twice) and runs
+`supabase/tests/phase1_security_and_matchmaking.test.sql` (PRD acceptance criteria MM/RR/PY +
+security regressions). CI runs it on every PR. Never point it at production.
+
+PRD → database/API mapping: `docs/PRD_V2_MAPPING.md`.
 
 Also in Supabase:
 
@@ -71,15 +93,15 @@ app/                       Next.js app router pages
 
 lib/
 ├─ supabaseClient.js       @supabase/ssr browser client
-├─ db.js                   All Supabase queries (venues, events, matches, missions, rewards)
+├─ db.js                   All Supabase queries + RPC clients (matchmaking, block/report, admin)
 └─ vibe.js                 Zodiac, age, energy, tonight helpers + computeVibeMatch
 
 components/
 └─ VibeProfile.js          Reusable VibeProfileCard + MatchReasons
 
 supabase/
-├─ schema.sql              Base tables + RLS
-└─ 002_venue_profile.sql   Venue profile columns migration
+├─ schema.sql … 014_*.sql  Migrations (see "Database setup")
+└─ tests/                  Postgres stub, test runner, acceptance & security checks
 ```
 
 ## License
